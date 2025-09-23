@@ -15,17 +15,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3  # 👈 Esto es lo nuevo
+      - uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - run: npm install  # Instala tus dependencias
+      - run: npm install
 
-      - run: npm run build  # Corre Vite (vite build)
+      - run: npm run build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_NEGOCIO_APP_2025 }}'
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_NEGOCIO_APP_2025 }}
           projectId: negocio-app-2025
           channelId: live
