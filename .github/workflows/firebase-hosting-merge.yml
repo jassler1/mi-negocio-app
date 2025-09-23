@@ -2,17 +2,27 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on merge
+
 on:
   push:
     branches:
-      - y
+      - y  # asegúrate de que tu rama se llama así
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - run: npm install # This new line installs your dependencies
-      - run: npm run build
+
+      - uses: actions/setup-node@v3  # 👈 Esto es lo nuevo
+        with:
+          node-version: '20'
+
+      - run: npm install  # Instala tus dependencias
+
+      - run: npm run build  # Corre Vite (vite build)
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
