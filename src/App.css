@@ -1,0 +1,251 @@
+/* Variables de color para un mantenimiento más fácil */
+:root {
+  --color-dark: #2d3748;
+  --color-text: #4a5568;
+  --color-light-gray: #eef2f6;
+  --color-white: #ffffff;
+  --color-border: #e2e8f0;
+  --color-primary: #007bff;
+  --color-success: #28a745;
+  --color-danger: #dc3545;
+  --color-hover-primary: #0056b3;
+  --color-hover-success: #218838;
+  --color-hover-danger: #c82333;
+}
+
+/* Reseteo de estilos básico y tipografía */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-light-gray);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* Estilos generales de la aplicación */
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Navegación */
+nav {
+  background-color: var(--color-white);
+  padding: 2rem 147px; /* Un poco menos de padding para un look más compacto */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--color-border);
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+nav li {
+  position: relative;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  border-radius: 9999px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  background-color: var(--color-light-gray);
+}
+
+nav a:hover, nav a:focus {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  transform: scale(1.05); /* Transición más sutil para evitar un movimiento brusco */
+  box-shadow: 0 4px 14px rgba(0, 123, 255, 0.2);
+}
+
+/* Estilos de botones unificados */
+.payment-btn, .confirm-btn, .close-btn {
+  padding: 12px 15px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  text-align: center;
+}
+
+/* Botones de pago por método */
+.payment-btn {
+  flex: 1;
+  background-color: var(--color-white);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.payment-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.payment-btn:hover:not(.active) {
+  background-color: var(--color-border);
+}
+
+/* Botones de confirmación y cierre */
+.confirm-btn {
+  width: 100%;
+  background-color: var(--color-success);
+  color: var(--color-white);
+}
+
+.confirm-btn:hover {
+  background-color: var(--color-hover-success);
+}
+
+/* Botón de cerrar, ahora con su propio estilo para un mejor control */
+.close-btn {
+  width: 100%;
+  background-color: var(--color-danger);
+  color: var(--color-white);
+}
+
+.close-btn:hover {
+  background-color: var(--color-hover-danger);
+}
+
+/* Contenido Principal y Componentes */
+.page-content {
+  flex-grow: 1;
+  padding: 2rem;
+  background-color: var(--color-light-gray);
+}
+
+h1, h2, h3 {
+  color: var(--color-dark);
+  font-weight: 700;
+}
+
+p {
+  color: var(--color-text);
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+/* Estilos del Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--color-white);
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-title {
+  text-align: center;
+  margin-bottom: 15px;
+  color: var(--color-dark);
+}
+
+.total-amount {
+  text-align: center;
+  font-size: 1.5rem;
+  color: var(--color-success);
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.payment-method-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.payment-form-section {
+  margin-bottom: 20px;
+}
+
+.payment-form-section p {
+  text-align: center;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.payment-form-section label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.payment-form-section input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.input-group label {
+  display: inline-block;
+  width: 150px;
+}
+
+.input-group input {
+  width: calc(100% - 160px);
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.modal-footer {
+  margin-top: auto;
+  padding-top: 15px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}

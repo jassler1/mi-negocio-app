@@ -1,0 +1,153 @@
+/* Estilos generales del dashboard */
+.egresos-dashboard {
+    padding: 40px;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+/* Título principal del dashboard */
+.dashboard-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: 600;
+    margin-bottom: 40px;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.title-icon {
+    margin-right: 15px;
+    color: #3498db;
+    font-size: 1.2em;
+}
+
+/* Contenedor de las tarjetas de resumen */
+.summary-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.summary-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    font-size: 2.5em;
+    color: #3498db;
+}
+
+.total-egresos-card .card-icon { color: #e74c3c; }
+.total-transacciones-card .card-icon { color: #2ecc71; }
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-label {
+    font-size: 1em;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.card-value {
+    font-size: 2em;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Contenedor principal de la tabla */
+.egresos-table-container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+}
+
+/* Estilos de la tabla */
+.egresos-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.egresos-table thead tr {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.egresos-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+.egresos-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f2f5;
+    color: #666;
+    font-size: 0.95em;
+}
+
+.egresos-table tbody tr:hover {
+    background-color: #fefefe;
+    cursor: pointer;
+}
+
+.egresos-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.monto-cell {
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+/* Mensajes de estado */
+.loading-status {
+    text-align: center;
+    font-size: 1.2em;
+    color: #7f8c8d;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.no-data-message {
+    text-align: center;
+    font-size: 1.2em;
+    color: #95a5a6;
+    font-style: italic;
+    padding: 40px;
+}

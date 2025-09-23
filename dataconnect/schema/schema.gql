@@ -1,0 +1,43 @@
+type Usuario @table {
+  nombre: String!
+  telefono: String!
+  email: String
+}
+
+type Cancha @table {
+  nombre: String!
+  precioPorHora: Float!
+  descripcion: String
+}
+
+type Reserva @table {
+  usuario: Usuario
+  cancha: Cancha!
+  fecha: Date!
+  horaInicio: String! # Consider using a specific Time type if available, otherwise String is common for HH:MM
+  horaFin: String!    # Consider using a specific Time type if available, otherwise String is common for HH:MM
+  totalPagado: Float!
+  notas: String
+}
+
+type Producto @table {
+  nombre: String!
+  precioUnitario: Float!
+  stock: Int!
+  descripcion: String
+}
+
+type VentaProducto @table {
+  usuario: Usuario
+  producto: Producto!
+  cantidad: Int!
+  precioTotal: Float!
+  fechaVenta: Date!
+}
+
+type Egreso @table {
+  descripcion: String!
+  monto: Float!
+  fechaEgreso: Date!
+  categoria: String
+}

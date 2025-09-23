@@ -1,0 +1,184 @@
+/* Contenedor principal para centrar el formulario */
+.login-container {
+    /* Removido el centrado con Flexbox y reemplazado con position: absolute */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    min-height: 100vh; /* Se mantiene para asegurar la altura de la página */
+    min-width: 100vw;
+    background-color: #f0f2f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* El siguiente Flexbox se usa ahora solo para centrar el contenido, no el contenedor */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Tarjeta (card) del formulario de login */
+.login-card {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Título principal del formulario */
+.login-title {
+    font-size: 2em;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.title-icon {
+    margin-right: 15px;
+    color: #3498db;
+}
+
+/* Grupo de formulario (label + input) */
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+/* Contenedor para el input con ícono */
+.input-with-icon {
+    display: flex;
+    align-items: center;
+    border: 1px solid #c8d4e0;
+    border-radius: 10px;
+    padding: 10px 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-with-icon:focus-within {
+    border-color: #3498db;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+.input-with-icon svg {
+    margin-right: 12px;
+    color: #7f8c8d;
+    font-size: 1.2em;
+}
+
+.input-with-icon input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    font-size: 1em;
+    background: transparent;
+}
+
+/* Contenedor específico para el campo de contraseña */
+.password-input-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #c8d4e0;
+    border-radius: 10px;
+    padding: 10px 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.password-input-container:focus-within {
+    border-color: #3498db;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+.password-input-container input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    font-size: 1em;
+    background: transparent;
+}
+
+.password-input-container .input-icon {
+    margin-right: 12px;
+    color: #7f8c8d;
+    font-size: 1.2em;
+}
+
+.toggle-password-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #7f8c8d;
+    transition: color 0.3s ease;
+    font-size: 1.2em;
+    padding: 0;
+}
+
+.toggle-password-btn:hover {
+    color: #3498db;
+}
+
+/* Botón de inicio de sesión */
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: white;
+    background-color: #3498db;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.login-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.login-btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mensaje de error */
+.error-message {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #fdeeee;
+    color: #c0392b;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}

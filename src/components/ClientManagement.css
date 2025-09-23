@@ -1,0 +1,292 @@
+/* Variables CSS para una mejor gestión de la UI */
+:root {
+  --primary-blue: #007bff;
+  --primary-blue-dark: #0056b3;
+  --secondary-gray: #6c757d;
+  --secondary-gray-dark: #5a6268;
+  --success-color: #28a745;
+  --success-color-dark: #218838;
+  --error-color: #dc3545;
+  --error-color-dark: #c82333;
+  --light-bg: #f4f7f6;
+  --card-bg: #fff;
+  --border-color: #e0e0e0;
+  --text-dark: #333;
+  --text-muted: #555;
+  --font-base: 16px;
+  --border-radius-base: 8px;
+  --border-radius-pill: 25px;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Importa una fuente limpia y moderna para mejor legibilidad */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Estilo general del cuerpo y contenedor */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--light-bg);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+}
+
+.client-management-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Encabezados y títulos */
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 2.5rem;
+}
+
+h2 {
+  text-align: center;
+  color: #34495e;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+
+/* Mensajes de estado (éxito/error) */
+.message {
+  text-align: center;
+  padding: 12px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Estilos para la tabla --- */
+
+.table-container {
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--border-radius-base);
+  overflow: hidden;
+}
+
+thead {
+  background-color: #f0f2f5;
+}
+
+th {
+  text-align: left;
+  padding: 12px 15px;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border-color);
+  cursor: pointer;
+  position: relative;
+}
+
+th svg {
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+th.ascending,
+th.descending {
+  color: var(--primary-blue);
+}
+
+
+tbody tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+  background-color: #f7f9fc;
+}
+
+td {
+  padding: 12px 15px;
+  font-size: 14px;
+}
+
+/* Contenedor de controles */
+.controls-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+@media (min-width: 768px) {
+  .controls-container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.search-container {
+  width: 100%;
+  max-width: 300px;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-pill);
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* --- Estilos de los botones generales --- */
+
+button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--border-radius-pill);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+}
+
+.create-client-btn {
+  background-color: var(--primary-blue);
+  color: var(--card-bg);
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
+}
+
+.create-client-btn:hover {
+  background-color: var(--primary-blue-dark);
+  box-shadow: 0 6px 10px rgba(0, 123, 255, 0.3);
+}
+
+.toggle-sort-btn {
+  background-color: var(--secondary-gray);
+  color: var(--card-bg);
+  box-shadow: 0 4px 6px rgba(108, 117, 125, 0.2);
+}
+
+.toggle-sort-btn:hover {
+  background-color: var(--secondary-gray-dark);
+  box-shadow: 0 6px 10px rgba(108, 117, 125, 0.3);
+}
+
+.toggle-sort-btn.active {
+  background-color: var(--primary-blue);
+  color: var(--card-bg);
+  box-shadow: 0 6px 10px rgba(0, 123, 255, 0.3);
+}
+
+/* --- Estilos específicos para los botones de acción en la tabla (Editar/Eliminar) --- */
+
+/* Contenedor de los botones de acción */
+td {
+  white-space: nowrap;
+}
+
+.action-buttons-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-buttons-container button {
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  box-shadow: var(--shadow-sm);
+  min-width: 70px;
+}
+
+.action-buttons-container button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.edit-btn {
+  background-color: var(--primary-blue);
+  color: var(--card-bg);
+}
+
+.edit-btn:hover {
+  background-color: var(--primary-blue-dark);
+}
+
+.delete-btn {
+  background-color: var(--error-color);
+  color: var(--card-bg);
+}
+
+.delete-btn:hover {
+  background-color: var(--error-color-dark);
+}

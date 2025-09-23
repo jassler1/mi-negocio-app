@@ -1,0 +1,274 @@
+/* --- CSS Custom Properties for a unified style --- */
+:root {
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --secondary-color: #28a745;
+  --secondary-hover: #218838;
+  --text-dark: #333;
+  --text-medium: #555;
+  --text-light: #888;
+  --background-light: #f7f9fc;
+  --background-card: #fff;
+  --border-light: #eee;
+  --border-medium: #ccc;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: var(--background-light);
+  color: var(--text-dark);
+}
+
+/* --- Main Container --- */
+.ventas-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--background-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+}
+
+.main-title {
+  text-align: center;
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: 1rem;
+}
+
+/* --- Cancha Selection Section --- */
+.section-canchas {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-medium);
+  margin-bottom: 1rem;
+}
+
+.cancha-buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.cancha-btn {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-medium);
+  background-color: #f0f0f0;
+  color: var(--text-medium);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.cancha-btn:hover,
+.cancha-btn:focus {
+  background-color: #e0e0e0;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  outline: none;
+}
+
+.cancha-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.selected-cancha-info {
+  background-color: #e9ecef;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid var(--primary-color);
+}
+
+/* --- Product List and Controls --- */
+.add-accessory-btn {
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  font-weight: bold;
+}
+
+.add-accessory-btn:hover,
+.add-accessory-btn:focus {
+  background-color: var(--secondary-hover);
+  outline: none;
+}
+
+.products-list-container {
+  background-color: var(--background-card);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.list-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.product-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.no-products-msg {
+  text-align: center;
+  color: var(--text-light);
+  padding: 1rem 0;
+}
+
+.product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.product-item:last-child {
+  border-bottom: none;
+}
+
+.product-info {
+  flex-grow: 1;
+}
+
+.product-name {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.product-price {
+  margin-left: 1rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.product-quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border-medium);
+  background-color: #f0f0f0;
+  color: var(--text-medium);
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.1em;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quantity-btn:hover,
+.quantity-btn:focus {
+  background-color: #e0e0e0;
+  outline: none;
+}
+
+/* --- Totals and Payment --- */
+.total-container {
+  text-align: right;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--border-light);
+}
+
+.total-amount {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+.pay-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 1.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.pay-btn:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.pay-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px; /* Increased space between buttons */
+    margin: 20px 0;
+    padding: 10px;
+}
+
+.filter-icon {
+    color: #007bff; /* Primary blue color */
+    font-size: 1.5rem;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    border: 1px solid #ddd; /* Lighter border */
+    background-color: #f0f4f7; /* Soft gray background */
+    color: #555;
+    border-radius: 25px; /* Pill shape for a modern look */
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.filter-btn:hover {
+    background-color: #e2e6ea; /* Slightly darker on hover */
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn.active {
+    background-color: #007bff; /* Primary blue for the active button */
+    color: white;
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+}

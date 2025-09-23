@@ -1,0 +1,153 @@
+/* Contenedor principal de la lista de usuarios */
+.user-list-container {
+    padding: 30px;
+    background-color: #f9fbfd;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    max-width: 900px;
+    margin: 40px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #444;
+}
+
+/* Título de la lista */
+.list-title {
+    text-align: center;
+    color: #333;
+    font-size: 2em;
+    font-weight: 600;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.title-icon {
+    margin-right: 12px;
+    color: #3498db;
+}
+
+/* Mensajes de estado (éxito/error) */
+.status-message {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.status-message.success {
+    background-color: #eaf8ee;
+    color: #27ae60;
+}
+
+.status-message.error {
+    background-color: #fdeeee;
+    color: #c0392b;
+}
+
+/* Tabla de usuarios */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden; /* Asegura que las esquinas redondeadas se apliquen correctamente */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.user-table thead tr {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.user-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+.user-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f2f5;
+    color: #666;
+    font-size: 0.95em;
+}
+
+.user-table tbody tr:hover {
+    background-color: #fefefe;
+}
+
+.user-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Botones de acción en la tabla */
+.user-table td button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+}
+
+.edit-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #2980b9;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Estado de carga */
+.loading-container {
+    text-align: center;
+    font-size: 1.2em;
+    color: #7f8c8d;
+    padding: 40px;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estado vacío */
+.empty-state {
+    text-align: center;
+    font-size: 1.2em;
+    color: #95a5a6;
+    font-style: italic;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}

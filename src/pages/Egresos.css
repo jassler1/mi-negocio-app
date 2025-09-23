@@ -1,0 +1,147 @@
+.egresos-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 25px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.main-title {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.form-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+}
+
+.section-title {
+    color: #34495e;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 5px;
+}
+
+.form-fields {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-weight: bold;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group select {
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.add-egreso-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.add-egreso-btn:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+}
+
+.add-egreso-btn:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+    margin: 30px 0;
+}
+
+.summary-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.total-egresos {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #e74c3c;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.egresos-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.egreso-item {
+    padding: 12px;
+    border-bottom: 1px solid #ecf0f1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.egreso-item:last-child {
+    border-bottom: none;
+}
+
+.egreso-date {
+    color: #95a5a6;
+    font-size: 0.9em;
+    order: 2;
+}
+
+.egreso-concepto {
+    color: #34495e;
+    font-size: 1.1em;
+    order: 1;
+}
+
+.egreso-details {
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-top: 5px;
+    flex-basis: 100%;
+    order: 3;
+}
