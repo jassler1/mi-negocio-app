@@ -18,7 +18,7 @@ jobs:
 
       - run: npm ci
 
-      # - run: npm install -g vite  # solo para probar, comentar luego
+      - run: npx vite --version
 
       - run: npm run build
 
