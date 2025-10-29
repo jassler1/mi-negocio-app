@@ -1,194 +1,273 @@
-/* Contenedor principal del formulario */
-.add-user-container {
-    padding: 30px;
-    background-color: #f9fbfd;
-    border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    max-width: 700px;
-    margin: 40px auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #444;
+/* ================================================================= */
+/* 1. VARIABLES CSS (TOKENS DE DISEÑO) - BASE UNIFICADA */
+/* ================================================================= */
+:root {
+    /* Colores Principales (Brand) */
+    --color-brand-primary: #0077c2;   /* Azul para botones y foco */
+    --color-brand-secondary: #28a745; /* Verde para éxito */
+    --color-brand-alert: #ff6f61;     /* Rojo/Coral para errores */
+    --color-brand-hover: #005a92;
+
+    /* Colores Neutrales */
+    --color-text-dark: #212529;
+    --color-text-muted: #566573;
+    --color-bg-body: #f7f9fb;
+    --color-bg-card: #ffffff;
+    --color-border-light: #e8ebed;
+    --color-border-medium: #c5cdd4;
+
+    /* Tipografía y Espaciado */
+    --font-family-base: 'Roboto', sans-serif;
+    --space-unit: 8px; /* Base de 8px */
+    --radius-base: 8px;
+
+    /* Sombras */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.1);
+
+    /* Iconos */
+    --color-icon-muted: var(--color-text-muted);
+    --color-icon-hover: var(--color-brand-primary);
 }
 
-/* Título del formulario */
+/* Aplicamos la fuente Roboto si no está ya en el body */
+body {
+    font-family: var(--font-family-base);
+}
+
+/* ================================================================= */
+/* 2. CONTENEDOR Y TÍTULO */
+/* ================================================================= */
+
+.add-user-container {
+    padding: calc(4 * var(--space-unit)); /* 32px */
+    background-color: var(--color-bg-card);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-md);
+    max-width: 650px; /* Un poco más enfocado */
+    margin: calc(5 * var(--space-unit)) auto;
+    color: var(--color-text-dark);
+}
+
 .form-title {
     text-align: center;
-    color: #333;
-    font-size: 2em;
-    font-weight: 600;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 15px;
+    color: var(--color-text-dark);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: calc(4 * var(--space-unit));
+    border-bottom: 1px solid var(--color-border-medium);
+    padding-bottom: calc(2 * var(--space-unit));
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .title-icon {
-    margin-right: 12px;
-    color: #3498db;
+    margin-right: calc(1.5 * var(--space-unit));
+    color: var(--color-brand-primary);
 }
 
-/* Layout de la cuadrícula para los campos */
+/* ================================================================= */
+/* 3. LAYOUT DE CAMPOS Y ESTILOS */
+/* ================================================================= */
+
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    /* Diseño de 2 columnas consistente en toda la aplicación */
+    grid-template-columns: 1fr 1fr; 
+    gap: calc(3 * var(--space-unit)); /* 24px */
 }
 
-/* Estilo para cada grupo de formulario (label + input) */
 .form-group {
     display: flex;
     flex-direction: column;
 }
 
 .form-group label {
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #555;
+    font-weight: 600;
+    margin-bottom: var(--space-unit);
+    color: var(--color-text-muted);
     font-size: 0.95em;
+    text-transform: uppercase;
 }
 
-/* Estilo para el contenedor de input con ícono */
-.input-with-icon {
-    display: flex;
-    align-items: center;
-    border: 1px solid #c8d4e0;
-    border-radius: 10px;
-    padding: 10px 15px;
-    background-color: #fff;
-    transition: all 0.3s ease;
-}
-
-.input-with-icon:focus-within {
-    border-color: #3498db;
-    box-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
-}
-
-.input-with-icon svg {
-    margin-right: 12px;
-    color: #7f8c8d;
-    font-size: 1.2em;
-}
-
-/* Estilo de los inputs dentro del contenedor con ícono */
-.input-with-icon input,
-.input-with-icon select {
-    border: none;
-    outline: none;
-    flex-grow: 1;
-    font-size: 1em;
-    background: transparent;
-    color: #333;
-}
-
-/* Contenedor específico para el campo de contraseña */
+/* --- Contenedor de Input con Ícono/Botón (Unificado) --- */
+.input-with-icon,
 .password-input-container {
     display: flex;
     align-items: center;
-    border: 1px solid #c8d4e0;
-    border-radius: 10px;
-    padding: 10px 15px;
-    background-color: #fff;
-    transition: all 0.3s ease;
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-base);
+    padding: calc(1 * var(--space-unit)) calc(1.5 * var(--space-unit)); /* 8px 12px */
+    background-color: var(--color-bg-card);
+    transition: all 0.2s ease;
 }
 
+.input-with-icon:focus-within,
 .password-input-container:focus-within {
-    border-color: #3498db;
-    box-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
+    outline: none;
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 0 3px rgba(0, 119, 194, 0.25);
 }
 
+.input-with-icon svg,
+.password-input-container svg {
+    margin-right: calc(1.5 * var(--space-unit));
+    color: var(--color-icon-muted);
+    font-size: 1.1em;
+}
+
+/* Placeholder legible */
+.input-with-icon input::placeholder,
+.password-input-container input::placeholder,
+.input-with-icon select {
+    color: var(--color-text-muted);
+    opacity: 1;
+}
+
+/* Estilo base para Input/Select */
+.input-with-icon input,
+.input-with-icon select,
 .password-input-container input {
     border: none;
     outline: none;
     flex-grow: 1;
     font-size: 1em;
     background: transparent;
-    color: #333;
+    color: var(--color-text-dark);
+    padding: 0;
 }
 
-.password-input-container svg {
-    color: #7f8c8d;
-    font-size: 1.2em;
-    margin-right: 10px;
-}
-
+/* --- Botón de Ojo (Toggle Password) --- */
 .toggle-password-btn {
     background: none;
     border: none;
     cursor: pointer;
-    color: #7f8c8d;
-    transition: color 0.3s ease;
-    font-size: 1.2em;
+    color: var(--color-icon-muted);
+    transition: color 0.2s ease;
+    font-size: 1.1em;
+    padding: 0;
 }
 
 .toggle-password-btn:hover {
-    color: #3498db;
+    color: var(--color-icon-hover);
 }
 
-/* Mensajes de estado (éxito/error) */
+/* Accesibilidad para toggle-password */
+.toggle-password-btn:focus-visible {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 2px;
+}
+
+/* ================================================================= */
+/* 4. MENSAJES Y ACCIONES */
+/* ================================================================= */
+
 .status-message {
     text-align: center;
-    margin-top: 20px;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
+    margin-top: calc(3 * var(--space-unit));
+    padding: calc(1.5 * var(--space-unit));
+    border-radius: var(--radius-base);
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: var(--space-unit);
+    font-size: 0.95em;
+    opacity: 0;
+    transform: translateY(5px);
+    animation: fadeInUp 0.3s forwards;
 }
 
 .status-message.success {
-    background-color: #eaf8ee;
-    color: #27ae60;
+    background-color: #e6faee;
+    color: var(--color-brand-secondary);
 }
 
 .status-message.error {
-    background-color: #fdeeee;
-    color: #c0392b;
+    background-color: #ffeeeb;
+    color: var(--color-brand-alert);
 }
 
-/* Botones de acción del formulario */
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .form-actions {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    margin-top: 30px;
+    gap: calc(2 * var(--space-unit));
+    margin-top: calc(4 * var(--space-unit));
 }
 
 .submit-btn,
 .cancel-btn {
-    padding: 14px 30px;
+    padding: calc(1.5 * var(--space-unit)) calc(3 * var(--space-unit));
     border: none;
-    border-radius: 8px;
-    font-size: 1.05em;
-    font-weight: 600;
+    border-radius: var(--radius-base);
+    font-size: 1em;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-unit);
+    text-transform: uppercase;
+}
+
+/* Estado disabled */
+.submit-btn:disabled,
+.cancel-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+    transform: none;
 }
 
 .submit-btn {
-    background-color: #3498db;
+    background-color: var(--color-brand-primary);
     color: white;
 }
 
-.submit-btn:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+.submit-btn:hover:not(:disabled) {
+    background-color: var(--color-brand-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 119, 194, 0.3);
 }
 
 .cancel-btn {
-    background-color: #95a5a6;
-    color: white;
+    background-color: var(--color-border-medium);
+    color: var(--color-text-muted);
 }
 
-.cancel-btn:hover {
-    background-color: #7f8c8d;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(149, 165, 166, 0.3);
+.cancel-btn:hover:not(:disabled) {
+    background-color: #a7b6c7;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(197, 205, 212, 0.3);
+}
+
+/* --- MEDIA QUERIES --- */
+@media (max-width: 650px) {
+    .add-user-container {
+        padding: calc(3 * var(--space-unit));
+    }
+
+    .form-grid {
+        /* Pasa a columna única en pantallas pequeñas para mejor usabilidad */
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: var(--space-unit);
+    }
+
+    .submit-btn,
+    .cancel-btn {
+        width: 100%; /* Botones full width para facilitar interacción en móviles */
+        justify-content: center;
+    }
 }

@@ -7,39 +7,41 @@ import './UserList.css';
 function UserList({ onEdit }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [deleteStatus, setDeleteStatus] = useState('');
-
-  const fetchUsers = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "usuarios"));
-      const usersList = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setUsers(usersList);
-    } catch (e) {
-      console.error("Error al obtener usuarios: ", e);
-      setDeleteStatus('Error al cargar la lista de usuarios.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [deleteStatus, setDeleteStatus] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "usuarios"));
+        const userList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setUsers(userList);
+      } catch (error) {
+        console.error("Error al obtener usuarios:", error);
+        setDeleteStatus({ type: 'error', message: 'Error al cargar la lista de usuarios.' });
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchUsers();
   }, []);
 
   const handleDelete = async (userId) => {
-    setDeleteStatus('');
-    if (window.confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
-      try {
-        await deleteDoc(doc(db, "usuarios", userId));
-        setDeleteStatus("✅ Usuario eliminado con éxito.");
-        fetchUsers();
-      } catch (e) {
-        console.error("Error al eliminar el documento: ", e);
-        setDeleteStatus("❌ Error al eliminar el usuario.");
-      }
+    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este usuario?");
+    if (!confirmDelete) return;
+
+    try {
+      setDeletingId(userId);
+      setDeleteStatus(null);
+      await deleteDoc(doc(db, "usuarios", userId));
+      setUsers(prev => prev.filter(user => user.id !== userId)); // sin recargar
+      setDeleteStatus({ type: 'success', message: '✅ Usuario eliminado con éxito.' });
+    } catch (error) {
+      console.error("Error al eliminar el documento:", error);
+      setDeleteStatus({ type: 'error', message: '❌ Error al eliminar el usuario.' });
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -57,10 +59,10 @@ function UserList({ onEdit }) {
       <h2 className="list-title">
         <FaUserFriends className="title-icon" /> Lista de Usuarios
       </h2>
-      
+
       {deleteStatus && (
-        <p className={`status-message ${deleteStatus.includes('éxito') ? 'success' : 'error'}`}>
-          {deleteStatus}
+        <p className={`status-message ${deleteStatus.type}`}>
+          {deleteStatus.message}
         </p>
       )}
 
@@ -84,11 +86,22 @@ function UserList({ onEdit }) {
                   <td>{user.role}</td>
                   <td>{user.numeroCelular}</td>
                   <td>
-                    <button className="edit-btn" onClick={() => onEdit(user)}>
+                    <button
+                      className="edit-btn"
+                      onClick={() => onEdit(user)}
+                      title="Editar usuario"
+                    >
                       <FaEdit /> Editar
                     </button>
-                    <button className="delete-btn" onClick={() => handleDelete(user.id)}>
-                      <FaTrashAlt /> Eliminar
+
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(user.id)}
+                      disabled={deletingId === user.id}
+                      title="Eliminar usuario"
+                    >
+                      {deletingId === user.id ? <FaSpinner className="spinner delete-spinner" /> : <FaTrashAlt />}
+                      Eliminar
                     </button>
                   </td>
                 </tr>

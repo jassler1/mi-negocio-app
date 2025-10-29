@@ -1,205 +1,427 @@
+/*
+ * --------------------------------
+ * 1. VARIABLES Y ESTILOS BASE
+ * --------------------------------
+ */
+
+:root {
+  --color-primary: #009688; /* Teal/Verde azulado para acciones */
+  --color-success: #4caf50; /* Verde para montos positivos */
+  --color-warning: #ffc107; /* Amarillo para cliente/advertencias */
+  --color-danger: #f44336; /* Rojo para errores */
+  --color-background: #f4f7f6; /* Fondo general claro */
+  --color-card-bg: #ffffff; /* Fondo de tarjetas */
+  --color-text: #37474f; /* Texto oscuro */
+  --color-border: #e0e0e0;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .ingresos-container {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 25px;
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f7f9;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--color-background);
+  font-family: 'Roboto', sans-serif;
+  color: var(--color-text);
 }
 
 .main-title {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #ecf0f1;
-    padding-bottom: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .title-icon {
-    color: #27ae60;
-    font-size: 1.5em;
-}
-
-.form-section, .summary-section {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.form-section {
-    margin-bottom: 25px;
-}
-
-.section-title {
-    color: #34495e;
-    margin-top: 0;
-    margin-bottom: 20px;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.input-group label {
-    display: block;
-    font-weight: bold;
-    color: #555;
-    margin-bottom: 8px;
-}
-
-.button-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.button-cancha, .button-categoria {
-    padding: 12px 20px;
-    border: 1px solid #bdc3c7;
-    border-radius: 8px;
-    background-color: #ecf0f1;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.button-cancha:hover, .button-categoria:hover {
-    background-color: #dfe6e9;
-    border-color: #95a5a6;
-}
-
-.button-cancha.active, .button-categoria.active {
-    background-color: #3498db;
-    color: white;
-    border-color: #2980b9;
-    transform: scale(1.05);
-}
-
-.monto-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #bdc3c7;
-    border-radius: 8px;
-    font-size: 1em;
-    box-sizing: border-box;
-}
-
-.monto-input.invalid {
-    border-color: #e74c3c;
-    box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
-}
-
-.error-message {
-    color: #e74c3c;
-    font-size: 0.85em;
-    margin-top: 5px;
-}
-
-.pay-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 15px;
-    background-color: #2ecc71;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 20px;
-    gap: 10px;
-}
-
-.pay-btn:hover:not(:disabled) {
-    background-color: #27ae60;
-}
-
-.pay-btn:disabled {
-    background-color: #95a5a6;
-    cursor: not-allowed;
-}
-
-.btn-icon {
-    font-size: 1.2em;
+  margin-right: 15px;
+  font-size: 2.5rem;
 }
 
 .divider {
-    border: 0;
-    height: 1px;
-    background: #bdc3c7;
-    margin: 30px 0;
+  border: 0;
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 40px 0;
 }
 
-.total-ingresos {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-bottom: 15px;
+/*
+ * --------------------------------
+ * 2. SECCIONES Y FORMULARIO (ORDENADO EN 2 COLUMNAS)
+ * --------------------------------
+ */
+
+.form-section,
+.summary-section {
+  background-color: var(--color-card-bg);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-bottom: 25px;
+  color: var(--color-text);
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 10px;
+}
+
+/* --- ESTRUCTURA DE FORMULARIO DE 2 COLUMNAS --- */
+.form-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+  gap: 30px;
+}
+
+/* Alinear los grupos en el grid: */
+/* Columna 1, Fila 1: Categoría */
+.form-fields > .input-group:nth-child(1) {
+    grid-column: 1 / 2;
+}
+
+/* Columna 2, Filas 1/2: Cancha y Cliente */
+.form-fields > .input-group:nth-child(2) {
+    grid-column: 2 / 3;
+    /* Este grupo contiene la selección de Cancha y Cliente */
+}
+
+/* Columna 1, Fila 2: Monto y Botón de Pago */
+.form-fields > .input-group:nth-child(3) {
+    grid-column: 1 / 2;
+    /* Contiene el monto y el botón de pago */
+}
+/* ----------------------------------------------- */
+
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.input-group select,
+.input-group input[type="number"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.input-group select:focus,
+.input-group input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 150, 136, 0.2);
+}
+
+.monto-input.invalid {
+  border-color: var(--color-danger);
+}
+
+.error-message {
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+/* -------------------- */
+/* CANCHA SELECTION */
+/* -------------------- */
+
+.cancha-selection-group {
+    margin-top: 10px; /* Ajuste menor */
     padding: 15px;
-    background-color: #e8f5e9;
-    border-left: 5px solid #4caf50;
-    color: #2c3e50;
+    background-color: #f0f8ff; 
     border-radius: 8px;
+    border: 1px dashed #b0e0e6;
+}
+
+.cancha-selection-group label {
+    font-weight: 700;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.button-cancha {
+  padding: 8px 15px;
+  border: 2px solid var(--color-primary);
+  background-color: transparent;
+  color: var(--color-primary);
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.button-cancha:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.button-cancha.active {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+/* -------------------- */
+/* CLIENTE SELECTION */
+/* -------------------- */
+
+.client-selection-area {
+    margin-top: 25px; 
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.add-client-btn {
+    padding: 10px 15px;
+    background-color: var(--color-warning); 
+    color: var(--color-text);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
     display: flex;
     align-items: center;
-    gap: 10px;
+}
+
+.add-client-btn svg {
+    margin-right: 8px;
+}
+
+.add-client-btn:hover {
+    background-color: #e0a800;
+}
+
+.client-info {
+    margin-top: 10px;
+    font-weight: 600;
+    color: var(--color-success);
+    padding: 5px 0;
+}
+
+/* -------------------- */
+/* BOTÓN DE PAGO */
+/* -------------------- */
+
+.payment-group {
+    display: flex;
+    flex-direction: column;
+    /* Empuja el contenido hacia el fondo del grid cell para alinearlo con la otra columna */
+    justify-content: flex-end; 
+}
+
+.pay-btn {
+  width: 100%;
+  padding: 15px;
+  margin-top: 20px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: var(--color-success);
+  color: white;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pay-btn:hover:not(:disabled) {
+  background-color: #388e3c;
+  box-shadow: var(--shadow-sm);
+}
+
+.pay-btn:disabled {
+  background-color: #bdbdbd;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-icon {
+  margin-right: 10px;
+  font-size: 1.3rem;
+}
+
+/*
+ * --------------------------------
+ * 3. LISTA DE INGRESOS
+ * --------------------------------
+ */
+
+.total-ingresos {
+    padding: 20px;
+    background-color: #e8f5e9; 
+    border: 1px solid var(--color-success);
+    border-radius: 8px;
+    margin-bottom: 25px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--color-success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.total-ingresos strong {
+    margin-right: 5px;
 }
 
 .total-icon {
-    font-size: 1.5em;
-    color: #27ae60;
-}
-
-.ingresos-list {
-    list-style-type: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.ingreso-item {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #ecf0f1;
-    font-size: 0.9em;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.ingreso-date {
-    color: #7f8c8d;
-    font-size: 0.85em;
-}
-
-.ingreso-concepto {
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.ingreso-details {
-    color: #7f8c8d;
-    font-size: 0.85em;
+    margin-right: 10px;
+    font-size: 1.5rem;
 }
 
 .no-data-msg {
     text-align: center;
-    color: #7f8c8d;
+    padding: 20px;
+    color: #757575;
     font-style: italic;
-    margin-top: 20px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
+}
+
+.ingresos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ingresos-list-header,
+.ingreso-item {
+    /* Define 4 columnas para la visualización tabular */
+    display: grid;
+    grid-template-columns: 1fr 2fr 1.5fr 2fr; 
+    gap: 15px;
+    padding: 12px 15px;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.ingresos-list-header {
+    font-weight: 700;
+    background-color: #eceff1; 
+    color: var(--color-text);
+    border-radius: 5px 5px 0 0;
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.ingreso-item {
+    background-color: var(--color-card-bg);
+    transition: background-color 0.2s;
+}
+
+.ingreso-item:hover {
+    background-color: #fcfcfc;
+}
+
+.ingreso-date {
+    font-size: 0.9rem;
+    color: #616161;
+}
+
+.ingreso-concepto {
+    font-weight: 600;
+}
+
+.ingreso-monto-metodo {
+    font-weight: 700;
+    color: var(--color-success);
+    display: flex;
+    flex-direction: column;
+}
+
+.metodo-pago-tag {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    background-color: rgba(0, 150, 136, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    align-self: flex-start;
+    margin-top: 3px;
+}
+
+.ingreso-details {
+    font-size: 0.9rem;
+    color: #757575;
+}
+
+
+/*
+ * --------------------------------
+ * 4. MEDIA QUERIES (Responsividad)
+ * --------------------------------
+ */
+
+@media (max-width: 992px) {
+    /* Formulario en 1 columna */
+    .form-fields {
+        grid-template-columns: 1fr; 
+    }
+    
+    .form-fields > .input-group {
+        grid-column: auto;
+    }
+
+    /* Lista de ingresos colapsada */
+    .ingresos-list-header,
+    .ingreso-item {
+        grid-template-columns: 1fr 1fr; 
+        padding: 15px;
+    }
+    
+    .ingresos-list-header span:nth-child(3), 
+    .ingresos-list-header span:nth-child(4) { 
+        display: none;
+    }
+    
+    .ingreso-date { grid-column: 1 / 2; order: 1; }
+    .ingreso-monto-metodo { grid-column: 2 / 3; order: 2; text-align: right; }
+    .ingreso-concepto { grid-column: 1 / 3; order: 3; margin-top: 10px; }
+    .ingreso-details { grid-column: 1 / 3; order: 4; font-size: 0.85rem; }
+
+    .metodo-pago-tag {
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-title {
+        font-size: 2rem;
+    }
+    .form-section, .summary-section {
+        padding: 15px;
+    }
 }

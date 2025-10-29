@@ -1,10 +1,40 @@
+/* ================================================================= */
+/* 1. VARIABLES CSS (TOKENS DE DISEÑO) - BASE UNIFICADA */
+/* ================================================================= */
+:root {
+    /* Colores Principales (Brand) */
+    --color-brand-primary: #0077c2;   /* Azul para botones y foco */
+    --color-brand-secondary: #28a745; /* Verde para éxito/añadir */
+    --color-brand-alert: #ff6f61;     /* Rojo/Coral para errores */
+    --color-brand-hover: #005a92;
+
+    /* Colores Neutrales */
+    --color-text-dark: #212529;
+    --color-text-muted: #566573;
+    --color-bg-card: #ffffff;
+    --color-border-light: #e8ebed;
+    --color-border-medium: #c5cdd4;
+
+    /* Tipografía y Espaciado */
+    --space-unit: 8px;
+    --radius-base: 8px;
+    --radius-pill: 9999px;
+
+    /* Sombras */
+    --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ================================================================= */
+/* 2. OVERLAY Y CONTENEDOR */
+/* ================================================================= */
+
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,31 +42,45 @@
 }
 
 .modal-content {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background-color: var(--color-bg-card);
+    padding: calc(4 * var(--space-unit)); /* 32px */
+    border-radius: var(--radius-base);
     width: 90%;
     max-width: 500px;
-    max-height: 80vh;
+    max-height: 85vh; /* Permitir un poco más de altura */
     overflow-y: auto;
+    box-shadow: var(--shadow-md);
     display: flex;
     flex-direction: column;
 }
 
 .modal-content h3 {
     text-align: center;
-    margin-bottom: 20px;
-    color: #333;
+    margin-bottom: calc(3 * var(--space-unit));
+    color: var(--color-brand-primary); /* Título en color de marca */
+    font-size: 1.5rem;
+    font-weight: 700;
 }
+
+/* ------------------------------------ */
+/* 3. BÚSQUEDA Y LISTA */
+/* ------------------------------------ */
 
 .search-input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: calc(1.5 * var(--space-unit)); /* Espaciado generoso */
+    margin-bottom: calc(3 * var(--space-unit));
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-base);
     font-size: 1em;
+    color: var(--color-text-dark);
+    transition: all 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 0 3px rgba(0, 119, 194, 0.15);
 }
 
 .product-list {
@@ -49,8 +93,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
+    padding: calc(1.5 * var(--space-unit)) 0;
+    border-bottom: 1px solid var(--color-border-light);
+    transition: background-color 0.1s;
+}
+
+.product-item:hover {
+    background-color: #fcfcfd;
 }
 
 .product-item:last-child {
@@ -58,67 +107,91 @@
 }
 
 .product-info strong {
-    color: #333;
+    color: var(--color-text-dark);
+    font-weight: 600;
 }
 
 .product-info small {
-    color: #777;
+    color: var(--color-text-muted);
+    font-size: 0.9em;
     display: block;
 }
+
+/* ------------------------------------ */
+/* 4. CONTROLES DE CANTIDAD Y BOTÓN AÑADIR */
+/* ------------------------------------ */
 
 .product-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-unit);
+    min-width: 150px; /* Asegura que el grupo no se comprima */
+    justify-content: flex-end;
 }
 
 .quantity-input {
-    width: 60px;
-    padding: 6px;
+    width: calc(6 * var(--space-unit)); /* 48px */
+    padding: calc(0.5 * var(--space-unit));
     text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-base);
     font-size: 1em;
+    color: var(--color-text-dark);
+    transition: border-color 0.2s;
+}
+
+.quantity-input:focus {
+    outline: none;
+    border-color: var(--color-brand-primary);
 }
 
 .add-product-btn {
-    background-color: #007bff;
+    background-color: var(--color-brand-secondary);
     color: white;
     border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
+    padding: calc(1 * var(--space-unit)) calc(1.5 * var(--space-unit));
+    border-radius: var(--radius-base);
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
     transition: background-color 0.2s;
+    text-transform: uppercase;
+    font-size: 0.9em;
 }
 
 .add-product-btn:hover:not(:disabled) {
-    background-color: #0056b3;
+    background-color: #1e8338;
 }
 
 .add-product-btn:disabled {
-    background-color: #ccc;
+    background-color: var(--color-border-medium);
+    color: var(--color-text-muted);
     cursor: not-allowed;
 }
 
+/* ------------------------------------ */
+/* 5. PIE DE PÁGINA Y MENSAJES */
+/* ------------------------------------ */
+
 .close-modal-btn {
-    background-color: #6c757d;
-    color: white;
+    background-color: var(--color-border-medium);
+    color: var(--color-text-muted);
     border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: calc(1.5 * var(--space-unit));
+    border-radius: var(--radius-base);
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: calc(3 * var(--space-unit));
     transition: background-color 0.2s;
+    font-weight: 600;
 }
 
 .close-modal-btn:hover {
-    background-color: #5a6268;
+    background-color: #d8dbdf;
+    color: var(--color-text-dark);
 }
 
-/* Estilos para "no se encontraron productos" */
-p {
+.modal-content p {
     text-align: center;
-    color: #888;
-    margin-top: 15px;
+    color: var(--color-text-muted);
+    margin-top: calc(2 * var(--space-unit));
+    font-style: italic;
 }

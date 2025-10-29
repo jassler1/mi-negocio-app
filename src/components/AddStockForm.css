@@ -1,44 +1,80 @@
+/* ================================================================= */
+/* 1. VARIABLES CSS (TOKENS DE DISEÑO) - BASE UNIFICADA */
+/* ================================================================= */
+:root {
+    --color-brand-primary: #0077c2;   /* Azul limpio para foco/activos */
+    --color-brand-secondary: #28a745; /* Verde para añadir/confirmar */
+    --color-brand-alert: #ff6f61;     /* Rojo/Coral para errores */
+    --color-brand-hover: #005a92;
+
+    --color-text-dark: #212529;
+    --color-text-muted: #566573;
+    --color-bg-body: #f7f9fb;
+    --color-bg-card: #ffffff;
+    --color-border-light: #e8ebed;
+    --color-border-medium: #c5cdd4;
+
+    --font-family-base: 'Roboto', sans-serif;
+    --space-unit: 8px; /* Base de 8px */
+    --radius-base: 8px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Aplicamos la fuente Roboto si no está ya en el body */
+body {
+    font-family: var(--font-family-base);
+}
+
+/* ================================================================= */
+/* 2. LAYOUT Y CONTENEDOR PRINCIPAL */
+/* ================================================================= */
+
 .add-stock-container {
-    padding: 30px;
-    background-color: #f9fbfd;
-    border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    max-width: 700px;
-    margin: 40px auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #444;
+    padding: calc(4 * var(--space-unit)); /* 32px */
+    background-color: var(--color-bg-body);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-md);
+    max-width: 800px; /* Un poco más amplio */
+    margin: calc(5 * var(--space-unit)) auto;
+    color: var(--color-text-dark);
 }
 
 .form-title {
     text-align: center;
-    color: #333;
-    font-size: 2em;
-    font-weight: 600;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 15px;
+    color: var(--color-text-dark);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: calc(4 * var(--space-unit));
+    border-bottom: 1px solid var(--color-border-light);
+    padding-bottom: calc(2 * var(--space-unit));
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .title-icon {
-    margin-right: 12px;
-    color: #3498db;
+    margin-right: calc(1.5 * var(--space-unit));
+    color: var(--color-brand-primary);
 }
 
+/* ------------------------------------ */
+/* 3. PANELES DE SECCIÓN (Tarjetas) */
+/* ------------------------------------ */
+
 .search-section, .add-stock-section, .product-list-container {
-    padding: 20px;
-    margin-bottom: 25px;
-    border: 1px solid #e0e7ee;
-    border-radius: 12px;
-    background-color: #ffffff;
+    padding: calc(3 * var(--space-unit));
+    margin-bottom: calc(4 * var(--space-unit));
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-base);
+    background-color: var(--color-bg-card);
+    box-shadow: var(--shadow-sm); /* Sombra suave para levantar la tarjeta */
 }
 
 .search-section form, .add-stock-section form {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    align-items: flex-end; /* Alinea los botones al final */
+    gap: calc(2 * var(--space-unit));
 }
 
 .form-group {
@@ -48,31 +84,34 @@
 }
 
 .form-group label {
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #555;
-    font-size: 0.95em;
+    font-weight: 600;
+    margin-bottom: var(--space-unit);
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    text-transform: uppercase;
 }
+
+/* --- Estilo de Input con Icono (Unificado) --- */
 
 .input-with-icon {
     display: flex;
     align-items: center;
-    border: 1px solid #c8d4e0;
-    border-radius: 10px;
-    padding: 10px 15px;
-    background-color: #fff;
-    transition: all 0.3s ease;
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-base);
+    padding: calc(1 * var(--space-unit)) calc(1.5 * var(--space-unit));
+    background-color: var(--color-bg-card);
+    transition: all 0.2s ease;
 }
 
 .input-with-icon:focus-within {
-    border-color: #3498db;
-    box-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 0 3px rgba(0, 119, 194, 0.15);
 }
 
 .input-with-icon svg {
-    margin-right: 12px;
-    color: #7f8c8d;
-    font-size: 1.2em;
+    margin-right: calc(1.5 * var(--space-unit));
+    color: var(--color-text-muted);
+    font-size: 1em;
 }
 
 .input-with-icon input,
@@ -82,79 +121,104 @@
     flex-grow: 1;
     font-size: 1em;
     background: transparent;
-    color: #333;
+    color: var(--color-text-dark);
+    padding: 0; /* Quitamos el padding interno para que el contenedor lo maneje */
 }
 
+/* ------------------------------------ */
+/* 4. BOTONES DE ACCIÓN (Unificados) */
+/* ------------------------------------ */
+
 .search-btn, .add-btn, .cancel-btn {
-    padding: 12px 25px;
+    padding: calc(1.5 * var(--space-unit)) calc(3 * var(--space-unit));
     border: none;
-    border-radius: 8px;
-    font-size: 1em;
-    font-weight: 600;
+    border-radius: var(--radius-base);
+    font-size: 0.95em;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-unit);
+    text-transform: uppercase;
 }
 
 .search-btn {
-    background-color: #3498db;
+    background-color: var(--color-brand-primary);
     color: white;
 }
 
 .search-btn:hover {
-    background-color: #2980b9;
+    background-color: var(--color-brand-hover);
+    transform: translateY(-1px);
 }
 
 .add-btn {
-    background-color: #2ecc71;
+    background-color: var(--color-brand-secondary);
     color: white;
 }
 
 .add-btn:hover {
-    background-color: #27ad60;
+    background-color: #1e8338;
+    transform: translateY(-1px);
 }
 
 .cancel-btn {
-    background-color: #95a5a6;
-    color: white;
+    background-color: var(--color-border-medium);
+    color: var(--color-text-muted);
 }
 
 .cancel-btn:hover {
-    background-color: #7f8c8d;
+    background-color: #a7b6c7;
+    transform: translateY(-1px);
 }
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: calc(1.5 * var(--space-unit));
+    margin-top: calc(3 * var(--space-unit));
+}
+
+/* ------------------------------------ */
+/* 5. ESTADOS Y MENSAJES */
+/* ------------------------------------ */
 
 .status-message {
     text-align: center;
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 8px;
-    font-weight: bold;
+    margin-top: calc(2 * var(--space-unit));
+    padding: calc(1.5 * var(--space-unit));
+    border-radius: var(--radius-base);
+    font-weight: 600;
+    font-size: 0.95em;
 }
 
 .status-message.success {
-    background-color: #eaf8ee;
-    color: #27ae60;
+    background-color: #e6faee;
+    color: var(--color-brand-secondary);
+    border: 1px solid #c2e2c9;
 }
 
 .status-message.error {
-    background-color: #fdeeee;
-    color: #c0392b;
+    background-color: #ffeeeb;
+    color: var(--color-brand-alert);
+    border: 1px solid #f7a8a0;
 }
 
 .loading-status {
     text-align: center;
-    color: #7f8c8d;
+    color: var(--color-text-muted);
     font-style: italic;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: var(--space-unit);
+    margin-top: calc(2 * var(--space-unit));
 }
 
 .spinner {
     animation: spin 1s linear infinite;
+    color: var(--color-brand-primary);
 }
 
 @keyframes spin {
@@ -164,38 +228,53 @@
 
 .no-products {
     text-align: center;
-    color: #95a5a6;
+    color: var(--color-text-muted);
     font-style: italic;
-    margin-top: 15px;
+    margin-top: calc(2 * var(--space-unit));
 }
 
+/* ------------------------------------ */
+/* 6. INFORMACIÓN DEL PRODUCTO Y LISTA */
+/* ------------------------------------ */
+
 .selected-product-info {
-    text-align: center;
-    margin-bottom: 20px;
+    text-align: left;
+    margin-bottom: calc(3 * var(--space-unit));
+    padding: calc(1.5 * var(--space-unit));
+    background-color: #f0f4f7;
+    border-left: 4px solid var(--color-brand-primary);
+    border-radius: var(--radius-base);
 }
 
 .selected-product-info h3 {
-    color: #34495e;
-    margin-bottom: 5px;
+    color: var(--color-text-dark);
+    margin-bottom: 2px;
+    font-size: 1.2em;
 }
 
 .selected-product-info p {
-    color: #7f8c8d;
-    font-size: 0.95em;
+    color: var(--color-text-muted);
+    font-size: 0.9em;
+    margin: 0;
 }
 
 .product-list-container {
     max-height: 400px;
     overflow-y: auto;
-    background-color: #f0f4f7;
+    background-color: var(--color-bg-body);
+    border: none; /* Quitamos el borde extra */
+    box-shadow: none; /* Quitamos la sombra extra */
+    padding: 0;
 }
 
 .list-title {
-    color: #555;
-    margin-bottom: 15px;
+    color: var(--color-text-dark);
+    margin-bottom: calc(1.5 * var(--space-unit));
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-unit);
+    font-size: 1.1em;
+    font-weight: 600;
 }
 
 .product-list {
@@ -204,10 +283,10 @@
 }
 
 .product-item {
-    padding: 12px 15px;
-    border-bottom: 1px solid #e9ecef;
+    padding: calc(1.5 * var(--space-unit)) calc(2 * var(--space-unit));
+    border-bottom: 1px solid var(--color-border-light);
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
+    transition: background-color 0.2s;
     font-size: 0.9em;
 }
 
@@ -217,11 +296,5 @@
 
 .product-item:hover {
     background-color: #e6f2fa;
-    transform: translateX(5px);
-}
-
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 25px;
+    transform: none; /* Quitamos el transform: translateX para un look más estático */
 }

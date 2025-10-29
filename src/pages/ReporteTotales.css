@@ -1,64 +1,106 @@
-/* Estilos generales del dashboard */
-.ingresos-dashboard {
-    padding: 40px;
-    background-color: #f0f2f5;
-    min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
+/* ================================================================= */
+/* 1. VARIABLES CSS (TOKENS DE DISEÑO) - BASE UNIFICADA */
+/* ================================================================= */
+:root {
+    /* Colores Principales (Brand) */
+    --color-brand-primary: #0077c2;   /* Azul para botones/foco */
+    --color-brand-secondary: #28a745; /* Verde para Ingresos/Éxito */
+    --color-brand-alert: #ff6f61;     /* Rojo/Coral para Egresos/Pérdidas */
+    --color-brand-accent: #ffc107;    /* Amarillo/Naranja (si se necesita un 4to color) */
+    --color-brand-hover: #005a92;
+
+    /* Colores Neutrales */
+    --color-text-dark: #212529;
+    --color-text-muted: #566573;
+    --color-bg-body: #f7f9fb;
+    --color-bg-card: #ffffff;
+    --color-border-light: #e8ebed;
+    --color-border-medium: #c5cdd4;
+
+    /* Tipografía y Espaciado */
+    --font-family-base: 'Roboto', sans-serif;
+    --space-unit: 8px; /* Base de 8px */
+    --radius-base: 8px;
+
+    /* Sombras */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Título principal del dashboard */
+/* Aplicamos la fuente Roboto si no está ya en el body */
+body {
+    font-family: var(--font-family-base);
+}
+
+/* ================================================================= */
+/* 2. LAYOUT GENERAL Y TÍTULO */
+/* ================================================================= */
+
+.ingresos-dashboard {
+    padding: calc(5 * var(--space-unit));
+    background-color: var(--color-bg-body);
+    min-height: 100vh;
+    color: var(--color-text-dark);
+}
+
 .dashboard-title {
     text-align: center;
-    font-size: 2.5em;
-    font-weight: 600;
-    margin-bottom: 40px;
-    color: #2c3e50;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: calc(5 * var(--space-unit));
+    color: var(--color-text-dark);
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: calc(1.5 * var(--space-unit));
 }
 
 .title-icon {
-    margin-right: 15px;
-    color: #3498db;
-    font-size: 1.2em;
+    color: var(--color-brand-primary);
 }
 
-/* Contenedor de las tarjetas de resumen */
+/* ================================================================= */
+/* 3. TARJETAS DE RESUMEN (SUMMARY CARDS) */
+/* ================================================================= */
+
 .summary-cards-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 25px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: calc(3 * var(--space-unit));
+    margin-bottom: calc(5 * var(--space-unit));
 }
 
 .summary-card {
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    padding: 25px;
+    background-color: var(--color-bg-card);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-md);
+    padding: calc(3 * var(--space-unit));
     display: flex;
     align-items: center;
-    gap: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    gap: calc(2 * var(--space-unit));
+    transition: transform 0.2s ease;
+    /* Usamos el borde izquierdo para indicar el tipo de saldo */
+    border-left: 5px solid var(--color-brand-primary);
 }
 
 .summary-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
 }
 
 .card-icon {
-    font-size: 2em;
-    color: #3498db;
+    font-size: 2.2em;
+    padding: var(--space-unit);
+    border-radius: 50%;
+    background-color: var(--color-bg-body);
 }
 
-/* Colores específicos para cada tipo de ingreso */
-.total-general-card .card-icon { color: #2ecc71; }
-.alquiler-card .card-icon { color: #3498db; }
-.ventas-card .card-icon { color: #f1c40f; }
-.comandas-card .card-icon { color: #e67e22; }
+.total-general-card { border-left-color: var(--color-brand-secondary); }
+.egresos-card { border-left-color: var(--color-brand-alert); }
+.balance-card { border-left-color: var(--color-brand-primary); }
+
+.total-general-card .card-icon { color: var(--color-brand-secondary); }
+.egresos-card .card-icon { color: var(--color-brand-alert); }
+.balance-card .card-icon { color: var(--color-brand-primary); }
 
 
 .card-content {
@@ -68,96 +110,110 @@
 
 .card-label {
     font-size: 0.9em;
-    color: #7f8c8d;
+    color: var(--color-text-muted);
     font-weight: 500;
+    text-transform: uppercase;
 }
 
 .card-value {
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.card-sub-label {
-    font-size: 0.8em;
-    color: #95a5a6;
+    font-size: 2em;
+    font-weight: 800;
     margin-top: 5px;
+    color: var(--color-text-dark);
 }
 
-/* Contenedor de la tabla de transacciones */
+/* Colores condicionales */
+.ingreso-total-color { color: var(--color-brand-secondary); }
+.egreso-total-color { color: var(--color-brand-alert); }
+
+/* Estilos de Balance Neto */
+.balance-positivo .card-value { color: var(--color-brand-secondary); }
+.balance-negativo .card-value { color: var(--color-brand-alert); }
+
+
+/* ================================================================= */
+/* 4. TABLA DE TRANSACCIONES Y FILTROS */
+/* ================================================================= */
+
 .transactions-table-container {
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    padding: 30px;
+    background-color: var(--color-bg-card);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-sm);
+    padding: calc(3 * var(--space-unit));
 }
 
 .table-title {
-    font-size: 1.5em;
-    font-weight: 600;
-    color: #555;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--color-text-dark);
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: calc(3 * var(--space-unit));
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-unit);
+    border-bottom: 1px solid var(--color-border-light);
+    padding-bottom: var(--space-unit);
 }
 
-/* Estilos de la tabla */
 .transactions-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 900px;
 }
 
-.transactions-table thead tr {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #e9ecef;
+.transactions-table th,
+.transactions-table td {
+    padding: calc(1.5 * var(--space-unit));
+    text-align: left;
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 .transactions-table th {
-    padding: 15px;
-    text-align: left;
+    background-color: var(--color-bg-body);
+    color: var(--color-text-muted);
     font-weight: 600;
-    color: #555;
     text-transform: uppercase;
-    font-size: 0.9em;
-}
-
-.transactions-table td {
-    padding: 15px;
-    border-bottom: 1px solid #f0f2f5;
-    color: #666;
-    font-size: 0.95em;
+    font-size: 0.8em;
 }
 
 .transactions-table tbody tr:hover {
-    background-color: #fefefe;
-    cursor: pointer;
+    background-color: #fcfcfd;
 }
 
 .transactions-table tbody tr:last-child td {
     border-bottom: none;
 }
 
+/* Estilos de Fila Condicionales */
+.ingreso-row .monto-cell strong { color: var(--color-brand-secondary); }
+.egreso-row .monto-cell strong { color: var(--color-brand-alert); }
+.egreso-row td { color: var(--color-text-muted); } /* Egresos ligeramente más sutiles */
+
 .monto-cell {
-    font-weight: bold;
-    color: #2ecc71;
+    font-weight: 700;
+    text-align: right;
+    width: 150px;
 }
 
-/* Mensajes de estado */
-.loading-status {
+/* ------------------------------------ */
+/* 5. ESTADOS Y MENSAJES */
+/* ------------------------------------ */
+
+.loading-status,
+.no-data-message {
     text-align: center;
-    font-size: 1.2em;
-    color: #7f8c8d;
-    padding: 40px;
+    font-size: 1em;
+    color: var(--color-text-muted);
+    padding: calc(5 * var(--space-unit));
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    gap: var(--space-unit);
 }
 
 .spinner {
     animation: spin 1s linear infinite;
+    color: var(--color-brand-primary);
 }
 
 @keyframes spin {
@@ -165,10 +221,55 @@
     100% { transform: rotate(360deg); }
 }
 
-.no-data-message {
-    text-align: center;
+/* --- Filtros y Botón de Descarga (Ajuste para ReporteTotales) --- */
+
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: calc(2 * var(--space-unit));
+    padding-bottom: calc(3 * var(--space-unit));
+    border-bottom: 1px solid var(--color-border-light);
+    margin-bottom: calc(3 * var(--space-unit));
+}
+
+.filter-icon {
+    color: var(--color-brand-primary);
     font-size: 1.2em;
-    color: #95a5a6;
-    font-style: italic;
-    padding: 40px;
+}
+
+.date-filter-group label,
+.type-filter-group label,
+.payment-filter-group label {
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin-right: 5px;
+}
+
+.filter-container input[type="date"],
+.filter-container select {
+    padding: var(--space-unit) calc(1.5 * var(--space-unit));
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-base);
+    color: var(--color-text-dark);
+}
+
+.download-btn {
+    padding: var(--space-unit) calc(2 * var(--space-unit));
+    background-color: var(--color-brand-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-base);
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: var(--space-unit);
+    margin-left: auto; /* Empuja el botón a la derecha */
+}
+
+.download-btn:hover {
+    background-color: var(--color-brand-hover);
 }

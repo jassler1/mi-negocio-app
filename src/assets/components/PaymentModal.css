@@ -1,157 +1,217 @@
-/* Modal Overlay and Content */
+/* ================================================================= */
+/* 1. VARIABLES (Asegúrate de importar o definir estas variables) */
+/* ================================================================= */
+
+:root {
+    /* Colores */
+    --color-brand-primary: #0077c2;  /* Azul para activa/foco */
+    --color-brand-secondary: #28a745; /* Verde para confirmación/pago */
+    --color-brand-alert: #ff6f61;    /* Rojo/Coral para cerrar/error */
+    --color-text-dark: #212529;
+    --color-text-muted: #6c757d;
+    --color-bg-card: #ffffff;
+    --color-border: #e0e4e8;
+    --color-bg-overlay: rgba(0, 0, 0, 0.6);
+    
+    /* Espaciado y radios */
+    --space-unit: 8px;
+    --radius-base: 8px;
+    
+    /* Sombras */
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ================================================================= */
+/* 2. MODAL OVERLAY Y CONTENEDOR */
+/* ================================================================= */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--color-bg-overlay);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    opacity: 0;
+    animation: modal-fade-in 0.3s forwards;
 }
 
 .modal-content {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background-color: var(--color-bg-card);
+    padding: calc(4 * var(--space-unit)); /* 32px */
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-md);
     width: 90%;
-    max-width: 500px;
-    max-height: 80vh;
+    max-width: 480px; /* Ligeramente más estrecho para foco */
+    max-height: 90vh; /* Permitir más altura */
     overflow-y: auto;
     display: flex;
     flex-direction: column;
 }
 
-/* Modal Elements */
+@keyframes modal-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ================================================================= */
+/* 3. ELEMENTOS INTERNOS DEL MODAL */
+/* ================================================================= */
 .modal-title {
     text-align: center;
-    margin-bottom: 15px;
-    color: #333;
+    margin-bottom: calc(3 * var(--space-unit)); /* 24px */
+    color: var(--color-text-dark);
+    font-weight: 700;
+    font-size: 1.5rem;
 }
 
 .total-amount {
     text-align: center;
-    font-size: 1.5rem;
-    color: #28a745;
-    margin-bottom: 20px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-brand-secondary);
+    margin-bottom: calc(4 * var(--space-unit));
+    padding-bottom: calc(2 * var(--space-unit));
+    border-bottom: 1px solid var(--color-border);
 }
 
 .section-title {
-    font-size: 1.1rem;
-    color: #555;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    margin-bottom: calc(2 * var(--space-unit));
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
-/* Payment Method Buttons */
+/* ================================================================= */
+/* 4. BOTONES DE MÉTODO DE PAGO */
+/* ================================================================= */
 .payment-method-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: var(--space-unit);
+    margin-bottom: calc(4 * var(--space-unit));
 }
 
 .payment-btn {
     flex: 1;
-    padding: 10px 15px;
-    border: 1px solid #ccc;
-    background-color: #f0f0f0;
-    color: #333;
-    border-radius: 5px;
+    min-width: 120px;
+    padding: calc(1.5 * var(--space-unit)) calc(2 * var(--space-unit)); /* 12px 16px */
+    border: 2px solid var(--color-border); /* Borde más grueso */
+    background-color: var(--color-bg-card);
+    color: var(--color-text-dark);
+    border-radius: var(--radius-base);
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s, color 0.3s;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-transform: capitalize;
 }
 
 .payment-btn.active {
-    background-color: #007bff;
+    background-color: var(--color-brand-primary);
     color: white;
-    border-color: #007bff;
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 2px 5px rgba(0, 119, 194, 0.2);
 }
 
 .payment-btn:hover:not(.active) {
-    background-color: #e9ecef;
+    background-color: #f0f2f5;
+    border-color: var(--color-brand-primary);
 }
 
-/* Payment Forms */
+/* ================================================================= */
+/* 5. FORMULARIOS DE PAGO */
+/* ================================================================= */
 .payment-form-section {
-    margin-bottom: 20px;
+    margin-bottom: calc(4 * var(--space-unit));
 }
 
 .payment-form-section p {
     text-align: center;
     font-size: 1.1em;
-    font-weight: bold;
-    color: #444;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    margin-bottom: calc(3 * var(--space-unit));
 }
 
 .payment-form-section label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
+    margin-bottom: calc(0.5 * var(--space-unit));
+    font-weight: 600;
+    color: var(--color-text-dark);
+    font-size: 0.95rem;
 }
 
 .payment-form-section input {
     width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: calc(1.5 * var(--space-unit)); /* 12px */
+    margin-bottom: calc(2 * var(--space-unit));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-base);
     font-size: 1em;
+    transition: border-color 0.2s;
 }
 
-.input-group label {
-    display: inline-block;
-    width: 150px;
+.payment-form-section input:focus {
+    outline: none;
+    border-color: var(--color-brand-primary);
 }
 
-.input-group input {
-    width: calc(100% - 160px);
+/* ================================================================= */
+/* 6. PIE DE PÁGINA Y ACCIONES */
+/* ================================================================= */
+.modal-footer {
+    margin-top: auto;
+    padding-top: calc(3 * var(--space-unit));
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-unit);
 }
 
 .form-actions {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 0;
+    order: 1;
 }
 
 .confirm-btn {
     width: 100%;
-    padding: 12px;
-    background-color: #28a745;
+    padding: calc(2 * var(--space-unit)); /* 16px */
+    background-color: var(--color-brand-secondary);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius-base);
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: background-color 0.2s;
+    text-transform: uppercase;
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
 }
 
 .confirm-btn:hover {
     background-color: #218838;
 }
 
-/* Updated Close Button and new Footer */
-.modal-footer {
-    margin-top: auto; 
-    padding-top: 15px; 
-}
-
 .close-btn {
     width: 100%;
-    padding: 11px;
-    background-color: #dc3545;
-    color: white;
+    padding: calc(1.5 * var(--space-unit));
+    background-color: var(--color-border); /* Color neutro para cerrar */
+    color: var(--color-text-muted);
     border: none;
+    border-radius: var(--radius-base);
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    order: 2;
+    font-size: 0.95rem;
 }
 
 .close-btn:hover {
-    background-color: #c82333;
+    background-color: #d8dbdf;
+    color: var(--color-text-dark);
 }

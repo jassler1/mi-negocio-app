@@ -1,80 +1,168 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
+import { Link } from 'react-router-dom';
 import { db } from '../firebaseConfig';
 import { collection, onSnapshot, query } from 'firebase/firestore';
+import { 
+    FaShoppingCart, 
+    FaBoxes, 
+    FaHistory, 
+    FaMoneyBillWave, 
+    FaCoins, 
+    FaExclamationTriangle, 
+    FaCheckCircle 
+} from 'react-icons/fa';
 import './Home.css';
+
+// --- Función para obtener el rol del usuario ---
+const getRole = () => localStorage.getItem('usuarioRol') || 'cajero'; 
+
+// --- Tarjetas de Navegación con Roles ---
+const HOME_CARDS = [
+    { 
+        title: '🧾 Comandas', 
+        description: 'Crea, edita y gestiona las órdenes de tus clientes en tiempo real.', 
+        icon: <FaShoppingCart />, 
+        link: '/comandas', 
+        roles: ['cajero', 'admin'] 
+    },
+    { 
+        title: '💵 Ingresos', 
+        description: 'Registra rápidamente pagos por canchas, clases y ventas.', 
+        icon: <FaMoneyBillWave />, 
+        link: '/ingresos', 
+        roles: ['cajero', 'admin'] 
+    },
+    { 
+        title: '📉 Egresos', 
+        description: 'Registra los gastos operativos del día (servicios, insumos, sueldos).', 
+        icon: <FaCoins />, 
+        link: '/egresos', 
+        roles: ['cajero', 'admin'] 
+    },
+    { 
+        title: '📦 Inventario', 
+        description: 'Controla tus productos, stock mínimo y movimientos de bodega.', 
+        icon: <FaBoxes />, 
+        link: '/inventario', 
+        roles: ['admin'] 
+    },
+    { 
+        title: '📈 Reportes y Historial', 
+        description: 'Accede a reportes detallados de ventas, ingresos y egresos.', 
+        icon: <FaHistory />, 
+        link: '/reporte-totales', 
+        roles: ['admin'] 
+    },
+];
 
 function Home() {
     const [lowStockProducts, setLowStockProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const rolUsuario = getRole();
 
     useEffect(() => {
-        // Escuchador en tiempo real para alertas de stock.
         const q = query(collection(db, 'inventario'));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const lowStockList = [];
-            snapshot.docs.forEach((doc) => {
-                const data = doc.data();
-                // Verifica si la cantidad actual es igual o menor al stock mínimo.
-                if (data.cantidad <= data.stockMinimo) {
-                    lowStockList.push({ id: doc.id, ...data });
-                }
-            });
-            setLowStockProducts(lowStockList);
-            setLoading(false);
-        }, (error) => {
-            // Manejo de errores para el escuchador de Firestore.
-            console.error("Error al obtener alertas de stock: ", error);
-            setLoading(false);
-        });
 
-        // Limpieza del escuchador cuando el componente se desmonta.
+        const unsubscribe = onSnapshot(
+            q,
+            (snapshot) => {
+                const lowStock = snapshot.docs
+                    .map(doc => ({ id: doc.id, ...doc.data() }))
+                    .filter(product => product.cantidad <= product.stockMinimo);
+
+                setLowStockProducts(lowStock);
+                setLoading(false);
+            },
+            (error) => {
+                console.error("Error al obtener alertas de stock:", error);
+                setLoading(false);
+            }
+        );
+
         return () => unsubscribe();
-    }, []); // La dependencia vacía asegura que el efecto se ejecute solo una vez.
+    }, []);
+
+    const allowedCards = HOME_CARDS.filter(card => card.roles.includes(rolUsuario));
+    const hasLowStock = lowStockProducts.length > 0;
+    
+    // Función para mostrar el rol con el formato del CSS
+    const getFormattedRole = () => {
+        const displayRole = rolUsuario.charAt(0).toUpperCase() + rolUsuario.slice(1);
+        return <span className="user-id-display">{displayRole}</span>;
+    };
 
     return (
         <div className="home-container">
-            <h1 className="home-title">Bienvenido a PadelFlow</h1>
+            <h1 className="home-title">
+                Bienvenido a <span className="brand">PadelFlow</span>
+            </h1>
+            
+            <div className="user-info">
+                Tu rol actual es: {getFormattedRole()}
+            </div>
+
             {loading ? (
-                <p>Cargando información del panel...</p>
+                <p className="loading-text">Cargando información del panel... ⏳</p>
             ) : (
-                <div className="home-content">
-                    {/* Sección de Alertas de Stock */}
-                    <div className="home-alerts">
-                        <div className="alert-card low-stock-alert">
-                            <h2>Alertas de Stock 🚨</h2>
-                            {lowStockProducts.length > 0 ? (
-                                <ul>
+                <div className="home-content grid-layout">
+                    
+                    {/* Columna 1: ALERTAS (Ocupa 1/3 del espacio en escritorio) */}
+                    <section className="home-alerts">
+                        <div 
+                            className="alert-card" 
+                            data-has-alerts={hasLowStock ? "true" : "false"}
+                        >
+                            <h2 className="section-title">
+                                {hasLowStock ? <FaExclamationTriangle /> : <FaCheckCircle />} 
+                                Alertas de Stock
+                            </h2>
+                            
+                            {hasLowStock ? (
+                                <ul className="alert-list">
                                     {lowStockProducts.map(product => (
-                                        <li key={product.id}>
-                                            El stock de {product.nombre} se está acabando. Quedan {product.cantidad} {product.unidad}.
+                                        <li key={product.id} className="alert-item">
+                                            Producto: <strong>{product.nombre}</strong>. Quedan 
+                                            <span className="stock-count"> {product.cantidad}</span> und. (Mín: {product.stockMinimo})
                                         </li>
                                     ))}
                                 </ul>
                             ) : (
-                                <p>No hay productos con stock bajo. ¡Todo en orden!</p>
+                                <p className="no-alert-message">
+                                    No hay productos con stock bajo. ¡Todo en orden!
+                                </p>
                             )}
                         </div>
-                    </div>
+                    </section>
 
-                    {/* Las características existentes */}
-                    <div className="home-features">
-                        <div className="feature-card">
-                            <h2>Comandas</h2>
-                            <p>Crea, edita y gestiona las órdenes de tus clientes.</p>
+                    {/* Columna 2: FUNCIONALIDADES (Ocupa 2/3 del espacio en escritorio) */}
+                    <section className="home-features">
+                        <div className="features-grid">
+                            {allowedCards.map(card => (
+                                <FeatureCard 
+                                    key={card.link}
+                                    title={card.title}
+                                    description={card.description}
+                                    icon={card.icon}
+                                    link={card.link}
+                                />
+                            ))}
                         </div>
-                        <div className="feature-card">
-                            <h2>Inventario</h2>
-                            <p>Controla tus productos y accesorios en stock.</p>
-                        </div>
-                        <div className="feature-card">
-                            <h2>Historial</h2>
-                            <p>Accede a reportes detallados de ventas, ingresos y egresos.</p>
-                        </div>
-                    </div>
+                    </section>
                 </div>
             )}
         </div>
     );
 }
+
+/**
+ * Componente Tarjeta de Funcionalidad
+ */
+const FeatureCard = memo(({ title, description, icon, link }) => (
+    <Link to={link} className="feature-card">
+        <div className="card-icon">{icon}</div>
+        <h2>{title}</h2>
+        <p>{description}</p>
+    </Link>
+));
 
 export default Home;

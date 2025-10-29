@@ -1,152 +1,271 @@
-/* --- CSS Custom Properties for a unified style --- */
+/* ================================================================= */
+/* 1. VARIABLES CSS (TOKENS DE DISEÑO)  */
+/* Basado en un sistema de 8px (var(--space-unit)) */
+/* ================================================================= */
 :root {
-  --primary-color: #007bff;
-  --primary-hover: #0056b3;
-  --secondary-color: #28a745;
-  --secondary-hover: #218838;
-  --text-dark: #333;
-  --text-medium: #555;
-  --text-light: #888;
-  --background-light: #f7f9fc;
-  --background-card: #fff;
-  --border-light: #eee;
-  --border-medium: #ccc;
+  /* Colores Principales (Brand) */
+  --color-brand-primary: #0077c2; /* Azul limpio */
+  --color-brand-secondary: #28a745; /* Verde para Pagar/Confirmar */
+  --color-brand-hover: #005a92;
+  --color-accent: #ffc107; /* Amarillo/Naranja para alerta/edición */
+
+  /* Colores Neutrales */
+  --color-text-dark: #212529;
+  --color-text-muted: #6c757d;
+  --color-bg-body: #f7f9fb;
+  --color-bg-card: #ffffff;
+  --color-border-light: #e0e4e8;
+  --color-border-medium: #c5cdd4;
+
+  /* Tipografía y Espaciado */
+  --font-family-base: 'Roboto', sans-serif;
+  --space-unit: 8px;
+  --radius-base: 8px;
+  --radius-pill: 9999px;
+
+  /* Sombras */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: var(--background-light);
-  color: var(--text-dark);
+  font-family: var(--font-family-base);
+  background-color: var(--color-bg-body);
+  color: var(--color-text-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- Main Container --- */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* ================================================================= */
+/* 2. LAYOUT GENERAL Y CONTENEDOR */
+/* ================================================================= */
 .ventas-container {
   max-width: 900px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: var(--background-card);
-  border-radius: 12px;
+  margin: calc(4 * var(--space-unit)) auto;
+  padding: calc(4 * var(--space-unit));
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-base);
   box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: calc(4 * var(--space-unit));
 }
 
 .main-title {
   text-align: center;
   font-size: 2rem;
-  color: var(--primary-color);
-  margin-bottom: 2rem;
-  border-bottom: 2px solid var(--border-light);
-  padding-bottom: 1rem;
+  color: var(--color-brand-primary);
+  margin-bottom: calc(2 * var(--space-unit));
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: calc(2 * var(--space-unit));
+  font-weight: 700;
 }
 
-/* --- Cancha Selection Section --- */
-.section-canchas {
-  margin-bottom: 2rem;
+/* Principal panel flex con gap para separación */
+.main-content-panels {
+  display: flex;
+  gap: calc(4 * var(--space-unit));
+  flex: 1;
+  min-height: 400px;
+  flex-wrap: wrap;
+}
+
+/* ================================================================= */
+/* 3. PANEL IZQUIERDO - CANCHAS Y CONTROLES */
+/* ================================================================= */
+.side-panel {
+  flex: 0 0 250px;
+  background-color: var(--color-bg-body);
+  padding: calc(3 * var(--space-unit));
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: calc(3 * var(--space-unit));
 }
 
 .section-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-medium);
-  margin-bottom: 1rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: var(--space-unit);
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: var(--space-unit);
 }
 
 .cancha-buttons-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--space-unit);
 }
 
 .cancha-btn {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border-medium);
-  background-color: #f0f0f0;
-  color: var(--text-medium);
-  border-radius: 6px;
+  padding: calc(1.5 * var(--space-unit)) calc(2 * var(--space-unit));
+  border: 1px solid var(--color-border-medium);
+  background-color: var(--color-bg-card);
+  color: var(--color-text-dark);
+  border-radius: var(--radius-base);
   cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
+  font-weight: 500;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
   flex-grow: 1;
   text-align: center;
+  user-select: none;
 }
 
 .cancha-btn:hover,
-.cancha-btn:focus {
-  background-color: #e0e0e0;
+.cancha-btn:focus-visible {
+  background-color: #f0f3f6;
+  border-color: var(--color-brand-primary);
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
-  outline: none;
+  outline-offset: 2px;
 }
 
 .cancha-btn.active {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-  box-shadow: var(--shadow-sm);
+  background-color: var(--color-brand-primary);
+  color: #fff;
+  border-color: var(--color-brand-primary);
+  font-weight: 600;
+  transform: none;
+  box-shadow: none;
 }
 
+/* Info cancha seleccionada */
 .selected-cancha-info {
-  background-color: #e9ecef;
-  padding: 1rem;
-  border-radius: 6px;
-  margin-bottom: 1.5rem;
-  border-left: 4px solid var(--primary-color);
+  background-color: #e6f5ff;
+  padding: calc(2 * var(--space-unit));
+  border-radius: var(--radius-base);
+  margin-bottom: calc(3 * var(--space-unit));
+  border-left: 4px solid var(--color-brand-primary);
 }
 
-/* --- Product List and Controls --- */
-.add-accessory-btn {
-  padding: 1rem 1.25rem;
-  font-size: 1rem;
-  background-color: var(--secondary-color);
-  color: white;
+/* Contenedor para botones agregar */
+.controls-group {
+  display: flex;
+  gap: var(--space-unit);
+  margin-top: calc(2 * var(--space-unit));
+}
+
+.add-client-btn,
+.add-product-btn {
+  flex-grow: 1;
+  padding: calc(1.25 * var(--space-unit));
+  font-size: 0.95rem;
+  font-weight: 600;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-base);
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 100%;
-  font-weight: bold;
+  text-transform: uppercase;
+  user-select: none;
 }
 
-.add-accessory-btn:hover,
-.add-accessory-btn:focus {
-  background-color: var(--secondary-hover);
-  outline: none;
-}
-
-.products-list-container {
-  background-color: var(--background-card);
-  padding: 1.5rem;
-  border-radius: 12px;
+.add-client-btn {
+  background-color: var(--color-brand-primary);
+  color: var(--color-bg-card);
   box-shadow: var(--shadow-sm);
+}
+
+.add-client-btn:hover,
+.add-client-btn:focus-visible {
+  background-color: var(--color-brand-hover);
+  outline-offset: 2px;
+}
+
+.add-product-btn {
+  background-color: var(--color-brand-secondary);
+  color: var(--color-bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.add-product-btn:hover,
+.add-product-btn:focus-visible {
+  background-color: #1e8338;
+  outline-offset: 2px;
+}
+
+/* Información Cliente */
+.client-info {
+  background-color: #f0f4f7;
+  padding: calc(2 * var(--space-unit));
+  border-radius: var(--radius-base);
+  margin-top: calc(2 * var(--space-unit));
+  border-left: 4px solid var(--color-brand-primary);
+  font-size: 0.95rem;
+  color: var(--color-text-dark);
+  line-height: 1.4;
+}
+
+.client-info p {
+  margin: 4px 0;
+}
+
+/* ================================================================= */
+/* 4. PANEL DERECHO - LISTA DE PRODUCTOS Y DETALLES */
+/* ================================================================= */
+.details-panel {
+  flex: 1;
+  background-color: var(--color-bg-card);
+  padding: calc(4 * var(--space-unit));
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
 }
 
 .list-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: calc(3 * var(--space-unit));
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: var(--space-unit);
 }
 
 .product-list {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
   margin: 0;
+  min-height: 150px;
+  flex-grow: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-medium) transparent;
 }
 
-.no-products-msg {
+.product-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.product-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-medium);
+  border-radius: var(--radius-base);
+}
+
+/* Mensaje cuando no hay productos */
+.empty-products-msg {
   text-align: center;
-  color: var(--text-light);
-  padding: 1rem 0;
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: calc(4 * var(--space-unit)) 0;
 }
 
+/* Item producto */
 .product-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--border-light);
+  padding: calc(1.5 * var(--space-unit)) 0;
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background-color 0.3s ease;
+}
+
+.product-item:hover {
+  background-color: #fcfcfc;
 }
 
 .product-item:last-child {
@@ -155,120 +274,121 @@ body {
 
 .product-info {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .product-name {
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--color-text-dark);
+  font-size: 1rem;
 }
 
-.product-price {
-  margin-left: 1rem;
-  font-weight: bold;
-  color: var(--primary-color);
+.product-price-display {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
 }
 
+/* Controles cantidad */
 .product-quantity-controls {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: calc(1.5 * var(--space-unit));
 }
 
 .quantity-btn {
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--border-medium);
-  background-color: #f0f0f0;
-  color: var(--text-medium);
+  width: calc(4 * var(--space-unit));
+  height: calc(4 * var(--space-unit));
+  border: 1px solid var(--color-border-medium);
+  background-color: var(--color-bg-card);
+  color: var(--color-text-dark);
   border-radius: 50%;
   cursor: pointer;
-  font-weight: bold;
-  font-size: 1.1em;
-  transition: all 0.2s ease;
+  font-weight: 700;
+  font-size: 1.2rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  user-select: none;
 }
 
 .quantity-btn:hover,
-.quantity-btn:focus {
-  background-color: #e0e0e0;
-  outline: none;
+.quantity-btn:focus-visible {
+  background-color: #e9ecef;
+  border-color: var(--color-brand-primary);
+  outline-offset: 2px;
 }
 
-/* --- Totals and Payment --- */
-.total-container {
+.product-quantity {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--color-brand-primary);
+  min-width: 28px;
+  text-align: center;
+}
+
+/* Totales y botón */
+.total-amount-container {
   text-align: right;
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 2px solid var(--border-light);
+  margin-top: calc(3 * var(--space-unit));
+  padding-top: calc(2 * var(--space-unit));
+  border-top: 2px solid var(--color-border-light);
 }
 
 .total-amount {
   font-size: 1.75rem;
-  font-weight: bold;
-  color: var(--text-dark);
+  font-weight: 700;
+  color: var(--color-brand-secondary);
 }
 
 .pay-btn {
   width: 100%;
-  padding: 1rem;
-  background-color: var(--primary-color);
+  padding: calc(2 * var(--space-unit));
+  background-color: var(--color-brand-secondary);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-base);
   cursor: pointer;
-  font-weight: bold;
-  margin-top: 1.5rem;
-  transition: background-color 0.3s ease;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: calc(2 * var(--space-unit));
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
 }
 
-.pay-btn:hover:not(:disabled) {
-  background-color: var(--primary-hover);
+.pay-btn:hover:not(:disabled),
+.pay-btn:focus-visible:not(:disabled) {
+  background-color: #1e8338;
+  box-shadow: 0 4px 10px rgba(30, 131, 56, 0.5);
+  outline-offset: 2px;
 }
 
 .pay-btn:disabled {
-  background-color: #ccc;
+  background-color: var(--color-border-medium);
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.7;
+  color: var(--color-text-dark);
 }
 
-.filter-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px; /* Increased space between buttons */
-    margin: 20px 0;
-    padding: 10px;
-}
+/* ================================================================= */
+/* 5. RESPONSIVE */
+/* ================================================================= */
+@media (max-width: 720px) {
+  .main-content-panels {
+    flex-direction: column;
+  }
 
-.filter-icon {
-    color: #007bff; /* Primary blue color */
-    font-size: 1.5rem;
-}
+  .side-panel {
+    width: 100%;
+    min-width: auto;
+  }
 
-.filter-btn {
-    padding: 10px 20px;
-    border: 1px solid #ddd; /* Lighter border */
-    background-color: #f0f4f7; /* Soft gray background */
-    color: #555;
-    border-radius: 25px; /* Pill shape for a modern look */
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    font-size: 0.95rem;
-}
-
-.filter-btn:hover {
-    background-color: #e2e6ea; /* Slightly darker on hover */
-    color: #333;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.filter-btn.active {
-    background-color: #007bff; /* Primary blue for the active button */
-    color: white;
-    border-color: #007bff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    transform: translateY(-1px);
+  .ventas-container {
+    padding: calc(2 * var(--space-unit));
+    margin: calc(2 * var(--space-unit)) auto;
+  }
 }

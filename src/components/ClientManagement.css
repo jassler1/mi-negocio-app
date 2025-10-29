@@ -1,174 +1,141 @@
-/* Variables CSS para una mejor gestión de la UI */
+/* ================================================================= */
+/* CLIENT MANAGEMENT STYLES                     */
+/* ================================================================= */
+
+/* ------------------------------------ */
+/* 1. VARIABLES CSS (TOKENS DE DISEÑO)  */
+/* ------------------------------------ */
+
 :root {
-  --primary-blue: #007bff;
-  --primary-blue-dark: #0056b3;
-  --secondary-gray: #6c757d;
-  --secondary-gray-dark: #5a6268;
-  --success-color: #28a745;
-  --success-color-dark: #218838;
-  --error-color: #dc3545;
-  --error-color-dark: #c82333;
-  --light-bg: #f4f7f6;
-  --card-bg: #fff;
-  --border-color: #e0e0e0;
-  --text-dark: #333;
-  --text-muted: #555;
-  --font-base: 16px;
-  --border-radius-base: 8px;
-  --border-radius-pill: 25px;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.08);
+  /* Paleta de Colores Primaria */
+  --color-primary: #0077c2; /* Azul vibrante (SaaS/Tech) */
+  --color-primary-dark: #005a92;
+  --color-accent: #ff6f61; /* Rojo/coral para acentos y errores */
+  
+  /* Colores Neutrales */
+  --color-text-default: #1c2833; /* Oscuro y legible */
+  --color-text-subtle: #566573; /* Gris para texto secundario */
+  --color-bg-light: #f7f9fb; /* Fondo muy claro y suave (para body) */
+  --color-bg-card: #ffffff; /* Fondo del contenedor/tarjeta */
+  --color-border: #e8ebed; /* Bordes sutiles */
+  
+  /* Colores de Estado */
+  --color-success: #2ecc71; /* Verde limpio */
+  --color-error: var(--color-accent); 
+
+  /* Tipografía */
+  --font-family-base: 'Roboto', sans-serif;
+  --font-size-base: 16px;
+
+  /* Espaciado y Geometría */
+  --space-unit: 8px;
+  --radius-base: 6px; 
+  --radius-pill: 9999px;
+  
+  /* Sombras (más suaves) */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
+
+/* ------------------------------------ */
+/* 2. BASE Y TIPOGRAFÍA                 */
+/* ------------------------------------ */
 
 /* Importa una fuente limpia y moderna para mejor legibilidad */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-/* Estilo general del cuerpo y contenedor */
 body {
-  font-family: 'Roboto', sans-serif;
-  background-color: var(--light-bg);
-  color: var(--text-dark);
+  font-family: var(--font-family-base);
+  background-color: var(--color-bg-light);
+  color: var(--color-text-default);
   margin: 0;
   padding: 0;
+  line-height: 1.6;
 }
 
 .client-management-container {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 30px;
-  background-color: var(--card-bg);
-  border-radius: var(--border-radius-base);
-  box-shadow: var(--shadow-lg);
+  max-width: 1200px;
+  margin: calc(5 * var(--space-unit)) auto;
+  padding: calc(4 * var(--space-unit));
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-md);
 }
 
-/* Encabezados y títulos */
 h1 {
   text-align: center;
-  color: #2c3e50;
-  margin-bottom: 20px;
+  color: var(--color-text-default);
+  margin-bottom: calc(3 * var(--space-unit));
   font-weight: 700;
-  font-size: 2.5rem;
+  font-size: 2rem;
 }
 
+/* Utilizado principalmente por la lista, centrado */
 h2 {
-  text-align: center;
-  color: #34495e;
-  margin-top: 20px;
-  margin-bottom: 10px;
+  color: var(--color-text-default);
+  margin-top: calc(3 * var(--space-unit));
+  margin-bottom: var(--space-unit);
   font-weight: 500;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
-/* Mensajes de estado (éxito/error) */
+
+/* ------------------------------------ */
+/* 3. UTILIDADES Y ESTADOS (MENSAJES)   */
+/* ------------------------------------ */
+
 .message {
   text-align: center;
-  padding: 12px;
-  margin: 15px 0;
-  border-radius: 8px;
+  padding: calc(1.5 * var(--space-unit));
+  margin: calc(2 * var(--space-unit)) 0;
+  border-radius: var(--radius-base);
   font-weight: 500;
   border: 1px solid transparent;
   animation: fadeIn 0.5s ease-in-out;
+  font-size: 0.95rem;
 }
 
 .message.success {
-  background-color: #d4edda;
-  color: #155724;
-  border-color: #c3e6cb;
+  background-color: #e6faee;
+  color: #1a7d41;
+  border-color: #b7e8c8;
 }
 
 .message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border-color: #f5c6cb;
+  background-color: #ffeeeb;
+  color: #c74c3e;
+  border-color: #f7a8a0;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* --- Estilos para la tabla --- */
-
-.table-container {
-  overflow-x: auto;
-  margin-top: 20px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: var(--card-bg);
-  box-shadow: var(--shadow-md);
-  border-radius: var(--border-radius-base);
-  overflow: hidden;
-}
-
-thead {
-  background-color: #f0f2f5;
-}
-
-th {
-  text-align: left;
-  padding: 12px 15px;
-  font-weight: 500;
-  color: var(--text-muted);
-  border-bottom: 2px solid var(--border-color);
-  cursor: pointer;
-  position: relative;
-}
-
-th svg {
-  margin-left: 5px;
-  vertical-align: middle;
-}
-
-th.ascending,
-th.descending {
-  color: var(--primary-blue);
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 
-tbody tr {
-  border-bottom: 1px solid var(--border-color);
-  transition: background-color 0.2s ease;
-}
+/* ------------------------------------ */
+/* 4. CONTROLES Y BOTONES (LISTA)       */
+/* ------------------------------------ */
 
-tbody tr:hover {
-  background-color: #f7f9fc;
-}
-
-td {
-  padding: 12px 15px;
-  font-size: 14px;
-}
-
-/* Contenedor de controles */
 .controls-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 25px;
+  align-items: stretch;
+  gap: calc(2 * var(--space-unit));
+  margin-bottom: calc(3 * var(--space-unit));
 }
 
 @media (min-width: 768px) {
   .controls-container {
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
   }
 }
 
 .button-group {
   display: flex;
-  gap: 10px;
+  gap: var(--space-unit);
 }
 
 .search-container {
@@ -178,115 +145,371 @@ td {
 
 .filter-input {
   width: 100%;
-  padding: 10px 15px;
-  border: 1px solid #ddd;
-  border-radius: var(--border-radius-pill);
+  padding: calc(1.25 * var(--space-unit)) calc(2 * var(--space-unit));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
   font-size: 14px;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   box-shadow: var(--shadow-sm);
 }
 
 .filter-input:focus {
   outline: none;
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 119, 194, 0.15);
 }
 
-/* --- Estilos de los botones generales --- */
-
+/* Estilos de Botones Generales */
 button {
   padding: 10px 18px;
   border: none;
-  border-radius: var(--border-radius-pill);
+  border-radius: var(--radius-pill);
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
+  box-shadow: var(--shadow-sm);
 }
 
 button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
-}
-
-.create-client-btn {
-  background-color: var(--primary-blue);
-  color: var(--card-bg);
-  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
-}
-
-.create-client-btn:hover {
-  background-color: var(--primary-blue-dark);
-  box-shadow: 0 6px 10px rgba(0, 123, 255, 0.3);
-}
-
-.toggle-sort-btn {
-  background-color: var(--secondary-gray);
-  color: var(--card-bg);
-  box-shadow: 0 4px 6px rgba(108, 117, 125, 0.2);
-}
-
-.toggle-sort-btn:hover {
-  background-color: var(--secondary-gray-dark);
-  box-shadow: 0 6px 10px rgba(108, 117, 125, 0.3);
-}
-
-.toggle-sort-btn.active {
-  background-color: var(--primary-blue);
-  color: var(--card-bg);
-  box-shadow: 0 6px 10px rgba(0, 123, 255, 0.3);
-}
-
-/* --- Estilos específicos para los botones de acción en la tabla (Editar/Eliminar) --- */
-
-/* Contenedor de los botones de acción */
-td {
-  white-space: nowrap;
-}
-
-.action-buttons-container {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  align-items: center;
-}
-
-.action-buttons-container button {
-  padding: 8px 12px;
-  font-size: 12px;
-  border-radius: 20px;
-  font-weight: 500;
-  text-transform: none;
-  letter-spacing: normal;
-  box-shadow: var(--shadow-sm);
-  min-width: 70px;
-}
-
-.action-buttons-container button:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.create-client-btn {
+  background-color: var(--color-primary);
+  color: var(--color-bg-card);
+}
+
+.create-client-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.toggle-sort-btn {
+  background-color: var(--color-border);
+  color: var(--color-text-subtle);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.toggle-sort-btn:hover {
+  background-color: #dadfe3;
+  color: var(--color-text-default);
+}
+
+.toggle-sort-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-bg-card);
+}
+
+
+/* ------------------------------------ */
+/* 5. TABLA DE CLIENTES                 */
+/* ------------------------------------ */
+
+.table-container {
+  overflow-x: auto;
+  margin-top: calc(3 * var(--space-unit));
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: var(--color-bg-card);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-base);
+  overflow: hidden;
+}
+
+thead {
+  background-color: #fafbfd;
+}
+
+th {
+  text-align: left;
+  padding: calc(1.5 * var(--space-unit)) calc(2 * var(--space-unit));
+  font-weight: 500;
+  color: var(--color-text-subtle);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+th svg {
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+th.ascending,
+th.descending {
+  color: var(--color-primary);
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: #fcfcfd;
+}
+
+td {
+  padding: calc(1.5 * var(--space-unit)) calc(2 * var(--space-unit));
+  font-size: 14px;
+}
+
+/* Botones de Acción en la Tabla */
+.action-buttons-container {
+  display: flex;
+  gap: var(--space-unit);
+  justify-content: flex-start;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.action-buttons-container button {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: var(--radius-base);
+  text-transform: none;
+  letter-spacing: normal;
+  box-shadow: none;
+  min-width: unset;
+  color: var(--color-bg-card); /* Aseguramos el texto blanco en botones oscuros */
+}
+
+.action-buttons-container button:hover {
+  transform: translateY(0);
+  opacity: 0.9;
+  box-shadow: none;
+}
+
 .edit-btn {
-  background-color: var(--primary-blue);
-  color: var(--card-bg);
+  background-color: var(--color-primary);
 }
 
 .edit-btn:hover {
-  background-color: var(--primary-blue-dark);
+  background-color: var(--color-primary-dark);
 }
 
 .delete-btn {
-  background-color: var(--error-color);
-  color: var(--card-bg);
+  background-color: var(--color-accent);
 }
 
 .delete-btn:hover {
-  background-color: var(--error-color-dark);
+  background-color: #da5d50;
+}
+
+
+/* ------------------------------------ */
+/* 6. ESTILOS DE TOP CONSUMIDORES       */
+/* ------------------------------------ */
+
+/* Estilo para la fila que representa a un Top Consumidor */
+tbody tr.top-consumer-row {
+  background-color: #fcece0; /* Color crema/naranja suave */
+  font-weight: 500;
+  border-left: 5px solid var(--color-accent); /* Borde lateral para llamar la atención */
+}
+
+tbody tr.top-consumer-row:hover {
+  background-color: #fae4d7;
+}
+
+/* Estilo para las celdas de la columna de 'Total Compras' */
+tbody tr.top-consumer-row td:nth-last-child(2) {
+  color: var(--color-accent); /* Color de acento (rojo/coral) para el valor */
+  font-weight: 700;
+  font-size: 15px;
+}
+
+
+/* ================================================================= */
+/* FORM STYLES (CREATE/EDIT)                    */
+/* ================================================================= */
+
+/* ------------------------------------ */
+/* 7. CONTENEDOR Y TÍTULO DEL FORMULARIO*/
+/* ------------------------------------ */
+.form-container {
+  max-width: 600px;
+  margin: calc(5 * var(--space-unit)) auto;
+  padding: calc(5 * var(--space-unit));
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-md);
+}
+
+.form-container h2 {
+  text-align: left; /* Alineado a la izquierda para un look más "de aplicación" */
+  margin-bottom: calc(4 * var(--space-unit));
+  color: var(--color-text-default);
+  font-weight: 700;
+  font-size: 1.75rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: calc(2 * var(--space-unit));
+}
+
+/* ------------------------------------ */
+/* 8. ESTRUCTURA Y REJILLA DEL FORMULARIO */
+/* ------------------------------------ */
+.client-form {
+  display: flex;
+  flex-direction: column;
+  gap: calc(2.5 * var(--space-unit));
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: calc(2 * var(--space-unit));
+}
+
+@media (min-width: 500px) {
+  .form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--color-text-subtle);
+  margin-bottom: calc(0.5 * var(--space-unit));
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+/* ------------------------------------ */
+/* 9. ESTILO DE INPUTS Y ERRORES        */
+/* ------------------------------------ */
+.form-group input {
+  padding: calc(1.5 * var(--space-unit));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-base);
+  color: var(--color-text-default);
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Sombra interna sutil */
+}
+
+/* Estado de Error de Validación */
+.form-group input.input-error {
+  border-color: var(--color-error);
+}
+
+.error-message {
+  color: var(--color-error);
+  font-size: 0.85rem;
+  margin-top: calc(0.5 * var(--space-unit));
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Solo lectura / Desactivado */
+.form-group input:disabled {
+  background-color: #f5f7f9;
+  cursor: not-allowed;
+  color: var(--color-text-subtle);
+  border-color: #e0e4e7;
+  box-shadow: none;
+}
+
+/* Enfoque (Focus) */
+.form-group input:not(:disabled):focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 119, 194, 0.1);
+}
+
+
+/* ------------------------------------ */
+/* 10. ACCIONES Y BOTONES DEL FORMULARIO*/
+/* ------------------------------------ */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: calc(1.5 * var(--space-unit));
+  margin-top: calc(5 * var(--space-unit));
+}
+
+.form-actions button {
+  padding: calc(1.5 * var(--space-unit)) calc(3 * var(--space-unit));
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius-base);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.form-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn {
+  background-color: var(--color-success);
+  color: var(--color-bg-card);
+}
+
+.submit-btn:hover {
+  background-color: #26b962;
+}
+
+.cancel-btn {
+  background-color: var(--color-bg-light);
+  color: var(--color-text-subtle);
+  box-shadow: none;
+}
+
+.cancel-btn:hover {
+  background-color: #e0e4e7;
+  color: var(--color-text-default);
+  transform: translateY(0);
+}
+
+
+/* ------------------------------------ */
+/* 11. MENSAJES DE ESTADO (FORMULARIO)  */
+/* ------------------------------------ */
+/* Reutilizamos .message, pero lo hacemos más grande en el formulario */
+.status-message {
+  padding: calc(2 * var(--space-unit));
+  margin: calc(2.5 * var(--space-unit)) 0 0;
+  border-radius: var(--radius-base);
+  font-weight: 500;
+  font-size: 1rem;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Colores de estado basados en las nuevas variables */
+.status-message.success {
+  background-color: #e6faee; 
+  color: #1a7d41; 
+  border-color: #b7e8c8;
+}
+
+.status-message.error {
+  background-color: #ffeeeb; 
+  color: #c74c3e; 
+  border-color: #f7a8a0;
 }

@@ -1,184 +1,204 @@
-/* Contenedor principal para centrar el formulario */
+/* Variables CSS para colores y estilos base */
+:root {
+  --color-primary: #3498db;
+  --color-primary-dark: #2980b9;
+  --color-error-bg: #fdeeee;
+  --color-error-text: #c0392b;
+  --color-border: #c8d4e0;
+  --color-text-primary: #333;
+  --color-text-secondary: #555;
+  --color-icon: #7f8c8d;
+  --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --border-radius: 12px;
+  --transition-fast: 0.2s ease;
+}
+
+/* Contenedor principal para centrar el formulario con flexbox */
 .login-container {
-    /* Removido el centrado con Flexbox y reemplazado con position: absolute */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    
-    min-height: 100vh; /* Se mantiene para asegurar la altura de la página */
-    min-width: 100vw;
-    background-color: #f0f2f5;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    
-    /* El siguiente Flexbox se usa ahora solo para centrar el contenido, no el contenedor */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: #f0f2f5;
+  font-family: var(--font-family-base);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px; /* Evita que el formulario quede pegado en móviles */
+  box-sizing: border-box;
 }
 
 /* Tarjeta (card) del formulario de login */
 .login-card {
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+
+  max-height: 90vh; /* Para evitar que el formulario sea demasiado alto en pantallas pequeñas */
+  overflow-y: auto;
 }
 
 /* Título principal del formulario */
 .login-title {
-    font-size: 2em;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  font-size: 2em;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .title-icon {
-    margin-right: 15px;
-    color: #3498db;
+  margin-right: 15px;
+  color: var(--color-primary);
 }
 
 /* Grupo de formulario (label + input) */
 .form-group {
-    text-align: left;
-    margin-bottom: 20px;
+  text-align: left;
+  margin-bottom: 20px;
 }
 
 .form-group label {
-    display: block;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 8px;
+  display: block;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
 }
 
 /* Contenedor para el input con ícono */
-.input-with-icon {
-    display: flex;
-    align-items: center;
-    border: 1px solid #c8d4e0;
-    border-radius: 10px;
-    padding: 10px 15px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.input-with-icon:focus-within {
-    border-color: #3498db;
-    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
-}
-
-.input-with-icon svg {
-    margin-right: 12px;
-    color: #7f8c8d;
-    font-size: 1.2em;
-}
-
-.input-with-icon input {
-    border: none;
-    outline: none;
-    flex-grow: 1;
-    font-size: 1em;
-    background: transparent;
-}
-
-/* Contenedor específico para el campo de contraseña */
+.input-with-icon,
 .password-input-container {
-    display: flex;
-    align-items: center;
-    border: 1px solid #c8d4e0;
-    border-radius: 10px;
-    padding: 10px 15px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 10px 15px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+.input-with-icon:focus-within,
 .password-input-container:focus-within {
-    border-color: #3498db;
-    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+  box-shadow: none;
 }
 
-.password-input-container input {
-    border: none;
-    outline: none;
-    flex-grow: 1;
-    font-size: 1em;
-    background: transparent;
-}
-
+.input-with-icon svg,
 .password-input-container .input-icon {
-    margin-right: 12px;
-    color: #7f8c8d;
-    font-size: 1.2em;
+  margin-right: 12px;
+  color: var(--color-icon);
+  font-size: 1.2em;
 }
 
+.input-with-icon input,
+.password-input-container input {
+  border: none;
+  outline: none;
+  flex-grow: 1;
+  font-size: 1em;
+  background: transparent;
+}
+
+input::placeholder {
+  color: #a0a0a0;
+  opacity: 1;
+  font-style: italic;
+}
+
+/* Botón para mostrar/ocultar contraseña */
 .toggle-password-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #7f8c8d;
-    transition: color 0.3s ease;
-    font-size: 1.2em;
-    padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-icon);
+  transition: color 0.3s ease;
+  font-size: 1.2em;
+  padding: 0;
 }
 
 .toggle-password-btn:hover {
-    color: #3498db;
+  color: var(--color-primary);
 }
 
 /* Botón de inicio de sesión */
 .login-btn {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.1em;
-    font-weight: bold;
-    color: white;
-    background-color: #3498db;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+  width: 100%;
+  padding: 15px;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: white;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .login-btn:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
 }
 
 .login-btn:disabled {
-    background-color: #bdc3c7;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
+/* Animación para el icono spinner */
 .spinner {
-    animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Mensaje de error */
 .error-message {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #fdeeee;
-    color: #c0392b;
-    border-radius: 8px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+  border-radius: 8px;
+  font-weight: 500;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 420px) {
+  .login-card {
+    padding: 20px;
+    max-width: 320px;
+  }
+
+  .login-title {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+  }
+
+  .login-btn {
+    padding: 12px;
+    font-size: 1em;
+  }
 }

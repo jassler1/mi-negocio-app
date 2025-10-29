@@ -1,3 +1,24 @@
+/* ================================================================= */
+/* 1. VARIABLES CSS (TOKENS DE DISEÑO) - BASE UNIFICADA */
+/* Asumimos que estas variables están definidas en el entorno global */
+/* ================================================================= */
+:root {
+    --color-brand-primary: #0077c2;   /* Azul para foco/activo */
+    --color-brand-secondary: #28a745; /* Verde para confirmación/éxito */
+    --color-brand-alert: #ff6f61;     /* Rojo/Coral para cancelación/error */
+    --color-text-dark: #212529;
+    --color-text-muted: #566573;
+    --color-bg-card: #ffffff;
+    --color-border-medium: #c5cdd4;
+    --space-unit: 8px;
+    --radius-base: 8px;
+    --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ================================================================= */
+/* 2. OVERLAY Y CONTENEDOR */
+/* ================================================================= */
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -12,144 +33,166 @@
 }
 
 .modal-content {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
+    background-color: var(--color-bg-card);
+    padding: calc(4 * var(--space-unit)); /* 32px */
+    border-radius: var(--radius-base);
     width: 90%;
-    max-width: 450px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    max-width: 480px; /* Ancho ajustado */
+    box-shadow: var(--shadow-md);
     position: relative;
-    font-family: 'Arial', sans-serif;
-    color: #34495e;
+    font-family: var(--font-family-base);
+    color: var(--color-text-dark);
     text-align: center;
+    display: flex;
+    flex-direction: column;
 }
 
 .close-btn {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: calc(2 * var(--space-unit));
+    right: calc(2 * var(--space-unit));
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: #95a5a6;
+    color: var(--color-text-muted);
     cursor: pointer;
     transition: color 0.3s ease;
 }
 
 .close-btn:hover {
-    color: #e74c3c;
+    color: var(--color-brand-alert);
 }
 
+/* ------------------------------------ */
+/* 3. ENCABEZADO Y RESUMEN */
+/* ------------------------------------ */
+
 h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
+    font-size: 1.6rem;
+    margin-bottom: calc(3 * var(--space-unit));
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    color: #2c3e50;
+    gap: calc(1.5 * var(--space-unit));
+    color: var(--color-text-dark);
+    font-weight: 700;
 }
 
 .modal-icon {
-    color: #2ecc71;
+    color: var(--color-brand-secondary);
     font-size: 1.5em;
 }
 
 .payment-summary {
-    border-bottom: 2px solid #ecf0f1;
-    padding-bottom: 15px;
-    margin-bottom: 20px;
+    border-bottom: 1px solid var(--color-border-medium);
+    padding-bottom: calc(2 * var(--space-unit));
+    margin-bottom: calc(3 * var(--space-unit));
 }
 
 .total-amount {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #27ae60;
+    font-size: 2rem; /* Mayor énfasis */
+    font-weight: 700;
+    color: var(--color-brand-secondary);
 }
 
+/* ------------------------------------ */
+/* 4. FORMULARIO Y CONTROLES */
+/* ------------------------------------ */
+
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: calc(2 * var(--space-unit));
     text-align: left;
 }
 
 .label {
     display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #555;
+    font-weight: 600;
+    margin-bottom: var(--space-unit);
+    color: var(--color-text-dark);
+    font-size: 0.95rem;
 }
 
 .select-field,
 .input-field {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #bdc3c7;
-    border-radius: 8px;
+    padding: calc(1.5 * var(--space-unit));
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-base);
     font-size: 1em;
     box-sizing: border-box;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    color: var(--color-text-dark);
 }
 
 .select-field:focus,
 .input-field:focus {
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 0 3px rgba(0, 119, 194, 0.15);
 }
 
 .change-info {
     font-size: 1.2rem;
-    font-weight: bold;
-    margin-top: 25px;
-    padding: 10px;
-    background-color: #f0f4f7;
-    border-radius: 8px;
+    font-weight: 700;
+    margin-top: calc(3 * var(--space-unit));
+    padding: calc(1.5 * var(--space-unit));
+    background-color: #f0f4f7; /* Gris claro de fondo */
+    border-radius: var(--radius-base);
+    border: 1px solid var(--color-border-medium);
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 8px;
 }
 
 .change-info .change-amount {
-    color: #34495e;
+    color: var(--color-brand-primary);
 }
+
+/* ------------------------------------ */
+/* 5. ACCIONES (Botones) */
+/* ------------------------------------ */
 
 .modal-actions {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
+    gap: calc(1.5 * var(--space-unit));
+    margin-top: calc(4 * var(--space-unit));
 }
 
 .confirm-btn,
 .cancel-btn {
-    padding: 12px 25px;
+    padding: calc(1.5 * var(--space-unit)) calc(3 * var(--space-unit));
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-base);
     font-size: 1em;
-    font-weight: bold;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-unit);
+    text-transform: uppercase;
+    box-shadow: var(--shadow-sm);
 }
 
 .confirm-btn {
-    background-color: #2ecc71;
+    background-color: var(--color-brand-secondary);
     color: white;
 }
 
 .confirm-btn:hover {
-    background-color: #27ae60;
+    background-color: #1e8338;
 }
 
 .cancel-btn {
-    background-color: #e74c3c;
-    color: white;
+    background-color: var(--color-border-medium); /* Botón de cancelación neutro */
+    color: var(--color-text-muted);
+    box-shadow: none;
 }
 
 .cancel-btn:hover {
-    background-color: #c0392b;
+    background-color: #d8dbdf;
+    color: var(--color-text-dark);
 }

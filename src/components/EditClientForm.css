@@ -1,31 +1,52 @@
-/* Importa las variables de estilo globales */
+/* ==================================== */
+/* 1. IMPORTE DE VARIABLES GLOBALES     */
+/* ==================================== */
 @import './ClientManagement.css'; 
 
-/* Estilos del contenedor principal del formulario */
+/* ==================================== */
+/* 2. CONTENEDOR PRINCIPAL DEL FORMULARIO */
+/* ==================================== */
 .form-container {
-  max-width: 600px;
-  margin: 30px auto;
-  padding: 25px;
-  background-color: var(--card-bg);
-  border-radius: var(--border-radius-base);
+  max-width: 600px; /* Incrementamos ligeramente para campos duales */
+  margin: calc(5 * var(--space-unit)) auto; /* 40px auto */
+  padding: calc(5 * var(--space-unit));    /* 40px */
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-base);
   box-shadow: var(--shadow-md);
 }
 
-/* Estilo para el título del formulario */
 .form-container h2 {
-  text-align: center;
-  margin-bottom: 25px;
-  color: var(--text-dark);
+  text-align: left; /* Alineado a la izquierda para un look más "de aplicación" */
+  margin-bottom: calc(4 * var(--space-unit)); /* 32px */
+  color: var(--color-text-default);
+  font-weight: 700;
+  font-size: 1.75rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: calc(2 * var(--space-unit));
 }
 
-/* Estilos para el formulario en sí */
+/* ==================================== */
+/* 3. ESTRUCTURA Y REJILLA DEL FORMULARIO */
+/* ==================================== */
 .client-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: calc(2.5 * var(--space-unit)); /* 20px de espacio uniforme */
 }
 
-/* Estilos para cada grupo de label e input */
+/* Rejilla simple para campos adyacentes en pantallas grandes */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: calc(2 * var(--space-unit));
+}
+
+@media (min-width: 500px) {
+  .form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -33,98 +54,105 @@
 
 .form-group label {
   font-weight: 500;
-  color: var(--text-muted);
-  margin-bottom: 5px;
-}
-
-.form-group input {
-  padding: 10px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-base);
-  font-size: var(--font-base);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Estilo para los inputs de solo lectura (disabled) */
-.form-group input:disabled {
-  background-color: #e9ecef;
-  cursor: not-allowed;
-  color: var(--secondary-gray);
-}
-
-/* Estilo para el enfoque del input */
-.form-group input:not(:disabled):focus {
-  outline: none;
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-}
-
-/* Estilos para los botones del formulario */
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.form-actions button {
-  padding: 12px 20px;
-  font-size: 15px;
-  font-weight: 500;
-  border-radius: var(--border-radius-pill);
-  cursor: pointer;
-  transition: all 0.3s ease;
+  color: var(--color-text-subtle); /* Más sutil para enfocarse en el input */
+  margin-bottom: calc(0.5 * var(--space-unit));
+  font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
+/* ==================================== */
+/* 4. ESTILO DE INPUTS Y ERRORES        */
+/* ==================================== */
+.form-group input {
+  padding: calc(1.5 * var(--space-unit)); 
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-base);
+  color: var(--color-text-default);
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Sombra interna sutil */
+}
+
+/* Estado de Error de Validación */
+.form-group input.input-error {
+  border-color: var(--color-error); /* Usa el color de acento/error */
+}
+
+.error-message {
+  color: var(--color-error);
+  font-size: 0.85rem;
+  margin-top: calc(0.5 * var(--space-unit));
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Solo lectura / Desactivado */
+.form-group input:disabled {
+  background-color: #f5f7f9; /* Más claro que el anterior */
+  cursor: not-allowed;
+  color: var(--color-text-subtle);
+  border-color: #e0e4e7;
+  box-shadow: none;
+}
+
+/* Enfoque (Focus) */
+.form-group input:not(:disabled):focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 119, 194, 0.1); /* Hacemos la sombra de foco aún más sutil */
+}
+
+/* ==================================== */
+/* 5. ACCIONES Y BOTONES DEL FORMULARIO */
+/* ==================================== */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: calc(1.5 * var(--space-unit)); /* 12px */
+  margin-top: calc(5 * var(--space-unit)); /* 40px, más espacio */
+}
+
+.form-actions button {
+  padding: calc(1.5 * var(--space-unit)) calc(3 * var(--space-unit)); /* 12px 24px */
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius-base);
+  text-transform: uppercase; /* Volvemos a uppercase en los botones principales para contraste */
+  letter-spacing: 0.8px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
 .form-actions button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .submit-btn {
-  background-color: var(--success-color);
-  color: var(--card-bg);
+  background-color: var(--color-success);
+  color: var(--color-bg-card);
 }
 
 .submit-btn:hover {
-  background-color: var(--success-color-dark);
+  background-color: #26b962;
 }
 
 .cancel-btn {
-  background-color: var(--secondary-gray);
-  color: var(--card-bg);
+  background-color: var(--color-bg-light); /* Fondo más claro para ser más sutil */
+  color: var(--color-text-subtle);
+  box-shadow: none;
 }
 
 .cancel-btn:hover {
-  background-color: var(--secondary-gray-dark);
+  background-color: #e0e4e7;
+  color: var(--color-text-default);
+  transform: translateY(0);
 }
 
-/* Estilos para el mensaje de estado */
+/* ==================================== */
+/* 6. MENSAJES DE ESTADO (Feedback)     */
+/* ==================================== */
 .status-message {
-  text-align: center;
-  padding: 12px;
-  margin: 20px 0 0;
-  border-radius: var(--border-radius-base);
-  font-weight: 500;
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.status-message.success {
-  background-color: #d4edda;
-  color: #155724;
-  border-color: #c3e6cb;
-}
-
-.status-message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border-color: #f5c6cb;
-}
-
-/* Animación de fade-in para mensajes */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  padding: calc(2 * var(--space-unit));
+  /* ... resto de estilos de mensajes ... */
 }

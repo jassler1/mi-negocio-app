@@ -1,244 +1,451 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import ClientSelectionModal from '../assets/components/ClientSelectionModal';
 import ProductSelectionModal from '../assets/components/ProductSelectionModal';
 import PaymentModal from '../assets/components/PaymentModal';
 import { db } from '../firebaseConfig';
-import { collection, addDoc, doc, runTransaction } from 'firebase/firestore';
+import { collection, addDoc, doc, runTransaction, getDocs, serverTimestamp } from 'firebase/firestore'; 
+import { registrarEventoAuditoria } from '../utils/auditoria';
 import './VentaAccesorios.css';
 
-function VentaAccesorios() {
-  const [canchas] = useState([
-    { id: 1, nombre: 'Cancha 1' },
-    { id: 2, nombre: 'Cancha 2' },
-    { id: 3, nombre: 'Cancha 3' },
-    { id: 4, nombre: 'Cancha 4' },
-  ]);
-  const [selectedCancha, setSelectedCancha] = useState(null);
-  const [canchaProducts, setCanchaProducts] = useState({});
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+const canchasData = [
+  { id: 1, nombre: 'Cancha 1' },
+  { id: 2, nombre: 'Cancha 2' },
+  { id: 3, nombre: 'Cancha 3' },
+  { id: 4, nombre: 'Cancha 4' },
+];
 
-  // Simulación: Obtener el nombre del usuario de la sesión
-  const nombreUsuario = "Jassler"; 
+const nombreUsuario = "Jassler";
+const ventasCollectionRef = collection(db, 'ventas');
+const productosCollectionRef = collection(db, 'productos');
+const reportesTotalesCollectionRef = collection(db, 'reportesTotales'); 
 
-  const ventasCollectionRef = collection(db, 'ventas');
+// 🔑 CAMBIO CLAVE: Aceptar los estados y setters del componente padre para persistencia
+function VentaAccesorios({ canchas, setCanchas, openVentas, setOpenVentas }) {
 
-  const handleOpenProductModal = () => {
-    if (!selectedCancha) {
-      alert("Por favor, selecciona una cancha primero.");
-      return;
+  // 1. Inicialización de Canchas (Se ejecuta solo la primera vez que canchas está vacío)
+  useEffect(() => {
+    if (canchas.length === 0) {
+      const initialCanchas = canchasData.map(c => ({
+        ...c,
+        productosEnVenta: [],
+        clienteSeleccionado: null,
+        tipo: 'cancha'
+      }));
+      // Solo inicializar si el array está realmente vacío
+      setCanchas(initialCanchas); 
     }
-    setIsProductModalOpen(true);
-  };
+  }, [canchas.length, setCanchas]);
 
-  const handleCloseProductModal = () => {
-    setIsProductModalOpen(false);
-  };
 
-  const handleSelectProduct = (newProduct) => {
-    setCanchaProducts(prevCanchaProducts => {
-      const currentProducts = prevCanchaProducts[selectedCancha.id] || [];
-      const existingProduct = currentProducts.find(p => p.id === newProduct.id);
+  // Estados locales
+  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [isCanchaSelected, setIsCanchaSelected] = useState(true);
 
-      let updatedProducts;
-      if (existingProduct) {
-        updatedProducts = currentProducts.map(p =>
-          p.id === newProduct.id ? { ...p, cantidad: p.cantidad + newProduct.cantidad } : p
-        );
-      } else {
-        updatedProducts = [...currentProducts, newProduct];
-      }
+  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
-      return {
-        ...prevCanchaProducts,
-        [selectedCancha.id]: updatedProducts,
-      };
-    });
-    handleCloseProductModal();
-  };
-  
-  const handleUpdateProductQuantity = (productId, change) => {
-    setCanchaProducts(prevCanchaProducts => {
-      const currentProducts = prevCanchaProducts[selectedCancha.id] || [];
-      const updatedProducts = currentProducts.map(product => {
-        if (product.id === productId) {
-          const newQuantity = product.cantidad + change;
-          if (newQuantity <= 0) {
-            return null;
-          }
-          return { ...product, cantidad: newQuantity };
-        }
-        return product;
-      }).filter(Boolean);
+  // Cargar productos (Sin cambios)
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const snapshot = await getDocs(productosCollectionRef);
+        const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setProducts(all);
+      } catch (err) {
+        console.error("Error al cargar productos:", err);
+      }
+    };
+    fetchProducts();
+  }, []);
 
-      return {
-        ...prevCanchaProducts,
-        [selectedCancha.id]: updatedProducts,
-      };
-    });
-  };
+  // Memorización de item seleccionado (Sin cambios)
+  const selectedItem = useMemo(() => {
+    if (selectedItemId == null) return null;
+    return isCanchaSelected
+      ? canchas.find(c => c.id === selectedItemId)
+      : openVentas.find(v => v.id === selectedItemId);
+  }, [selectedItemId, isCanchaSelected, canchas, openVentas]);
 
-  const calculateTotal = () => {
-    if (!selectedCancha) return 0;
-    const products = canchaProducts[selectedCancha.id] || [];
-    return products.reduce((acc, product) => acc + (product.precio * product.cantidad), 0);
-  };
+  // Cálculo del total (Sin cambios)
+  const totalAmount = useMemo(() => {
+    if (!selectedItem) return 0;
+    return (selectedItem.productosEnVenta || []).reduce((sum, p) => sum + (p.precio * (p.cantidad || 0)), 0);
+  }, [selectedItem]);
 
-  const handleOpenPaymentModal = () => {
-    const productsToPay = canchaProducts[selectedCancha.id] || [];
-    if (productsToPay.length === 0) {
-      alert("No hay accesorios en la lista para procesar el pago.");
-      return;
-    }
-    setIsPaymentModalOpen(true);
-  };
+  // Combinar ventas abiertas de canchas y ventas pendientes (Sin cambios)
+  const allOpenVentas = useMemo(() => {
+    const fromCanchas = canchas.filter(c => c.productosEnVenta && c.productosEnVenta.length > 0);
+    return [...fromCanchas, ...openVentas];
+  }, [canchas, openVentas]);
 
-  const handleClosePaymentModal = () => {
-    setIsPaymentModalOpen(false);
-  };
+  // Manejo de selección (Sin cambios)
+  const handleSelectItem = useCallback((id, isCancha) => {
+    setSelectedItemId(id);
+    setIsCanchaSelected(isCancha);
+  }, []);
 
-  const handleProcessPayment = async (paymentData) => {
-    const productsToPay = canchaProducts[selectedCancha.id] || [];
-    const totalVenta = calculateTotal();
+  // Crear venta pendiente desde cancha
+  const handleSaveVentaPendiente = useCallback(() => {
+    if (!selectedItem) return;
+    if (!selectedItem.productosEnVenta || selectedItem.productosEnVenta.length === 0) {
+      alert("No hay accesorios para guardar.");
+      return;
+    }
 
-    const nuevaVenta = {
-      cancha: selectedCancha.nombre,
-      productos: productsToPay.map(p => ({
-        id: p.id,
-        nombre: p.nombre,
-        cantidad: p.cantidad,
-        precio: p.precio
-      })),
-      total: totalVenta,
-      metodoPago: paymentData.method,
-      fecha: new Date().toISOString().slice(0, 10),
-      usuario: nombreUsuario, // <-- ¡Aquí se agrega el nombre de usuario!
-    };
+    if (isCanchaSelected) {
+      const newId = openVentas.length > 0 ? Math.max(...openVentas.map(v => v.id)) + 1 : 1;
+      const nuevaVentaPendiente = {
+        id: newId,
+        nombre: `Venta #${newId}`,
+        productosEnVenta: [...selectedItem.productosEnVenta],
+        clienteSeleccionado: selectedItem.clienteSeleccionado,
+        tipo: 'pendiente',
+      };
+      setOpenVentas(prev => [...prev, nuevaVentaPendiente]);
+      // limpiar cancha
+      setCanchas(prev => prev.map(c =>
+        c.id === selectedItemId
+          ? { ...c, productosEnVenta: [], clienteSeleccionado: null }
+          : c
+      ));
+      setSelectedItemId(null);
+      alert("✅ Venta guardada como pendiente.");
+    } else {
+      alert("La venta ya está en pendientes.");
+    }
+  }, [selectedItem, isCanchaSelected, openVentas, canchas, selectedItemId, setOpenVentas, setCanchas]);
 
-    try {
-      for (const product of productsToPay) {
-        const productRef = doc(db, 'inventario', product.id);
-        await runTransaction(db, async (transaction) => {
-          const productDoc = await transaction.get(productRef);
-          if (!productDoc.exists()) {
-            throw `El documento del producto ${product.nombre} no existe!`;
-          }
-          const currentQuantity = productDoc.data().cantidad;
-          const newQuantity = currentQuantity - product.cantidad;
-          if (newQuantity < 0) {
-            throw `No hay suficiente stock para ${product.nombre}. Cantidad disponible: ${currentQuantity}`;
-          }
-          transaction.update(productRef, { cantidad: newQuantity });
-        });
-      }
+  // Manejo cliente, producto (Sin cambios importantes, usan los setters de props)
+  const openClientModal = useCallback(() => {
+    if (!selectedItem) {
+      alert("Selecciona primero una cancha o venta pendiente.");
+      return;
+    }
+    setIsClientModalOpen(true);
+  }, [selectedItem]);
 
-      await addDoc(ventasCollectionRef, nuevaVenta);
-      console.log("Venta registrada en Firebase:", nuevaVenta);
-      alert("Venta procesada y guardada.");
+  const handleSelectClient = useCallback((client) => {
+    if (!selectedItem) return;
+    const updateIn = (items, setter) => {
+      setter(items.map(item =>
+        item.id === selectedItemId
+          ? { ...item, clienteSeleccionado: client }
+          : item
+      ));
+    };
+    if (isCanchaSelected) {
+      updateIn(canchas, setCanchas);
+    } else {
+      updateIn(openVentas, setOpenVentas);
+    }
+    setIsClientModalOpen(false);
+  }, [selectedItemId, isCanchaSelected, canchas, openVentas, setCanchas, setOpenVentas]);
 
-      setCanchaProducts(prevCanchaProducts => {
-        const newCanchaProducts = { ...prevCanchaProducts };
-        delete newCanchaProducts[selectedCancha.id];
-        return newCanchaProducts;
-      });
-      setSelectedCancha(null);
-      handleClosePaymentModal();
-      
-    } catch (e) {
-      console.error("Error al procesar la venta: ", e);
-      alert(e.message || "Ocurrió un error al procesar la venta.");
-    }
-  };
+  const openProductModal = () => {
+    if (!selectedItem) {
+      alert("Selecciona primero una cancha o venta pendiente.");
+      return;
+    }
+    setIsProductModalOpen(true);
+  };
 
-  const handleSelectCancha = (cancha) => {
-    setSelectedCancha(cancha);
-  };
-  
-  const productsToShow = selectedCancha ? (canchaProducts[selectedCancha.id] || []) : [];
+  const handleSelectProduct = useCallback((newProd) => {
+    if (!selectedItem) return;
+    const updateIn = (items, setter) => {
+      setter(items.map(item => {
+        if (item.id === selectedItemId) {
+          const existing = (item.productosEnVenta || []).find(p => p.id === newProd.id);
+          if (existing) {
+            return {
+              ...item,
+              productosEnVenta: item.productosEnVenta.map(p =>
+                p.id === newProd.id
+                  ? { ...p, cantidad: p.cantidad + newProd.cantidad }
+                  : p
+              )
+            };
+          } else {
+            return {
+              ...item,
+              productosEnVenta: [...(item.productosEnVenta || []), newProd]
+            };
+          }
+        }
+        return item;
+      }));
+    };
+    if (isCanchaSelected) {
+      updateIn(canchas, setCanchas);
+    } else {
+      updateIn(openVentas, setOpenVentas);
+    }
+    setIsProductModalOpen(false);
+  }, [selectedItemId, isCanchaSelected, canchas, openVentas, setCanchas, setOpenVentas]);
 
-  return (
-    <div className="ventas-container">
-      <h1 className="main-title">Venta de Accesorios</h1>
-      
-      <div className="section-canchas">
-        <h3 className="section-title">Seleccionar Cancha</h3>
-        <div className="cancha-buttons-container">
-          {canchas.map(cancha => (
-            <button
-              key={cancha.id}
-              onClick={() => handleSelectCancha(cancha)}
-              className={`cancha-btn ${selectedCancha && selectedCancha.id === cancha.id ? 'active' : ''}`}
+  const updateProductQuantity = useCallback((prodId, delta) => {
+    if (!selectedItem) return;
+    const updateIn = (items, setter) => {
+      setter(items.map(item => {
+        if (item.id === selectedItemId) {
+          const newList = (item.productosEnVenta || []).map(p => {
+            if (p.id === prodId) {
+              const newQty = (p.cantidad || 0) + delta;
+              return newQty > 0 ? { ...p, cantidad: newQty } : null;
+            }
+            return p;
+          }).filter(Boolean);
+          return { ...item, productosEnVenta: newList };
+        }
+        return item;
+      }));
+    };
+    if (isCanchaSelected) {
+      updateIn(canchas, setCanchas);
+    } else {
+      updateIn(openVentas, setOpenVentas);
+    }
+  }, [selectedItemId, isCanchaSelected, canchas, openVentas, setCanchas, setOpenVentas]);
+
+  const openPaymentModal = () => {
+    if (!selectedItem || !(selectedItem.productosEnVenta && selectedItem.productosEnVenta.length > 0)) {
+      alert("Debe haber al menos un accesorio para pagar.");
+      return;
+    }
+    setIsPaymentModalOpen(true);
+  };
+
+  // Procesar pago (con corrección de método de pago)
+  const handleProcessPayment = useCallback(async (paymentData) => {
+    if (!selectedItem) return;
+    const ventaTotal = (selectedItem.productosEnVenta || []).reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
+
+    // ✅ CORRECCIÓN: Asegurar que metodoPago tenga un valor
+    const metodoPagoFinal = paymentData.method || 'Desconocido';
+
+    const nuevaVenta = {
+      tipoVenta: 'Accesorio', 
+      ubicacion: selectedItem.nombre,
+      productos: (selectedItem.productosEnVenta || []).map(p => ({
+        id: p.id,
+        nombre: p.nombre,
+        cantidad: p.cantidad,
+        precio: p.precio
+      })),
+      clienteId: selectedItem.clienteSeleccionado?.id || null,
+      clienteNombre: selectedItem.clienteSeleccionado?.nombreCompleto || 'Anónimo',
+      total: ventaTotal,
+      metodoPago: metodoPagoFinal, // Usar el valor asegurado
+      fecha: new Date().toISOString().slice(0,10),
+      fechaHora: serverTimestamp(), 
+      usuario: nombreUsuario
+    };
+
+    try {
+      await registrarEventoAuditoria({
+        usuario: nombreUsuario,
+        tipo: 'VentaAccesorio',
+        detalles: `Venta de accesorios a ${selectedItem.clienteSeleccionado?.nombreCompleto || 'Anónimo'} por Bs. ${ventaTotal.toFixed(2)} - Origen: ${selectedItem.nombre}`
+      });
+
+      // ajustar inventario
+      for (const p of selectedItem.productosEnVenta) {
+        const productRef = doc(db, 'inventario', p.id);
+        await runTransaction(db, async tx => {
+          const snap = await tx.get(productRef);
+          if (!snap.exists()) throw new Error(`Producto ${p.nombre} no existe.`);
+          const stock = snap.data().cantidad;
+          if (stock < p.cantidad) {
+            throw new Error(`Stock insuficiente para ${p.nombre}. Disponible: ${stock}`);
+          }
+          tx.update(productRef, { cantidad: stock - p.cantidad });
+        });
+      }
+
+      // 1. Guardar en la colección 'ventas'
+      await addDoc(ventasCollectionRef, nuevaVenta);
+
+      // 2. Guardar en la colección 'reportesTotales'
+      const reporteRegistro = {
+          ...nuevaVenta,
+          tipoRegistro: 'VENTA_ACCESORIO',
+          esVenta: true,
+          esAlquiler: false,
+          esAccesorio: true,
+      };
+      await addDoc(reportesTotalesCollectionRef, reporteRegistro);
+
+
+      if (selectedItem.clienteSeleccionado?.id) {
+        const clientRef = doc(db, 'clientes', selectedItem.clienteSeleccionado.id);
+        await runTransaction(db, async tx => {
+          const clientSnap = await tx.get(clientRef);
+          if (clientSnap.exists()) {
+            const curr = clientSnap.data().totalCompras || 0;
+            tx.update(clientRef, { totalCompras: curr + ventaTotal });
+          }
+        });
+      }
+
+      alert("✅ Venta procesada y cerrada.");
+
+      // limpiar el item (usan los setters de props)
+      if (isCanchaSelected) {
+        setCanchas(prev => prev.map(c =>
+          c.id === selectedItemId
+            ? { ...c, productosEnVenta: [], clienteSeleccionado: null }
+            : c
+        ));
+      } else {
+        setOpenVentas(prev => prev.filter(v => v.id !== selectedItemId));
+      }
+
+      setSelectedItemId(null);
+      setIsPaymentModalOpen(false);
+
+    } catch (err) {
+      console.error("Error procesando venta:", err);
+      alert(err.message || "Error al procesar la venta.");
+    }
+  }, [selectedItem, isCanchaSelected, selectedItemId, canchas, openVentas, setCanchas, setOpenVentas]);
+
+
+  // UI (Sin cambios)
+  return (
+    <div className="ventas-container">
+      <h1 className="main-title">Venta de Accesorios</h1>
+
+      <div className="main-content-panels">
+        <div className="side-panel">
+          <h3 className="section-title">Seleccionar Cancha</h3>
+          <div className="button-list">
+            {canchas.map(c => (
+              <button
+                key={c.id}
+                className={`comanda-btn ${isCanchaSelected && selectedItemId === c.id ? 'active' : ''}`}
+                onClick={() => handleSelectItem(c.id, true)}
+              >
+                {c.nombre}
+              </button>
+            ))}
+            <h3 className="section-title">Ventas Pendientes</h3>
+            <div className="button-list open-orders-list">
+              {openVentas.length > 0 ? openVentas.map(v => (
+                <button
+                  key={v.id}
+                  className={`comanda-btn ${!isCanchaSelected && selectedItemId === v.id ? 'active' : ''}`}
+                  onClick={() => handleSelectItem(v.id, false)}
+                >
+                  {v.nombre}
+                </button>
+              )) : (
+                <p className="no-open-orders-msg">No hay ventas pendientes</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="details-panel">
+          {selectedItem ? (
+            <div className="venta-details-container">
+              <h3 className="details-title">
+                {selectedItem.nombre}
+              </h3>
+
+              <div className="details-section">
+                <button onClick={openClientModal} className="add-client-btn">
+                  {selectedItem.clienteSeleccionado ? 'Cambiar Cliente' : 'Agregar Cliente'}
+                </button>
+              </div>
+              {selectedItem.clienteSeleccionado && (
+                <div className="client-info">
+                  <p><strong>Cliente:</strong> {selectedItem.clienteSeleccionado.nombreCompleto}</p>
+                  <p><strong>CI:</strong> {selectedItem.clienteSeleccionado.numeroCi}</p>
+                </div>
+              )}
+
+              <div className="details-section product-section">
+                <button onClick={openProductModal} className="add-product-btn">Añadir Accesorio</button>
+                <h4 className="products-list-title">Accesorios en la venta</h4>
+                {selectedItem.productosEnVenta && selectedItem.productosEnVenta.length > 0 ? (
+                  <ul className="products-list">
+                    {selectedItem.productosEnVenta.map(p => (
+                      <li key={p.id} className="product-item">
+                        <div className="product-info">
+                          <span className="product-name">{p.nombre}</span>
+                          <span className="product-price-display">
+                            Bs. {(p.precio * p.cantidad).toFixed(2)} <small>(Bs. {p.precio.toFixed(2)} c/u)</small>
+                          </span>
+                        </div>
+                        <div className="quantity-controls">
+                          <button className="quantity-btn" onClick={() => updateProductQuantity(p.id, -1)} aria-label="Reducir cantidad">−</button>
+                          <span className="product-quantity">{p.cantidad}</span>
+                          <button className="quantity-btn" onClick={() => updateProductQuantity(p.id, 1)} aria-label="Aumentar cantidad">+</button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="empty-products-msg">No hay accesorios aún.</p>
+                )}
+                <div className="total-amount-container">
+                  <p className="total-amount-text">Total: Bs. {totalAmount.toFixed(2)}</p>
+                </div>
+                {selectedItem.productosEnVenta && selectedItem.productosEnVenta.length > 0 && (
+                  <>
+                    <button onClick={handleSaveVentaPendiente} className="save-btn">Guardar Venta Pendiente</button>
+                    <button onClick={openPaymentModal} className="pay-btn">Pagar Venta</button>
+                  </>
+                )}
+              </div>
+
+            </div>
+          ) : (
+            <p className="no-selection-message">Selecciona una cancha o venta pendiente para ver detalles.</p>
+          )}
+        </div>
+      </div>
+
+      <div className="open-orders-display-panel">
+        <h3 className="section-title">Ventas con Accesorios Pendientes</h3>
+        <div className="open-orders-list-cards">
+          {allOpenVentas.length > 0 ? allOpenVentas.map(item => (
+            <div 
+                key={`venta-${item.tipo}-${item.id}`} 
+                className={`order-card ${selectedItemId === item.id ? 'active-card' : ''}`}
+                onClick={() => handleSelectItem(item.id, item.tipo === 'cancha')} // Añadir onClick a la tarjeta
             >
-              {cancha.nombre}
-            </button>
-          ))}
-        </div>
-      </div>
-      
-      {selectedCancha && (
-        <div className="selected-cancha-info">
-          <h4>Cancha seleccionada: {selectedCancha.nombre}</h4>
-        </div>
-      )}
+              <div className="card-header"><h4>{item.nombre}</h4></div>
+              <div className="card-body">
+                {item.clienteSeleccionado && <p>Cliente: {item.clienteSeleccionado.nombreCompleto}</p>}
+                {item.productosEnVenta.slice(0,3).map(p => <p key={p.id}>{p.nombre} x {p.cantidad}</p>)}
+                {item.productosEnVenta.length > 3 && <p>+ {item.productosEnVenta.length - 3} más</p>}
+                <div className="total-card"><strong>Total: Bs. {item.productosEnVenta.reduce((s, p) => s + (p.precio * p.cantidad), 0).toFixed(2)}</strong></div>
+              </div>
+              <div className="card-actions">
+                {/* Ahora el botón de Editar/Seleccionar es redundante pero lo mantengo por si quieres la acción */}
+                <button className="btn-edit" onClick={(e) => { e.stopPropagation(); handleSelectItem(item.id, item.tipo === 'cancha'); }}>Editar</button>
+                <button className="btn-pay" onClick={(e) => { e.stopPropagation(); openPaymentModal(); }}>Pagar</button>
+              </div>
+            </div>
+          )) : (
+            <p className="no-open-orders-msg">No hay ventas pendientes.</p>
+          )}
+        </div>
+      </div>
 
-      <button onClick={handleOpenProductModal} className="add-accessory-btn">
-        Añadir Accesorio
-      </button>
-      
-      <div className="products-list-container">
-        <h2 className="list-title">Productos en la Venta</h2>
-        <ul className="product-list">
-          {productsToShow.length === 0 ? (
-            <p className="no-products-msg">No hay accesorios en la lista para esta cancha.</p>
-          ) : (
-            productsToShow.map(product => (
-              <li key={product.id} className="product-item">
-                <div className="product-info">
-                  <span className="product-name">{product.nombre}</span>
-                  <span className="product-price">Bs. {(product.precio * product.cantidad).toFixed(2)}</span>
-                </div>
-                <div className="product-quantity-controls">
-                  <button onClick={() => handleUpdateProductQuantity(product.id, -1)} className="quantity-btn">-</button>
-                  <span className="product-quantity">{product.cantidad}</span>
-                  <button onClick={() => handleUpdateProductQuantity(product.id, 1)} className="quantity-btn">+</button>
-                </div>
-              </li>
-            ))
-          )}
-        </ul>
-      </div>
-
-      <div className="total-container">
-        <h3 className="total-amount">Total: Bs. {calculateTotal().toFixed(2)}</h3>
-      </div>
-      
-      {productsToShow.length > 0 && (
-        <button
-          onClick={handleOpenPaymentModal}
-          className="pay-btn"
-          disabled={productsToShow.length === 0}
-        >
-          Pagar
-        </button>
-      )}
-
-      {isProductModalOpen && (
-        <ProductSelectionModal
-          onSelectProduct={handleSelectProduct}
-          onClose={handleCloseProductModal}
-          filtroDeSeccion="accesorios"
-        />
-      )}
-
-      {isPaymentModalOpen && (
-        <PaymentModal
-          totalAmount={calculateTotal()}
-          products={productsToShow}
-          onProcessPayment={handleProcessPayment}
-          onClose={handleClosePaymentModal}
-        />
-      )}
-    </div>
-  );
+      {isClientModalOpen && (
+        <ClientSelectionModal onSelectClient={handleSelectClient} onClose={() => setIsClientModalOpen(false)} />
+      )}
+      {isProductModalOpen && (
+        <ProductSelectionModal products={products} filtroDeSeccion="ACCESORIOS" onSelectProduct={handleSelectProduct} onClose={() => setIsProductModalOpen(false)} />
+      )}
+      {isPaymentModalOpen && selectedItem && (
+        <PaymentModal totalAmount={totalAmount} products={selectedItem.productosEnVenta} onProcessPayment={handleProcessPayment} onClose={() => setIsPaymentModalOpen(false)} />
+      )}
+    </div>
+  );
 }
 
 export default VentaAccesorios;

@@ -1,127 +1,252 @@
-/* Estilos generales del contenedor principal */
+/* --- Variables Globales --- */
+:root {
+  --color-primary: #007bff;
+  --color-secondary: #f39c12;
+  --color-danger: #e74c3c;
+  --color-success: #2ecc71;
+  --color-text: #4a5568;
+  --color-dark: #2c3e50;
+  --color-border: #e2e8f0;
+  --color-white: #fff;
+  --color-light-gray: #f4f4f4;
+  --color-gray: #d1d1d1;
+  --color-muted: #7f8c8d;
+}
+
+/* --- Estilos Globales --- */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f9fafb;
+  color: var(--color-text);
+}
+
+/* --- Contenedor Principal --- */
 .home-container {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    animation: fadeIn 0.8s ease-in-out;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  color: var(--color-text);
+  animation: fadeIn 1s ease-in-out; /* Animación */
+  font-size: 1rem;
+  line-height: 1.6;
+  box-sizing: border-box; /* Asegurarse de que el padding no afecte el tamaño */
 }
 
-/* Animación de entrada para el fade-in */
+/* Animación de entrada */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Título principal de la página */
+/* --- Título Principal --- */
 .home-title {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: #1a1a1a;
-    text-align: center;
-    margin-bottom: 2rem;
+  font-size: clamp(1.8rem, 2vw + 1rem, 2.5rem);
+  font-weight: 700;
+  color: var(--color-dark);
+  text-align: left;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-border);
 }
 
-/* Contenedor de las secciones principales */
-.home-content {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+.brand {
+  color: var(--color-primary);
 }
 
-/* Estilos para las secciones de alertas y características */
-.home-alerts,
-.home-features {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    justify-content: space-between;
+/* --- Información de Usuario --- */
+.user-info {
+  font-size: 0.9rem;
+  margin-bottom: 20px;
 }
 
-/* Estilos para las tarjetas individuales de cada sección */
+.user-id-display {
+  font-weight: 600;
+  background-color: var(--color-border);
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin-left: 10px;
+  display: inline-block;
+}
+
+/* --- Layout Principal --- */
+.home-content.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  grid-template-rows: auto; /* Ajuste para las filas */
+}
+
+/* --- Tarjetas Generales --- */
 .alert-card,
 .feature-card {
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    padding: 1.5rem;
-    flex-grow: 1;
-    flex-basis: 300px; /* Tamaño base para el responsive */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: var(--color-white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
 }
 
-/* Efecto hover para las tarjetas */
-.alert-card:hover,
-.feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-}
-
-/* Encabezados de las tarjetas */
 .alert-card h2,
 .feature-card h2 {
-    font-size: 1.5rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    color: #333;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--color-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+  transition: color 0.3s ease;
 }
 
-/* Color específico para las alertas */
-.low-stock-alert h2 {
-    color: #d9534f; /* Un color de alerta rojo */
+/* --- Estilo Dinámico por Estado --- */
+.alert-card[data-has-alerts="false"] {
+  background-color: #e6f4ea; /* Color suave cuando no hay alertas */
+  border-left: 5px solid var(--color-success);
 }
 
-/* Estilos para las listas dentro de las alertas */
-.alert-card ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+.alert-card[data-has-alerts="false"] h2 {
+  color: var(--color-success);
 }
 
-.alert-card li {
-    font-size: 1rem;
-    margin-bottom: 0.75rem;
-    line-height: 1.4;
-    border-left: 4px solid #d9534f;
-    padding-left: 0.75rem;
-    border-radius: 2px;
+.alert-card[data-has-alerts="true"] {
+  background-color: #fff3f3;
+  border-left: 5px solid var(--color-danger);
 }
 
-/* Estilos para los párrafos de las características */
+.alert-card[data-has-alerts="true"] h2 {
+  color: var(--color-danger);
+}
+
+.no-alert-message {
+  text-align: center;
+  color: var(--color-success);
+  font-weight: 500;
+  background: #e6f4ea;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.stock-count {
+  font-weight: 700;
+  color: var(--color-danger);
+}
+
+/* --- Lista de Alertas --- */
+.alert-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.alert-item {
+  font-size: 0.95rem;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--color-border);
+  color: var(--color-dark);
+}
+
+.alert-item:last-child {
+  border-bottom: none;
+}
+
+/* --- Grid de Funcionalidades --- */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.feature-card {
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid transparent;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border-color: var(--color-primary);
+  background-color: var(--color-light-gray);
+}
+
+.feature-card h2 {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0.5rem;
+}
+
 .feature-card p {
-    font-size: 1rem;
-    color: #666;
-    line-height: 1.5;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  margin-top: 4px;
+  line-height: 1.5;
 }
 
-/* Media Queries para diseño responsive */
-@media (max-width: 768px) {
-    .home-content {
-        gap: 1.5rem;
-    }
+/* --- Responsive Layout --- */
+@media (max-width: 992px) {
+  .home-content.grid-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem; /* Ajuste espacio entre elementos */
+  }
 
-    .home-alerts,
-    .home-features {
-        flex-direction: column;
-        gap: 1.5rem;
-    }
+  .alert-card,
+  .feature-card {
+    padding: 1.2rem;
+  }
+}
 
-    .alert-card,
-    .feature-card {
-        flex-basis: 100%;
-    }
-    
-    .home-title {
-        font-size: 2rem;
-    }
+@media (max-width: 576px) {
+  .home-container {
+    padding: 1rem;
+  }
+
+  .home-title {
+    font-size: 1.75rem;
+  }
+
+  .alert-card,
+  .feature-card {
+    padding: 1rem;
+  }
+
+  .feature-card h2 {
+    font-size: 1.05rem;
+  }
+
+  .feature-card p {
+    font-size: 0.85rem;
+  }
+}
+
+/* --- Estilos de Enfoque (Focus States) --- */
+.feature-card:focus,
+.alert-card:focus {
+  outline: 2px solid var(--color-primary);
+  box-shadow: 0 0 5px var(--color-primary);
+}
+
+/* --- Estilos para Botones y Enlaces (si los usas) --- */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-primary);
 }

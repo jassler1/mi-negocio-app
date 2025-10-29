@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, addDoc, doc, runTransaction } from 'firebase/firestore';
-import './Clientes.css'; // ¡Importa el nuevo archivo CSS!
+import './Clientes.css';
 
 function Clientes({ onClientAdded, onCancel }) {
   const [formData, setFormData] = useState({
@@ -12,97 +12,125 @@ function Clientes({ onClientAdded, onCancel }) {
     correoElectronico: '',
     descuento: '',
   });
+
   const [status, setStatus] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const nombreInputRef = useRef(null);
+
+  useEffect(() => {
+    // Autofocus en el primer input
+    if (nombreInputRef.current) {
+      nombreInputRef.current.focus();
+    }
+  }, []);
 
   const clearStatus = () => {
     setTimeout(() => setStatus(''), 5000);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    let sanitizedValue = value;
+  const handleInputChange = ({ target: { name, value } }) => {
+    let sanitized = value;
 
-    if (name === 'nombreCompleto') {
-      sanitizedValue = value.toUpperCase().replace(/[^A-Z\s]/g, '');
-    } else if (name === 'instagram') {
-      sanitizedValue = value.toUpperCase().replace(/\s/g, '');
-    } else if (['numeroCi', 'telefono', 'descuento'].includes(name)) {
-      sanitizedValue = value.replace(/[^0-9]/g, '');
+    switch (name) {
+      case 'nombreCompleto':
+        sanitized = value.toUpperCase().replace(/[^A-ZÁÉÍÓÚÑ\s]/gi, '');
+        break;
+      case 'instagram':
+        sanitized = value.toUpperCase().replace(/\s/g, '');
+        break;
+      case 'numeroCi':
+      case 'telefono':
+      case 'descuento':
+        sanitized = value.replace(/\D/g, '');
+        break;
+      default:
+        break;
     }
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: sanitizedValue,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: sanitized }));
   };
 
-  const getNextClientId = async () => {
+  const getNextClientCode = async () => {
+    const counterRef = doc(db, 'contadores', 'clientesCounter');
+
     try {
-      const counterRef = doc(db, 'contadores', 'clientesCounter');
+      const newCode = await runTransaction(db, async (transaction) => {
+        const docSnap = await transaction.get(counterRef);
+        if (!docSnap.exists()) throw new Error('Contador no encontrado');
 
-      const newClientId = await runTransaction(db, async (transaction) => {
-        const counterDoc = await transaction.get(counterRef);
-
-        if (!counterDoc.exists()) {
-          throw new Error('El documento de contador no existe!');
-        }
-
-        const newId = counterDoc.data().lastClientId + 1;
+        const newId = docSnap.data().lastClientId + 1;
         transaction.update(counterRef, { lastClientId: newId });
-        return newId;
+
+        return String(newId).padStart(4, '0');
       });
 
-      return String(newClientId).padStart(4, '0');
-    } catch (e) {
-      console.error('Transacción fallida:', e);
-      setStatus('❌ Error al obtener el código de cliente. Inténtalo de nuevo.');
+      return newCode;
+    } catch (err) {
+      console.error('Error al generar código de cliente:', err);
+      setStatus('❌ Error generando el código de cliente.');
       clearStatus();
       return null;
     }
   };
 
+  const validateForm = () => {
+    const { nombreCompleto, numeroCi, telefono, correoElectronico, descuento } = formData;
+
+    if (!nombreCompleto || !numeroCi || !telefono) {
+      setStatus('❌ Los campos nombre completo, CI y teléfono son obligatorios.');
+      clearStatus();
+      return false;
+    }
+
+    // Validar solo si el correo electrónico es proporcionado
+    if (correoElectronico) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(correoElectronico)) {
+        setStatus('❌ Formato de correo inválido.');
+        clearStatus();
+        return false;
+      }
+    }
+
+    const desc = parseInt(descuento, 10);
+    if (descuento && (isNaN(desc) || desc < 0 || desc > 100)) {
+      setStatus('❌ El descuento debe ser un número entre 0 y 100.');
+      clearStatus();
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus('Guardando cliente...');
 
-    const trimmedData = {
+    if (isSubmitting) return; // Previene doble clic
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    setStatus('⏳ Guardando cliente...');
+
+    const newCode = await getNextClientCode();
+    if (!newCode) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    const cliente = {
       ...formData,
+      codigoCliente: newCode,
       nombreCompleto: formData.nombreCompleto.trim(),
       instagram: formData.instagram.trim(),
       correoElectronico: formData.correoElectronico.trim(),
+      descuento: parseInt(formData.descuento, 10) || 0,
+      totalCompras: 0,
     };
-    
-    const descuentoValue = parseInt(trimmedData.descuento, 10);
-    if (trimmedData.descuento !== '' && (descuentoValue < 0 || descuentoValue > 100)) {
-      setStatus('❌ El descuento debe ser un valor entre 0 y 100.');
-      clearStatus();
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (trimmedData.correoElectronico && !emailRegex.test(trimmedData.correoElectronico)) {
-      setStatus('❌ El formato del correo electrónico es inválido.');
-      clearStatus();
-      return;
-    }
-
-    const newCode = await getNextClientId();
-    if (!newCode) {
-      return;
-    }
 
     try {
-      const clientData = {
-        ...trimmedData,
-        codigoCliente: newCode,
-        descuento: descuentoValue || 0,
-        totalCompras: 0, // Añade este campo si no lo tienes
-      };
-
-      await addDoc(collection(db, 'clientes'), clientData);
-      setStatus('✅ Cliente agregado con éxito.');
-      clearStatus();
-
+      await addDoc(collection(db, 'clientes'), cliente);
+      setStatus('✅ Cliente registrado con éxito.');
       setFormData({
         nombreCompleto: '',
         numeroCi: '',
@@ -111,13 +139,12 @@ function Clientes({ onClientAdded, onCancel }) {
         correoElectronico: '',
         descuento: '',
       });
-
-      if (onClientAdded) {
-        onClientAdded();
-      }
-    } catch (e) {
-      console.error('Error al agregar cliente:', e);
-      setStatus('❌ Error al agregar cliente. Inténtalo de nuevo.');
+      onClientAdded?.();
+    } catch (error) {
+      console.error('Error al registrar cliente:', error);
+      setStatus('❌ No se pudo guardar el cliente.');
+    } finally {
+      setIsSubmitting(false);
       clearStatus();
     }
   };
@@ -125,79 +152,40 @@ function Clientes({ onClientAdded, onCancel }) {
   return (
     <div className="form-container">
       <h2>Registrar nuevo cliente</h2>
-      <form onSubmit={handleSubmit} className="client-form">
-        <div className="form-group">
-          <label htmlFor="nombreCompleto">Nombre completo:</label>
-          <input
-            id="nombreCompleto"
-            type="text"
-            name="nombreCompleto"
-            value={formData.nombreCompleto}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="numeroCi">Número de CI:</label>
-          <input
-            id="numeroCi"
-            type="text"
-            name="numeroCi"
-            value={formData.numeroCi}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="telefono">Teléfono:</label>
-          <input
-            id="telefono"
-            type="tel"
-            name="telefono"
-            value={formData.telefono}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="instagram">Instagram:</label>
-          <input
-            id="instagram"
-            type="text"
-            name="instagram"
-            value={formData.instagram}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="correoElectronico">Correo electrónico:</label>
-          <input
-            id="correoElectronico"
-            type="email"
-            name="correoElectronico"
-            value={formData.correoElectronico}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="descuento">Descuento (%):</label>
-          <input
-            id="descuento"
-            type="number"
-            name="descuento"
-            value={formData.descuento}
-            onChange={handleChange}
-            min="0"
-            max="100"
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="client-form" noValidate>
+        {[
+          { label: 'Nombre completo', name: 'nombreCompleto', type: 'text', ref: nombreInputRef },
+          { label: 'Número de CI', name: 'numeroCi', type: 'text' },
+          { label: 'Teléfono', name: 'telefono', type: 'tel' },
+          { label: 'Instagram', name: 'instagram', type: 'text' },
+          { label: 'Correo electrónico', name: 'correoElectronico', type: 'email' },
+          { label: 'Descuento (%)', name: 'descuento', type: 'number', min: 0, max: 100 },
+        ].map(({ label, name, type, ...rest }) => (
+          <div className="form-group" key={name}>
+            <label htmlFor={name}>{label}:</label>
+            <input
+              id={name}
+              type={type}
+              name={name}
+              value={formData[name]}
+              onChange={handleInputChange}
+              required={name !== 'descuento' && name !== 'instagram' && name !== 'correoElectronico'} // Los campos 'instagram' y 'correoElectronico' no son obligatorios
+              disabled={isSubmitting}
+              {...rest}
+            />
+          </div>
+        ))}
+
         <div className="form-actions">
-          <button type="submit" className="submit-btn">Agregar cliente</button>
-          <button type="button" className="cancel-btn" onClick={onCancel}>Cancelar</button>
+          <button type="submit" className="submit-btn" disabled={isSubmitting}>
+            {isSubmitting ? 'Guardando...' : 'Agregar cliente'}
+          </button>
+          <button type="button" className="cancel-btn" onClick={onCancel} disabled={isSubmitting}>
+            Cancelar
+          </button>
         </div>
       </form>
+
       {status && (
         <p className={`status-message ${status.includes('✅') ? 'success' : 'error'}`}>
           {status}

@@ -1,146 +1,201 @@
+/* ================================================================= */
+/* 1. VARIABLES CSS (TOKENS DE DISEÑO) - BASE UNIFICADA */
+/* ================================================================= */
+:root {
+    /* Colores Principales (Brand) */
+    --color-brand-primary: #0077c2;   /* Azul para botones y foco */
+    --color-brand-secondary: #28a745; /* Verde para éxito */
+    --color-brand-alert: #ff6f61;     /* Rojo/Coral para errores/eliminar */
+    --color-brand-hover: #005a92;
+
+    /* Colores Neutrales */
+    --color-text-dark: #212529;
+    --color-text-muted: #566573;
+    --color-bg-body: #f7f9fb;
+    --color-bg-card: #ffffff;
+    --color-border-light: #e8ebed;
+    --color-border-medium: #c5cdd4;
+
+    /* Tipografía y Espaciado */
+    --font-family-base: 'Roboto', sans-serif;
+    --space-unit: 8px; /* Base de 8px */
+    --radius-base: 8px;
+
+    /* Sombras */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Aplicamos la fuente Roboto si no está ya en el body */
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-bg-body);
+}
+
+/* ================================================================= */
+/* 2. CONTENEDOR Y TÍTULO */
+/* ================================================================= */
+
 .inventory-container {
-    padding: 25px;
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f7f9;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: calc(4 * var(--space-unit));
+    background-color: var(--color-bg-card);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-md);
     max-width: 1200px;
-    margin: 20px auto;
+    margin: calc(3 * var(--space-unit)) auto;
+    color: var(--color-text-dark);
 }
 
 .main-title {
     text-align: center;
-    color: #2c3e50;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #ecf0f1;
-    padding-bottom: 15px;
+    color: var(--color-text-dark);
+    margin-bottom: calc(4 * var(--space-unit));
+    border-bottom: 1px solid var(--color-border-light);
+    padding-bottom: calc(2 * var(--space-unit));
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: calc(1.5 * var(--space-unit));
+    font-size: 2rem;
+    font-weight: 700;
 }
 
 .title-icon {
-    color: #3498db;
-    font-size: 1.5em;
+    color: var(--color-brand-primary);
+    font-size: 1.2em;
 }
+
+/* ------------------------------------ */
+/* 3. BOTONES DE ACCIÓN PRINCIPAL */
+/* ------------------------------------ */
 
 .action-buttons {
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
+    justify-content: flex-start; /* Alineación a la izquierda o centro (ajustado para contexto) */
+    gap: calc(2 * var(--space-unit));
+    margin-bottom: calc(3 * var(--space-unit));
 }
 
 .action-btn {
-    padding: 12px 25px;
+    padding: calc(1.5 * var(--space-unit)) calc(3 * var(--space-unit));
     border: none;
-    border-radius: 8px;
-    background-color: #3498db;
+    border-radius: var(--radius-base);
+    background-color: var(--color-brand-primary);
     color: white;
     font-size: 1em;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-unit);
+    text-transform: uppercase;
 }
 
 .action-btn:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
+    background-color: var(--color-brand-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 119, 194, 0.2);
 }
 
 .btn-icon {
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
 .divider {
-    border: 0;
-    height: 1px;
-    background: #bdc3c7;
-    margin: 20px 0;
+    display: none; /* Rara vez es necesario con el buen uso de padding y margin */
 }
 
+/* ------------------------------------ */
+/* 4. SECCIÓN DE FILTROS */
+/* ------------------------------------ */
+
 .filter-section {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
+    background-color: var(--color-bg-card);
+    padding: calc(2 * var(--space-unit));
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: calc(3 * var(--space-unit));
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 20px;
+    gap: calc(2 * var(--space-unit));
 }
 
 .section-title {
-    color: #34495e;
+    color: var(--color-text-dark);
     margin: 0;
-    font-size: 1.2em;
+    font-size: 1.1em;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-unit);
 }
 
 .filter-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-unit);
 }
 
 .filter-group label {
-    font-weight: bold;
-    color: #555;
+    font-weight: 500;
+    color: var(--color-text-muted);
 }
 
 .filter-section select,
 .filter-section input {
-    padding: 8px 12px;
-    border: 1px solid #bdc3c7;
-    border-radius: 8px;
+    padding: calc(1 * var(--space-unit)) calc(1.5 * var(--space-unit));
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-base);
     font-size: 1em;
+    color: var(--color-text-dark);
 }
 
 .search-group {
     flex-grow: 1;
 }
 
-.search-group input {
-    width: 100%;
+.search-group input:focus {
+    outline: none;
+    border-color: var(--color-brand-primary);
 }
+
+/* ------------------------------------ */
+/* 5. TABLA DE INVENTARIO */
+/* ------------------------------------ */
 
 .table-container {
     overflow-x: auto;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: var(--color-bg-card);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-sm);
 }
 
 .inventory-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
+    min-width: 900px; /* Ancho mínimo para legibilidad */
 }
 
 .inventory-table th,
 .inventory-table td {
-    padding: 15px;
+    padding: calc(1.5 * var(--space-unit));
     text-align: left;
-    border-bottom: 1px solid #ecf0f1;
+    border-bottom: 1px solid var(--color-border-light);
+    font-size: 0.95em;
 }
 
 .inventory-table th {
-    background-color: #f0f4f7;
-    color: #7f8c8d;
-    font-weight: bold;
+    background-color: var(--color-bg-body); /* Fondo de cabecera muy sutil */
+    color: var(--color-text-muted);
+    font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.85em;
+    font-size: 0.8em;
 }
 
 .inventory-table tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: #fcfcfd;
 }
 
 .edit-btn,
@@ -149,20 +204,21 @@
     border: none;
     cursor: pointer;
     font-size: 1.1em;
-    margin: 0 5px;
-    transition: color 0.3s ease;
+    margin: 0 calc(0.5 * var(--space-unit));
+    transition: color 0.2s ease;
+    padding: 0; /* Quitar padding predeterminado */
 }
 
 .edit-btn {
-    color: #3498db;
+    color: var(--color-brand-primary);
 }
 
 .edit-btn:hover {
-    color: #2980b9;
+    color: var(--color-brand-hover);
 }
 
 .delete-btn {
-    color: #e74c3c;
+    color: var(--color-brand-alert);
 }
 
 .delete-btn:hover {
@@ -172,7 +228,7 @@
 .loading-message,
 .no-data-message {
     text-align: center;
-    padding: 20px;
+    padding: calc(3 * var(--space-unit));
     font-style: italic;
-    color: #7f8c8d;
+    color: var(--color-text-muted);
 }

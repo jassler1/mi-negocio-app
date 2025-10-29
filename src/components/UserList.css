@@ -1,153 +1,313 @@
-/* Contenedor principal de la lista de usuarios */
-.user-list-container {
-    padding: 30px;
-    background-color: #f9fbfd;
-    border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    max-width: 900px;
-    margin: 40px auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #444;
+/* ================================================================= */
+/* 1. VARIABLES CSS (TOKENS DE DISEÑO) - BASE UNIFICADA */
+/* ================================================================= */
+:root {
+  /* Colores Principales (Brand) */
+  --color-brand-primary: #0077c2;    /* Azul para botones, foco y acción */
+  --color-brand-secondary: #28a745;  /* Verde para éxito */
+  --color-brand-alert: #ff6f61;      /* Rojo/Coral para eliminar/errores */
+  --color-brand-hover: #005a92;
+
+  /* Colores Neutrales */
+  --color-text-dark: #212529;
+  --color-text-muted: #566573;
+  --color-bg-body: #f7f9fb;
+  --color-bg-card: #ffffff;
+  --color-border-light: #e8ebed;
+  --color-border-medium: #c5cdd4;
+
+  /* Tipografía y Espaciado */
+  --font-family-base: 'Roboto', sans-serif;
+  --space-unit: 8px; /* Base de 8px */
+  --radius-base: 8px;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.1);
+
+  /* Transiciones */
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.3s ease-in-out;
 }
 
-/* Título de la lista */
+/* ================================================================= */
+/* 2. RESET Y BASES */
+/* ================================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-base);
+  background-color: var(--color-bg-body);
+  color: var(--color-text-dark);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ================================================================= */
+/* 3. CONTENEDOR Y TÍTULO */
+/* ================================================================= */
+.user-list-container {
+  padding: calc(4 * var(--space-unit));
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-md);
+  max-width: 900px;
+  margin: calc(5 * var(--space-unit)) auto;
+  color: var(--color-text-dark);
+  /* Añadido para buen scroll horizontal en tablas */
+  overflow-x: auto;
+}
+
 .list-title {
-    text-align: center;
-    color: #333;
-    font-size: 2em;
-    font-weight: 600;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  text-align: center;
+  color: var(--color-text-dark);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: calc(4 * var(--space-unit));
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: calc(2 * var(--space-unit));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(1.5 * var(--space-unit));
 }
 
 .title-icon {
-    margin-right: 12px;
-    color: #3498db;
+  color: var(--color-brand-primary);
+  font-size: 1.8rem;
 }
 
-/* Mensajes de estado (éxito/error) */
+/* ================================================================= */
+/* 4. MENSAJES DE ESTADO */
+/* ================================================================= */
 .status-message {
-    text-align: center;
-    margin-bottom: 20px;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
+  text-align: center;
+  margin-bottom: calc(3 * var(--space-unit));
+  padding: calc(1.5 * var(--space-unit));
+  border-radius: var(--radius-base);
+  font-weight: 600;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-unit);
+  user-select: none;
+  /* Añadido para animación sutil de aparición */
+  opacity: 0;
+  animation: fadeIn 0.4s forwards;
 }
 
 .status-message.success {
-    background-color: #eaf8ee;
-    color: #27ae60;
+  background-color: #e6faee;
+  color: var(--color-brand-secondary);
 }
 
 .status-message.error {
-    background-color: #fdeeee;
-    color: #c0392b;
+  background-color: #ffeeeb;
+  color: var(--color-brand-alert);
 }
 
-/* Tabla de usuarios */
+/* ================================================================= */
+/* 5. TABLA Y ACCIONES */
+/* ================================================================= */
 .user-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    overflow: hidden; /* Asegura que las esquinas redondeadas se apliquen correctamente */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: calc(3 * var(--space-unit));
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-base);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  /* Añadido para suavizar bordes */
+  border: 1px solid var(--color-border-light);
 }
 
 .user-table thead tr {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #e9ecef;
+  background-color: var(--color-bg-body);
+  border-bottom: 2px solid var(--color-border-light);
 }
 
 .user-table th {
-    padding: 15px;
-    text-align: left;
-    font-weight: 600;
-    color: #555;
-    text-transform: uppercase;
-    font-size: 0.9em;
+  padding: calc(1.5 * var(--space-unit));
+  text-align: left;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-size: 0.85em;
+  white-space: nowrap; /* Evita que títulos largos hagan wrap */
 }
 
 .user-table td {
-    padding: 15px;
-    border-bottom: 1px solid #f0f2f5;
-    color: #666;
-    font-size: 0.95em;
+  padding: calc(1.5 * var(--space-unit));
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-dark);
+  font-size: 0.9em;
+  vertical-align: middle;
+  word-break: break-word;
 }
 
 .user-table tbody tr:hover {
-    background-color: #fefefe;
+  background-color: #fcfcfd;
+  transition: background-color var(--transition-fast);
 }
 
 .user-table tbody tr:last-child td {
-    border-bottom: none;
+  border-bottom: none;
 }
 
-/* Botones de acción en la tabla */
+/* --- Botones de acción en la tabla --- */
 .user-table td button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-right: 10px;
+  padding: calc(1 * var(--space-unit)) calc(1.5 * var(--space-unit));
+  border: none;
+  border-radius: 4px; /* Ligeramente más pequeño para botones de acción */
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: calc(0.5 * var(--space-unit));
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.user-table td button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .edit-btn {
-    background-color: #3498db;
-    color: white;
+  background-color: var(--color-brand-primary);
+  color: white;
 }
 
-.edit-btn:hover {
-    background-color: #2980b9;
+.edit-btn:hover:not(:disabled) {
+  background-color: var(--color-brand-hover);
+  transform: scale(1.05);
 }
 
 .delete-btn {
-    background-color: #e74c3c;
-    color: white;
+  background-color: var(--color-brand-alert);
+  color: white;
 }
 
-.delete-btn:hover {
-    background-color: #c0392b;
+.delete-btn:hover:not(:disabled) {
+  background-color: #c0392b;
+  transform: scale(1.05);
 }
 
-/* Estado de carga */
+/* ================================================================= */
+/* 6. ESTADOS DE CARGA/VACÍO */
+/* ================================================================= */
 .loading-container {
-    text-align: center;
-    font-size: 1.2em;
-    color: #7f8c8d;
-    padding: 40px;
+  text-align: center;
+  font-size: 1.1em;
+  color: var(--color-text-muted);
+  padding: calc(5 * var(--space-unit));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-unit);
+  user-select: none;
 }
 
 .spinner {
-    animation: spin 1s linear infinite;
-    font-size: 2em;
-    margin-bottom: 10px;
+  animation: spin 1s linear infinite;
+  font-size: 1.5em;
+  color: var(--color-brand-primary);
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Estado vacío */
 .empty-state {
-    text-align: center;
-    font-size: 1.2em;
-    color: #95a5a6;
-    font-style: italic;
-    padding: 40px;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  text-align: center;
+  font-size: 1.1em;
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: calc(5 * var(--space-unit));
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+}
+
+/* ================================================================= */
+/* 7. ANIMACIONES */
+/* ================================================================= */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+/* ================================================================= */
+/* 8. MEDIA QUERIES */
+/* ================================================================= */
+@media (max-width: 768px) {
+  .user-list-container {
+    padding: calc(3 * var(--space-unit));
+  }
+
+  .user-table th,
+  .user-table td {
+    padding: var(--space-unit);
+    font-size: 0.85em;
+  }
+
+  .list-title {
+    font-size: 1.5rem;
+  }
+
+  .title-icon {
+    font-size: 1.4rem;
+  }
+
+  /* Que la tabla tenga scroll horizontal */
+  .user-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .user-table thead,
+  .user-table tbody,
+  .user-table tr,
+  .user-table th,
+  .user-table td {
+    display: block;
+  }
+
+  .user-table thead tr {
+    display: none;
+  }
+
+  .user-table tr {
+    margin-bottom: calc(2 * var(--space-unit));
+    border-bottom: 2px solid var(--color-border-light);
+    padding-bottom: calc(1 * var(--space-unit));
+  }
+
+  .user-table td {
+    border: none;
+    padding-left: calc(50% + var(--space-unit));
+    position: relative;
+    text-align: left;
+  }
+
+  .user-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: var(--space-unit);
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
 }

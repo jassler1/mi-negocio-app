@@ -1,37 +1,73 @@
+/* ================================================================= */
+/* 1. VARIABLES CSS (TOKENS DE DISEÑO) - BASE UNIFICADA */
+/* ================================================================= */
+:root {
+    /* Colores Principales (Brand) */
+    --color-brand-primary: #0077c2;   /* Azul para foco/acción */
+    --color-brand-secondary: #28a745; /* Verde para éxito/submit */
+    --color-brand-alert: #ff6f61;     /* Rojo/Coral para errores/pérdidas */
+    --color-brand-hover: #005a92;
+
+    /* Colores Neutrales */
+    --color-text-dark: #212529;
+    --color-text-muted: #566573;
+    --color-bg-card: #ffffff;
+    --color-border-light: #e8ebed;
+    --color-border-medium: #c5cdd4;
+
+    /* Tipografía y Espaciado */
+    --font-family-base: 'Roboto', sans-serif;
+    --space-unit: 8px; /* Base de 8px */
+    --radius-base: 8px;
+
+    /* Sombras */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Aplicamos la fuente Roboto si no está ya en el body */
+body {
+    font-family: var(--font-family-base);
+}
+
+/* ================================================================= */
+/* 2. LAYOUT Y CONTENEDOR */
+/* ================================================================= */
+
 .form-container {
-    padding: 30px;
-    background-color: #f9fbfd;
-    border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    padding: calc(4 * var(--space-unit)); /* 32px */
+    background-color: var(--color-bg-card);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-md);
     max-width: 850px;
-    margin: 40px auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #444;
+    margin: calc(5 * var(--space-unit)) auto;
+    color: var(--color-text-dark);
 }
 
 .form-title {
     text-align: center;
-    color: #333;
-    font-size: 2em;
-    font-weight: 600;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 15px;
+    color: var(--color-text-dark);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: calc(4 * var(--space-unit));
+    border-bottom: 1px solid var(--color-border-light);
+    padding-bottom: calc(2 * var(--space-unit));
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: calc(1.5 * var(--space-unit));
 }
 
 .title-icon {
-    margin-right: 12px;
-    color: #3498db;
+    color: var(--color-brand-primary);
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    margin-bottom: 25px;
+    /* Diseño de 2 columnas consistente */
+    grid-template-columns: 1fr 1fr; 
+    gap: calc(3 * var(--space-unit)); /* 24px */
+    margin-bottom: calc(3 * var(--space-unit));
 }
 
 .form-group {
@@ -40,31 +76,34 @@
 }
 
 .form-group label {
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #555;
+    font-weight: 600;
+    margin-bottom: var(--space-unit);
+    color: var(--color-text-muted);
     font-size: 0.95em;
+    text-transform: uppercase;
 }
+
+/* --- Input y Select --- */
 
 .input-with-icon {
     display: flex;
     align-items: center;
-    border: 1px solid #c8d4e0;
-    border-radius: 10px;
-    padding: 10px 15px;
-    background-color: #fff;
-    transition: all 0.3s ease;
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-base);
+    padding: calc(1 * var(--space-unit)) calc(1.5 * var(--space-unit));
+    background-color: var(--color-bg-card);
+    transition: all 0.2s ease;
 }
 
 .input-with-icon:focus-within {
-    border-color: #3498db;
-    box-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 0 3px rgba(0, 119, 194, 0.15);
 }
 
 .input-with-icon svg {
-    margin-right: 12px;
-    color: #7f8c8d;
-    font-size: 1.2em;
+    margin-right: calc(1.5 * var(--space-unit));
+    color: var(--color-text-muted);
+    font-size: 1.1em;
 }
 
 .input-with-icon input,
@@ -74,109 +113,138 @@
     flex-grow: 1;
     font-size: 1em;
     background: transparent;
-    color: #333;
-}
-
-.input-with-icon select {
-    cursor: pointer;
+    color: var(--color-text-dark);
 }
 
 .input-with-icon input::placeholder {
-    color: #b0b0b0;
+    color: var(--color-border-medium);
     font-style: italic;
 }
 
 .read-only {
-    background-color: #f0f4f7 !important;
+    background-color: var(--color-bg-body) !important; /* Fondo gris claro para solo lectura */
     cursor: not-allowed;
+    box-shadow: none;
 }
 
-.ganancia-mensaje {
-    text-align: center;
-    font-weight: bold;
-    margin: 15px 0;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 1.1em;
-}
-
-.loss {
-    color: #c0392b;
-    background-color: #fdeeee;
-    border: 1px solid #e74c3c;
-}
-
-.profit {
-    color: #27ae60;
-    background-color: #eaf8ee;
-    border: 1px solid #2ecc71;
-}
+/* ------------------------------------ */
+/* 3. CHECKBOX Y MENSAJES DE GANANCIA */
+/* ------------------------------------ */
 
 .checkbox-group {
     grid-column: span 2;
-    margin-bottom: 25px;
+    margin-bottom: calc(3 * var(--space-unit));
+    padding-top: calc(1 * var(--space-unit));
 }
 
 .checkbox-label {
     display: flex;
     align-items: center;
-    font-weight: normal;
+    font-weight: 500;
     cursor: pointer;
-    color: #555;
+    color: var(--color-text-dark);
 }
 
 .checkbox-label input[type="checkbox"] {
-    margin-right: 12px;
-    width: 20px;
-    height: 20px;
+    margin-right: var(--space-unit);
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--color-border-medium);
+    border-radius: 4px;
+    cursor: pointer;
 }
+
+.ganancia-mensaje {
+    text-align: center;
+    font-weight: 700;
+    margin: calc(2 * var(--space-unit)) 0;
+    padding: calc(1.5 * var(--space-unit));
+    border-radius: var(--radius-base);
+    font-size: 1.1em;
+    box-shadow: var(--shadow-sm);
+}
+
+.loss {
+    color: var(--color-brand-alert);
+    background-color: #ffeeeb;
+    border: 1px solid var(--color-brand-alert);
+}
+
+.profit {
+    color: var(--color-brand-secondary);
+    background-color: #e6faee;
+    border: 1px solid var(--color-brand-secondary);
+}
+
+/* ------------------------------------ */
+/* 4. ACCIONES FINALES */
+/* ------------------------------------ */
 
 .form-actions {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    margin-top: 30px;
+    gap: calc(3 * var(--space-unit));
+    margin-top: calc(4 * var(--space-unit));
 }
 
 .submit-btn,
 .cancel-btn {
-    padding: 14px 30px;
+    padding: calc(1.5 * var(--space-unit)) calc(3.5 * var(--space-unit));
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-base);
     font-size: 1.05em;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-unit);
+    text-transform: uppercase;
+    box-shadow: var(--shadow-sm);
 }
 
 .submit-btn {
-    background-color: #2ecc71;
+    background-color: var(--color-brand-secondary);
     color: white;
 }
 
 .submit-btn:hover {
-    background-color: #27ad60;
+    background-color: #1e8338;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
 }
 
 .cancel-btn {
-    background-color: #95a5a6;
-    color: white;
+    background-color: var(--color-border-medium);
+    color: var(--color-text-muted);
 }
 
 .cancel-btn:hover {
-    background-color: #7f8c8d;
+    background-color: #a7b6c7;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(149, 165, 166, 0.3);
+    box-shadow: 0 4px 10px rgba(197, 205, 212, 0.3);
 }
 
 .status-message {
-    margin-top: 20px;
+    margin-top: calc(3 * var(--space-unit));
     text-align: center;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 1.1em;
+    color: var(--color-text-dark);
+}
+
+/* --- Media Queries --- */
+@media (max-width: 600px) {
+    .form-grid {
+        /* Pasa a columna única en móvil */
+        grid-template-columns: 1fr;
+        gap: calc(2 * var(--space-unit));
+    }
+    .checkbox-group {
+        grid-column: span 1;
+    }
+    .form-actions {
+        flex-direction: column;
+        gap: var(--space-unit);
+    }
 }

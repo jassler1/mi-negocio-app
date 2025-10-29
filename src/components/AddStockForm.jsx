@@ -46,7 +46,6 @@ function AddStockForm({ onAddComplete, onCancel }) {
     }
 
     try {
-      // Búsqueda por nombre (ya que el código se genera a partir del nombre)
       const q = query(collection(db, 'inventario'), where('nombre', '==', searchTerm));
       const querySnapshot = await getDocs(q);
 
