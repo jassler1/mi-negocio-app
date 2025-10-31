@@ -1,0 +1,27 @@
+Configuración del entorno de build
+
+[build]
+
+Carpeta que contiene los archivos finales para desplegar (resultado de 'npm run build')
+
+publish = "dist"
+
+Comando que Netlify debe ejecutar para generar la carpeta 'dist'
+
+command = "npm run build"
+
+Configuración de Redirecciones (Soluciona el error de MIME type y el ruteo)
+
+[[redirects]]
+
+Esto intercepta TODAS las rutas que no son archivos existentes
+
+from = "/*"
+
+Y las reenvía a index.html (esto es clave para el ruteo de React Router)
+
+to = "/index.html"
+
+Código de estado 200 (muestra el contenido de la página, no una redirección real 302/301)
+
+status = 200
