@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "negocio-app-2025"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }
