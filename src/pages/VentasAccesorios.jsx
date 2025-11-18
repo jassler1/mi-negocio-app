@@ -16,25 +16,24 @@ const canchasData = [
 
 const nombreUsuario = "Jassler";
 const ventasCollectionRef = collection(db, 'ventas');
-const productosCollectionRef = collection(db, 'productos');
+const productosCollectionRef = collection(db, 'inventario'); // ✅ Usar 'inventario'
 const reportesTotalesCollectionRef = collection(db, 'reportesTotales'); 
 
 // 🔑 CAMBIO CLAVE: Aceptar los estados y setters del componente padre para persistencia
 function VentaAccesorios({ canchas, setCanchas, openVentas, setOpenVentas }) {
 
-  // 1. Inicialización de Canchas (Se ejecuta solo la primera vez que canchas está vacío)
-  useEffect(() => {
-    if (canchas.length === 0) {
-      const initialCanchas = canchasData.map(c => ({
-        ...c,
-        productosEnVenta: [],
-        clienteSeleccionado: null,
-        tipo: 'cancha'
-      }));
-      // Solo inicializar si el array está realmente vacío
-      setCanchas(initialCanchas); 
-    }
-  }, [canchas.length, setCanchas]);
+  // 1. Inicialización de Canchas (Se ejecuta solo la primera vez que canchas está vacío)
+  useEffect(() => {
+    if (canchas.length === 0) {
+      const initialCanchas = canchasData.map(c => ({
+        ...c,
+        productosEnVenta: [],
+        clienteSeleccionado: null,
+        tipo: 'cancha'
+      }));
+      setCanchas(initialCanchas); 
+    }
+  }, [canchas.length, setCanchas]);
 
 
   // Estados locales
@@ -151,9 +150,22 @@ function VentaAccesorios({ canchas, setCanchas, openVentas, setOpenVentas }) {
     setIsProductModalOpen(true);
   };
 
-  const handleSelectProduct = useCallback((newProd) => {
-    if (!selectedItem) return;
-    const updateIn = (items, setter) => {
+  const handleSelectProduct = useCallback((productFromModal) => {
+    if (!selectedItem) return;
+
+    // 1. Obtener los datos completos del producto del inventario para extraer el costo
+    const productData = products.find(p => p.id === productFromModal.id);
+
+    // 2. Crear el objeto de producto de la venta con el campo costoCompra copiado
+    const newProd = {
+        ...productFromModal,
+        // ⬅️ CORRECCIÓN CLAVE: Copiamos el costoCompra del inventario al objeto de venta
+        costoCompra: Number(productData?.costoCompra) || 0,
+        // Usar costoVenta del inventario como precio, si está disponible
+        precio: Number(productData?.costoVenta) || productFromModal.precio || 0,
+    };
+
+    const updateIn = (items, setter) => {
       setter(items.map(item => {
         if (item.id === selectedItemId) {
           const existing = (item.productosEnVenta || []).find(p => p.id === newProd.id);
@@ -182,7 +194,7 @@ function VentaAccesorios({ canchas, setCanchas, openVentas, setOpenVentas }) {
       updateIn(openVentas, setOpenVentas);
     }
     setIsProductModalOpen(false);
-  }, [selectedItemId, isCanchaSelected, canchas, openVentas, setCanchas, setOpenVentas]);
+  }, [selectedItemId, isCanchaSelected, canchas, openVentas, setCanchas, setOpenVentas, products]); // ✅ products agregado como dependencia
 
   const updateProductQuantity = useCallback((prodId, delta) => {
     if (!selectedItem) return;
@@ -216,13 +228,11 @@ function VentaAccesorios({ canchas, setCanchas, openVentas, setOpenVentas }) {
     setIsPaymentModalOpen(true);
   };
 
-  // Procesar pago (con corrección de método de pago)
+  // Procesar pago (con corrección para guardar costoCompra)
   const handleProcessPayment = useCallback(async (paymentData) => {
     if (!selectedItem) return;
     const ventaTotal = (selectedItem.productosEnVenta || []).reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
-
-    // ✅ CORRECCIÓN: Asegurar que metodoPago tenga un valor
-    const metodoPagoFinal = paymentData.method || 'Desconocido';
+    const metodoPagoFinal = paymentData.method || 'Desconocido';
 
     const nuevaVenta = {
       tipoVenta: 'Accesorio', 
@@ -231,12 +241,13 @@ function VentaAccesorios({ canchas, setCanchas, openVentas, setOpenVentas }) {
         id: p.id,
         nombre: p.nombre,
         cantidad: p.cantidad,
-        precio: p.precio
+        precio: p.precio,
+         costoCompra: p.costoCompra, // ⬅️ CORRECCIÓN CLAVE: Guardamos el costo en Firestore
       })),
       clienteId: selectedItem.clienteSeleccionado?.id || null,
       clienteNombre: selectedItem.clienteSeleccionado?.nombreCompleto || 'Anónimo',
       total: ventaTotal,
-      metodoPago: metodoPagoFinal, // Usar el valor asegurado
+      metodoPago: metodoPagoFinal, 
       fecha: new Date().toISOString().slice(0,10),
       fechaHora: serverTimestamp(), 
       usuario: nombreUsuario
@@ -412,10 +423,10 @@ function VentaAccesorios({ canchas, setCanchas, openVentas, setOpenVentas }) {
         <div className="open-orders-list-cards">
           {allOpenVentas.length > 0 ? allOpenVentas.map(item => (
             <div 
-                key={`venta-${item.tipo}-${item.id}`} 
-                className={`order-card ${selectedItemId === item.id ? 'active-card' : ''}`}
-                onClick={() => handleSelectItem(item.id, item.tipo === 'cancha')} // Añadir onClick a la tarjeta
-            >
+                key={`venta-${item.tipo}-${item.id}`} 
+                className={`order-card ${selectedItemId === item.id ? 'active-card' : ''}`}
+                onClick={() => handleSelectItem(item.id, item.tipo === 'cancha')} // Añadir onClick a la tarjeta
+            >
               <div className="card-header"><h4>{item.nombre}</h4></div>
               <div className="card-body">
                 {item.clienteSeleccionado && <p>Cliente: {item.clienteSeleccionado.nombreCompleto}</p>}
@@ -424,7 +435,6 @@ function VentaAccesorios({ canchas, setCanchas, openVentas, setOpenVentas }) {
                 <div className="total-card"><strong>Total: Bs. {item.productosEnVenta.reduce((s, p) => s + (p.precio * p.cantidad), 0).toFixed(2)}</strong></div>
               </div>
               <div className="card-actions">
-                {/* Ahora el botón de Editar/Seleccionar es redundante pero lo mantengo por si quieres la acción */}
                 <button className="btn-edit" onClick={(e) => { e.stopPropagation(); handleSelectItem(item.id, item.tipo === 'cancha'); }}>Editar</button>
                 <button className="btn-pay" onClick={(e) => { e.stopPropagation(); openPaymentModal(); }}>Pagar</button>
               </div>
