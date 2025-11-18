@@ -14,7 +14,6 @@ import Egresos from './pages/Egresos.jsx';
 import Home from './pages/Home.jsx';
 import Ingresos from './pages/Ingresos.jsx';
 import VentasAccesorios from './pages/VentasAccesorios.jsx'; // Usando el nombre de importación del usuario
-import ReporteEgresos from './pages/ReporteEgresos.jsx';
 import ReporteTotales from './pages/ReporteTotales.jsx';
 
 import './App.css';
@@ -46,7 +45,6 @@ const appRoutes = [
   { path: '/historial', name: 'Historial', element: <HistorialAuditoria />, roles: [ROLES.ADMIN] },
   { path: '/ingresos', name: 'Ingresos', element: <Ingresos />, roles: [ROLES.CAJERO, ROLES.ADMIN] },
   { path: '/inventario', name: 'Inventario', element: <InventoryManagement />, roles: [ROLES.CAJERO, ROLES.ADMIN] },
-  { path: '/reporte-egresos', name: 'Reporte Egresos', element: <ReporteEgresos />, roles: [ROLES.ADMIN] },
   { path: '/reporte-totales', name: 'Reporte Totales', element: <ReporteTotales />, roles: [ROLES.ADMIN] },
   { path: '/gestion-usuarios', name: 'Gestión de Usuarios', element: <UserManagement />, roles: [ROLES.ADMIN] },
 ];
