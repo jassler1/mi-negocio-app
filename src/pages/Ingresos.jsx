@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import IngresosPaymentModal from '../assets/components/IngresosPaymentModal';
 import ClientSelectionModal from '../assets/components/ClientSelectionModal'; 
 import { db } from '../firebaseConfig';
-// IMPORTANTE: Asegúrate que serverTimestamp esté importado desde 'firebase/firestore'
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore'; 
 import { registrarEventoAuditoria } from '../utils/auditoria'; 
 import './Ingresos.css';
 import { FaMoneyBillWave, FaCoins, FaCheckCircle, FaExclamationCircle, FaUserPlus } from 'react-icons/fa';
-import { format } from 'date-fns'; // Necesario para formatear el Timestamp en la lista
+import { format } from 'date-fns';
 
 // =======================================================================
 // === FUNCIÓN PARA MOSTRAR FECHA Y HORA EXACTA
@@ -25,12 +24,12 @@ const formatTimestampCompleto = (dateValue) => {
 };
 // =======================================================================
 
-
 function Ingresos() {
   const [ingresosRegistrados, setIngresosRegistrados] = useState([]);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [alquilerMonto, setAlquilerMonto] = useState('');
+  const [descripcion, setDescripcion] = useState('');
   const [loading, setLoading] = useState(true);
 
   const [selectedClient, setSelectedClient] = useState(null);
@@ -43,9 +42,8 @@ function Ingresos() {
   const nombreUsuario = localStorage.getItem('usuarioNombre') || 'Desconocido';
   const rolUsuario = localStorage.getItem('usuarioRol') || 'Sin rol';
 
-  // Cargar ingresos desde Firestore, ordenando por el campo con hora
+  // Cargar ingresos desde Firestore
   useEffect(() => {
-    // Usamos 'fechaHora' para ordenar los ingresos más recientes con hora exacta
     const q = query(ingresosCollectionRef, orderBy('fechaHora', 'desc')); 
     const unsubscribe = onSnapshot(
       q,
@@ -90,6 +88,10 @@ function Ingresos() {
     setIsMontoValid(value && parseFloat(value) > 0);
   };
 
+  const handleDescripcionChange = (e) => {
+    setDescripcion(e.target.value);
+  };
+
   const handleCategoriaChange = (e) => {
     const categoriaNombre = e.target.value;
     const categoriaObj = categoriasAlquiler.find((cat) => cat.nombre === categoriaNombre);
@@ -119,51 +121,48 @@ function Ingresos() {
       return;
     }
 
-    setIsPaymentModalOpen(true); // Abre el modal de pago
+    setIsPaymentModalOpen(true); 
   };
 
   const handleClosePaymentModal = () => {
-    setIsPaymentModalOpen(false); // Cierra el modal de pago
+    setIsPaymentModalOpen(false);
   };
 
-  // --- PROCESAR PAGO (CORREGIDO) ---
   const handleProcessPayment = async (paymentData) => {
     const concepto = selectedCategoria.nombre.includes('Cancha')
       ? `${selectedCategoria.nombre} - ${selectedCancha?.nombre || 'General'}`
       : selectedCategoria.nombre;
     
-    // ✅ CORRECCIÓN CLAVE: Asegurar que metodoPago nunca sea undefined
     const metodoPagoFinal = paymentData.paymentMethod || 'Desconocido'; 
 
     const nuevoIngreso = {
       concepto,
       monto: parseFloat(alquilerMonto),
       categoria: selectedCategoria.nombre,
-      // ✅ Guardamos el Timestamp del servidor para la hora exacta
       fechaHora: serverTimestamp(),
-      // Guardamos la fecha simple como respaldo (útil para consultas rápidas o antiguas)
-      fecha: new Date().toISOString().slice(0, 10), 
-      metodoPago: metodoPagoFinal, // <-- Usamos el valor asegurado
+      fecha: new Date().toISOString().slice(0, 10),
+      metodoPago: metodoPagoFinal,
       usuario: nombreUsuario,
       clienteId: selectedClient ? selectedClient.id : null,
       clienteNombre: selectedClient ? selectedClient.nombreCompleto : 'Anónimo',
+      descripcion: descripcion || '',
     };
 
     try {
       await addDoc(ingresosCollectionRef, nuevoIngreso);
 
-      // Registrar evento de auditoría
       await registrarEventoAuditoria({
         usuario: nombreUsuario,
         rol: rolUsuario,
         tipo: 'Registro de ingreso',
-        detalles: `Ingreso de Bs. ${alquilerMonto} - Concepto: "${concepto}" - Cliente: ${nuevoIngreso.clienteNombre}`
+        detalles: `Ingreso de Bs. ${alquilerMonto} - Concepto: "${concepto}" - Cliente: ${nuevoIngreso.clienteNombre} - Descripción: ${descripcion || 'N/A'}`
       });
 
       // Limpiar estados
       setSelectedCancha(null);
       setSelectedCategoria(null);
       setAlquilerMonto('');
+      setDescripcion('');
       setSelectedClient(null);
       setIsMontoValid(false);
       handleClosePaymentModal(); 
@@ -230,7 +229,6 @@ function Ingresos() {
               </div>
             )}
 
-            {/* Cliente */}
             <div className="client-selection-area">
               <button onClick={handleOpenClientModal} className="add-client-btn">
                 <FaUserPlus /> {selectedClient ? 'Cambiar Cliente' : 'Agregar Cliente'}
@@ -243,7 +241,7 @@ function Ingresos() {
             </div>
           </div>
 
-          {/* Monto y pago */}
+          {/* Monto y descripción */}
           <div className="input-group payment-group">
             <label>Monto (Bs.):</label>
             <input
@@ -256,15 +254,26 @@ function Ingresos() {
             {!isMontoValid && alquilerMonto !== '' && (
               <p className="error-message">Monto no válido.</p>
             )}
-
-            <button
-              onClick={handleOpenPaymentModal}
-              className="pay-btn"
-              disabled={isPayButtonDisabled}
-            >
-              <FaCoins className="btn-icon" /> Registrar Pago
-            </button>
           </div>
+
+          <div className="input-group">
+            <label htmlFor="descripcion">Descripción (opcional):</label>
+            <textarea
+              id="descripcion"
+              value={descripcion}
+              onChange={handleDescripcionChange}
+              placeholder="Escribe una descripción del ingreso..."
+              rows={3}
+            />
+          </div>
+
+          <button
+            onClick={handleOpenPaymentModal}
+            className="pay-btn"
+            disabled={isPayButtonDisabled}
+          >
+            <FaCoins className="btn-icon" /> Registrar Pago
+          </button>
         </div>
       </div>
 
@@ -295,7 +304,6 @@ function Ingresos() {
               {ingresosRegistrados.map((ingreso) => (
                 <li key={ingreso.id} className="ingreso-item">
                   <span className="ingreso-date">
-                    {/* Mostramos fechaHora si existe, sino la fecha simple (registros antiguos) */}
                     {formatTimestampCompleto(ingreso.fechaHora || ingreso.fecha)}
                   </span>
                   <strong className="ingreso-concepto">{ingreso.concepto}</strong>
@@ -304,7 +312,8 @@ function Ingresos() {
                     <span className="metodo-pago-tag">({ingreso.metodoPago})</span>
                   </span>
                   <span className="ingreso-details">
-                    (Cat: {ingreso.categoria} / Cliente: {ingreso.clienteNombre || 'Anónimo'})
+                    (Cat: {ingreso.categoria} / Cliente: {ingreso.clienteNombre || 'Anónimo'}
+                    {ingreso.descripcion && ` / Descripción: ${ingreso.descripcion}`})
                   </span>
                 </li>
               ))}

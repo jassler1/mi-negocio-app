@@ -1,198 +1,137 @@
-/* ====================================================================
-   1. TOKENS DE DISEÑO (Refuerzo de Colores)
-==================================================================== */
-:root {
-    --color-primary-dark: #1b4f89;      /* Azul principal (Headers, Balance) */
-    --color-primary-light: #2f8e2f;     /* Verde principal (Botones, Ingresos) */
-    --color-secondary-dark: #267226;    /* Verde Hover */
-    --color-alert: #e04444;             /* Rojo (Egresos) */
-    --color-bg-light: #f7f9fb;          /* Fondo suave */
-    --color-bg-card: #ffffff;
-    --color-text: #333;
-    --color-border: #ccc;
-    --shadow-interactive: 0px 8px 15px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada al interactuar */
-}
-
-/* ============================================
-    CONTENEDOR PRINCIPAL
-============================================ */
+/* =======================================================================
+   === ESTILOS GENERALES Y CONTENEDOR
+   ======================================================================= */
 .ReporteTotales-container {
-    padding: 25px; /* Aumento ligero */
-    background: var(--color-bg-light);
-    border-radius: 12px; /* Más suave */
-    margin: 20px auto;
-    max-width: 1200px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05); /* Sombra más sutil */
-    transition: all 0.3s ease;
+    padding: 30px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa; /* Fondo gris muy claro */
+    min-height: 100vh;
 }
 
 .ReporteTotales-container h2 {
-    text-align: center;
+    color: #343a40; /* Título oscuro */
+    border-bottom: 3px solid #007bff; /* Línea de acento azul */
+    padding-bottom: 10px;
     margin-bottom: 25px;
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--color-text);
+    font-weight: 600;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-/* ============================================
-    FILTROS (INTERACTIVO)
-============================================ */
+/* =======================================================================
+   === FILTROS
+   ======================================================================= */
 .filtros-container {
     display: flex;
-    gap: 15px;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    gap: 15px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     margin-bottom: 30px;
-    padding: 15px; /* Añadir padding para darle espacio */
-    background: var(--color-bg-card);
-    border-radius: 10px;
-    box-shadow: var(--shadow-interactive); /* Sombra inicial sutil */
-    transition: box-shadow 0.3s ease;
+    align-items: flex-end; /* Asegura que los items se alineen al final */
 }
 
 .filtros-container label {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    width: 180px;
-    font-size: 14px;
-    color: var(--color-text);
-    font-weight: 700; /* Más fuerte */
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+    flex-grow: 1; /* Permite que crezcan */
+    min-width: 150px; /* Ancho mínimo para legibilidad */
+}
+
+.filtros-container label svg {
+    margin-right: 5px;
+    color: #007bff; /* Iconos azules */
 }
 
 .filtros-container select,
 .filtros-container input[type="date"] {
-    width: 100%;
-    padding: 9px 12px; /* Más padding vertical */
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    box-sizing: border-box;
-    color: var(--color-text); /* Asegura el color del texto */
-    background: white;
-    font-size: 14px;
-    transition: border-color 0.2s, box-shadow 0.2s; /* Transición para el foco */
+    padding: 10px 12px;
+    margin-top: 5px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-size: 1rem;
+    color: #495057;
 }
 
 .filtros-container select:focus,
 .filtros-container input[type="date"]:focus {
-    border-color: var(--color-primary-dark);
-    box-shadow: 0 0 0 3px rgba(27, 79, 137, 0.2); /* Sombra de foco azul */
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     outline: none;
 }
 
 .filtros-container button {
-    width: 180px;
-    padding: 12px; /* Más padding para que se vea mejor */
-    background-color: var(--color-primary-light);
-    color: white;
+    padding: 10px 15px;
     border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: 700;
+    border-radius: 4px;
     cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 6px;
-    transition: background-color 0.2s, transform 0.1s; /* Transiciones rápidas */
-    align-self: flex-end; /* Alinea el botón con el input */
+    gap: 5px;
+    height: 40px; /* Igualar altura de inputs/selects */
+    align-self: flex-end; /* Alinear al final de la fila */
 }
 
 .filtros-container button:hover {
-    background-color: var(--color-secondary-dark);
-    transform: translateY(-2px); /* Deslizamiento al pasar el ratón */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* ============================================
-    TABLA DE DATOS (INTERACTIVO)
-============================================ */
-.table-report {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--color-bg-card);
-    border-radius: 12px; /* Más suave */
-    overflow: hidden;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05); /* Sombra suave */
-}
-
-.table-report th {
-    background-color: var(--color-primary-dark);
+.clear-btn {
+    background-color: #6c757d; /* Gris para limpiar */
     color: white;
-    padding: 15px 12px; /* Más padding */
-    font-size: 15px;
-    text-align: left;
-    font-weight: 700;
 }
 
-.table-report td {
-    padding: 12px; /* Más padding */
-    border-bottom: 1px solid #e5e5e5;
-    font-size: 14px;
-    color: var(--color-text);
+.clear-btn:hover {
+    background-color: #5a6268;
 }
 
-.table-report tr:nth-child(even) {
-    background-color: #fcfcfc; /* Alternancia muy sutil */
+.export-btn {
+    background-color: #28a745; /* Verde para exportar */
+    color: white;
 }
 
-.table-report tr {
-    transition: background-color 0.2s; /* Transición en la fila */
+.export-btn:hover {
+    background-color: #218838;
 }
 
-.table-report tr:hover {
-    background-color: #e6f2ff; /* Fondo azul muy claro al pasar el ratón */
-    transform: scale(1.005); /* Micro-interacción */
-    box-shadow: 0 2px 5px rgba(27, 79, 137, 0.1);
+/* =======================================================================
+   === ESTILOS DE ESTADO (CARGA/ERROR)
+   ======================================================================= */
+.loading, .error-message {
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: center;
 }
 
-/* -------------------------------------------------- */
-/* COLORES CONDICIONALES (El color se aplica solo al texto) */
-/* -------------------------------------------------- */
-
-/* Color del MONTO y del Tipo */
-.monto-ingreso {
-    color: var(--color-primary-light) !important;
-    font-weight: 700;
-}
-.monto-egreso {
-    color: var(--color-alert) !important;
-    font-weight: 700;
-}
-.tipo-ingreso {
-    color: var(--color-primary-light);
-    font-weight: 600;
-}
-.tipo-egreso {
-    color: var(--color-alert);
-    font-weight: 600;
-}
-
-/* Necesitas modificar el JSX para aplicar las clases:
-   <td className={t.monto > 0 ? 'tipo-ingreso' : 'tipo-egreso'}>{t.tipo}</td>
-   <td>
-     <span className={t.monto > 0 ? 'monto-ingreso' : 'monto-egreso'}>
-       Bs. {t.monto.toFixed(2)}
-     </span>
-   </td>
-*/
-
-/* ============================================
-    LOADING
-============================================ */
 .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px; /* Más espacio */
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--color-primary-dark);
-    gap: 10px;
+    background-color: #e9ecef;
+    color: #495057;
 }
 
-.spin {
+.loading .spin {
     animation: spin 1s linear infinite;
-    color: var(--color-primary-dark);
+    margin-right: 10px;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }
 
 @keyframes spin {
@@ -200,95 +139,219 @@
     100% { transform: rotate(360deg); }
 }
 
-/* ============================================
-    RESUMEN DE TOTALES (INTERACTIVO)
-============================================ */
+/* =======================================================================
+   === TABLA DE TRANSACCIONES
+   ======================================================================= */
+.table-responsive-wrapper {
+    overflow-x: auto;
+    margin-bottom: 30px;
+}
+
+.table-report {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 900px; /* Asegurar que se vea bien en pantallas grandes */
+}
+
+.table-report thead th {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    position: sticky;
+    top: 0;
+}
+
+.table-report tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 0.95rem;
+    vertical-align: top; /* Mejor alineación para el detalle */
+}
+
+.table-report tbody tr:hover {
+    background-color: #f1f7fe; /* Color suave al pasar el ratón */
+    transition: background-color 0.2s;
+}
+
+.table-report tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Estilos de celda de Detalle (HTML) */
+.detalle-cell {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.detalle-cell div {
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+.detalle-cell strong {
+    font-weight: 600;
+}
+
+.detalle-cell ul {
+    margin: 5px 0 0 15px;
+    padding: 0;
+    list-style-type: disc;
+    font-size: 0.9rem;
+}
+
+.detalle-ingreso, .detalle-venta, .detalle-comanda, .detalle-egreso {
+    padding: 5px;
+    border-left: 3px solid;
+    background-color: #f7f7f7;
+    border-radius: 3px;
+}
+
+.detalle-ingreso { border-left-color: #28a745; }
+.detalle-venta { border-left-color: #ffc107; }
+.detalle-comanda { border-left-color: #17a2b8; }
+.detalle-egreso { border-left-color: #dc3545; }
+
+/* Estilos para el texto de Monto y Ganancia */
+.table-report tbody td span[style*="green"] {
+    font-weight: 600;
+}
+.table-report tbody td span[style*="red"] {
+    font-weight: 600;
+}
+
+/* =======================================================================
+   === RESUMEN DE TOTALES (GRID)
+   ======================================================================= */
 .totals-summary {
     margin-top: 30px;
-    background: var(--color-bg-card);
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-}
-
-.totals-summary:hover {
-    transform: translateY(-3px); /* Deslizamiento al pasar el ratón */
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
-}
-
-.totals-summary p {
-    font-size: 16px;
-    margin: 10px 0;
-    color: var(--color-text);
-    display: flex;
-    gap: 10px; /* Más separación */
-    align-items: center;
-    padding-left: 10px; /* Espacio visual */
-    border-left: 4px solid #eee; /* Borde izquierdo sutil */
-}
-
-/* Balance Neto Destacado */
-.totals-summary p:last-child {
-    background-color: var(--color-primary-dark);
-    color: white;
-    padding: 15px 20px;
+    padding: 20px;
+    background-color: #e9f5ff; /* Fondo ligeramente azul */
     border-radius: 8px;
-    margin-top: 20px;
-    font-size: 1.1em;
-    justify-content: space-between;
-    border-left: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.totals-summary strong {
-    font-size: 18px;
-    color: var(--color-primary-dark);
+.totals-summary h3 {
+    color: #343a40;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-bottom: 1px solid #a8c8e6;
+    padding-bottom: 10px;
 }
 
-/* Color para los strong en el balance neto */
-.totals-summary p:last-child strong {
-    color: white;
-    font-size: 20px;
+.totals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
 }
 
-/* ============================================
-    RESPONSIVE
-============================================ */
-@media (max-width: 800px) {
+.total-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-left: 5px solid #007bff; /* Borde de acento predeterminado */
+}
+
+.total-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.total-card .icon {
+    font-size: 2.5rem;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.total-card span {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.total-card strong {
+    font-size: 1.5rem;
+    color: #343a40;
+    font-weight: 700;
+}
+
+/* Estilos para cartas destacadas */
+.total-card.highlight-green {
+    border-left-color: #28a745;
+}
+.total-card.highlight-green .icon {
+    color: #28a745;
+}
+
+.total-card.highlight-red {
+    border-left-color: #dc3545;
+}
+.total-card.highlight-red .icon {
+    color: #dc3545;
+}
+
+.total-card.highlight-blue {
+    border-left-color: #17a2b8;
+}
+.total-card.highlight-blue .icon {
+    color: #17a2b8;
+}
+
+.total-card.highlight-orange {
+    border-left-color: #fd7e14;
+}
+.total-card.highlight-orange .icon {
+    color: #fd7e14;
+}
+
+
+/* =======================================================================
+   === RESPONSIVE (Ajustes para móviles)
+   ======================================================================= */
+@media (max-width: 768px) {
     .ReporteTotales-container {
         padding: 15px;
     }
 
-    /* Añade desplazamiento horizontal si la tabla es demasiado ancha */
-    .table-report {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-        min-width: 600px;
-    }
-
-    .table-report th,
-    .table-report td {
-        font-size: 12px;
-        padding: 8px;
-    }
-}
-
-@media (max-width: 600px) {
     .filtros-container {
-        justify-content: center;
-        flex-direction: column; /* Apila los filtros */
+        flex-direction: column;
         align-items: stretch;
+        gap: 10px;
     }
 
     .filtros-container label,
     .filtros-container button {
         width: 100%;
-        max-width: 100%;
-        align-self: auto;
+        margin-top: 5px; /* Separación extra para botones en móvil */
+        height: auto;
+    }
+    
+    .filtros-container button {
+        padding: 12px 15px;
+        justify-content: center;
     }
 
     .ReporteTotales-container h2 {
-        font-size: 22px;
+        font-size: 1.5rem;
+    }
+
+    .totals-grid {
+        grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
     }
 }

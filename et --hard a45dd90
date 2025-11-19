@@ -1,0 +1,26 @@
+[33m6cc2a31[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge branch 'main' of https://github.com/jassler1/mi-negocio-app
+[33mc9c9d95[m feat(ventas): Corregir la obtención y el guardado de costoCompra en Comandas y VentaAccesorios desde Inventario.
+[33ma45dd90[m feat: Refactorización a estilo minimalista e interactivo para UserList y Modales
+[33maf52165[m limpio
+[33m78a8aa4[m fix: Corregido netlify.toml para cumplir con el formato TOML (# en comentarios).
+[33m0d4de48[m feat: Implementación final de ReporteTotales con filtros interactivos y colores condicionales.
+[33m5be6fb9[m Implementacion final de netlify.toml y limpieza de archivos de redireccion antiguos
+[33md145320[m Implementacion de plugin de copiado en vite.config.js para Netlify
+[33m44ac784[m Agregado archivo _redirects para Netlify routing
+[33m0ea3aa0[m Compilacion funcionando y listo para deploy
+[33m2580c37[m feat: Implementación completa de la gestión de usuarios con roles y refactorización de componentes
+[33m2c930c4[m Merge branch 'main' con actualizaciones remotas
+[33m06d5a0b[m Actualiza workflow para deploy con vite
+[33m5ec1f4c[m Update firebase-hosting-merge.yml
+[33md7e9184[m Update firebase-hosting-merge.yml
+[33m748c0b2[m Update firebase-hosting-merge.yml
+[33ma5b1f7b[m Resuelto conflicto en firebase-hosting-merge.yml
+[33m084d3e4[m Cambios en workflow antes del pull
+[33m7954668[m Fix: añadir setup-node al workflow de preview
+[33m71d954c[m Update firebase-hosting-merge.yml
+[33m767f269[m Update firebase-hosting-merge.yml
+[33m4adcd85[m Update firebase-hosting-merge.yml
+[33ma4e3394[m feat: configura el despliegue automático de Firebase
+[33m1a6898a[m fix: corrige el directorio de despliegue en firebase.json
+[33mef6c6fb[m feat: actualiza firebase.json para hosting
+[33m5de5303[m feat: initial commit with Firebase setup
