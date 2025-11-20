@@ -1,427 +1,272 @@
-/*
- * --------------------------------
- * 1. VARIABLES Y ESTILOS BASE
- * --------------------------------
- */
+/* =========================================================
+   Ingresos.css - Estilo minimalista e interactivo
+   ========================================================= */
 
-:root {
-  --color-primary: #009688; /* Teal/Verde azulado para acciones */
-  --color-success: #4caf50; /* Verde para montos positivos */
-  --color-warning: #ffc107; /* Amarillo para cliente/advertencias */
-  --color-danger: #f44336; /* Rojo para errores */
-  --color-background: #f4f7f6; /* Fondo general claro */
-  --color-card-bg: #ffffff; /* Fondo de tarjetas */
-  --color-text: #37474f; /* Texto oscuro */
-  --color-border: #e0e0e0;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+  color: #333;
 }
 
+/* --- Contenedor Principal --- */
 .ingresos-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: var(--color-background);
-  font-family: 'Roboto', sans-serif;
-  color: var(--color-text);
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
+/* --- Títulos --- */
 .main-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  text-align: center;
-  margin-bottom: 30px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
 }
 
 .title-icon {
-  margin-right: 15px;
-  font-size: 2.5rem;
-}
-
-.divider {
-  border: 0;
-  height: 1px;
-  background-color: var(--color-border);
-  margin: 40px 0;
-}
-
-/*
- * --------------------------------
- * 2. SECCIONES Y FORMULARIO (ORDENADO EN 2 COLUMNAS)
- * --------------------------------
- */
-
-.form-section,
-.summary-section {
-  background-color: var(--color-card-bg);
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: var(--shadow-md);
-  margin-bottom: 30px;
+  margin-right: 0.5rem;
+  color: #4caf50;
 }
 
 .section-title {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.3rem;
+}
+
+/* --- Feedback de Mensajes --- */
+.feedback-message {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
   font-weight: 500;
-  margin-bottom: 25px;
-  color: var(--color-text);
-  border-bottom: 2px solid var(--color-border);
-  padding-bottom: 10px;
 }
 
-/* --- ESTRUCTURA DE FORMULARIO DE 2 COLUMNAS --- */
+.feedback-message.success {
+  background-color: #e6f4ea;
+  color: #2e7d32;
+}
+
+.feedback-message.error {
+  background-color: #fdecea;
+  color: #c62828;
+}
+
+.feedback-message svg {
+  margin-right: 0.5rem;
+}
+
+/* --- Formulario --- */
+.form-section {
+  margin-bottom: 2rem;
+}
+
 .form-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
-  gap: 30px;
-}
-
-/* Alinear los grupos en el grid: */
-/* Columna 1, Fila 1: Categoría */
-.form-fields > .input-group:nth-child(1) {
-    grid-column: 1 / 2;
-}
-
-/* Columna 2, Filas 1/2: Cancha y Cliente */
-.form-fields > .input-group:nth-child(2) {
-    grid-column: 2 / 3;
-    /* Este grupo contiene la selección de Cancha y Cliente */
-}
-
-/* Columna 1, Fila 2: Monto y Botón de Pago */
-.form-fields > .input-group:nth-child(3) {
-    grid-column: 1 / 2;
-    /* Contiene el monto y el botón de pago */
-}
-/* ----------------------------------------------- */
-
-
-.input-group {
   display: flex;
   flex-direction: column;
+  gap: 1.2rem;
 }
 
 .input-group label {
-  font-weight: 600;
-  margin-bottom: 8px;
   display: block;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
 }
 
-.input-group select,
-.input-group input[type="number"] {
+.required {
+  color: #c62828;
+}
+
+select,
+input[type="number"],
+textarea {
   width: 100%;
-  padding: 12px;
-  border: 1px solid var(--color-border);
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
-  transition: border-color 0.2s;
+  transition: all 0.2s ease-in-out;
 }
 
-.input-group select:focus,
-.input-group input:focus {
-  border-color: var(--color-primary);
+select:focus,
+input[type="number"]:focus,
+textarea:focus {
+  border-color: #4caf50;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 150, 136, 0.2);
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
-.monto-input.invalid {
-  border-color: var(--color-danger);
+.required-field {
+  border-color: #c62828;
+}
+
+.invalid {
+  border-color: #c62828;
 }
 
 .error-message {
-  color: var(--color-danger);
   font-size: 0.9rem;
-  margin-top: 5px;
+  color: #c62828;
+  margin-top: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-/* -------------------- */
-/* CANCHA SELECTION */
-/* -------------------- */
-
-.cancha-selection-group {
-    margin-top: 10px; /* Ajuste menor */
-    padding: 15px;
-    background-color: #f0f8ff; 
-    border-radius: 8px;
-    border: 1px dashed #b0e0e6;
+.loading-message {
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-.cancha-selection-group label {
-    font-weight: 700;
-    color: #007bff;
-    margin-bottom: 10px;
+.spinner-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* --- Botones --- */
+button {
+  cursor: pointer;
+  padding: 0.55rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pay-btn {
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+}
+
+.pay-btn:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.pay-btn:hover:not(:disabled) {
+  background-color: #43a047;
+}
+
+.add-client-btn {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+.add-client-btn:hover {
+  background-color: #1565c0;
+}
+
+.clear-client-btn {
+  cursor: pointer;
+  color: #c62828;
+  margin-left: 0.3rem;
+}
+
+.clear-client-btn:hover {
+  color: #b71c1c;
 }
 
 .button-group {
   display: flex;
+  gap: 0.5rem;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
 }
 
 .button-cancha {
-  padding: 8px 15px;
-  border: 2px solid var(--color-primary);
-  background-color: transparent;
-  color: var(--color-primary);
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.button-cancha:hover {
-    background-color: var(--color-primary);
-    color: white;
+  background-color: #eee;
+  color: #333;
 }
 
 .button-cancha.active {
-  background-color: var(--color-primary);
-  color: white;
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+  background-color: #4caf50;
+  color: #fff;
 }
 
-/* -------------------- */
-/* CLIENTE SELECTION */
-/* -------------------- */
-
-.client-selection-area {
-    margin-top: 25px; 
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+.button-cancha:hover {
+  background-color: #c8e6c9;
 }
 
-.add-client-btn {
-    padding: 10px 15px;
-    background-color: var(--color-warning); 
-    color: var(--color-text);
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: background-color 0.2s;
-    display: flex;
-    align-items: center;
+/* --- Lista de Ingresos --- */
+.summary-section {
+  margin-top: 2rem;
 }
-
-.add-client-btn svg {
-    margin-right: 8px;
-}
-
-.add-client-btn:hover {
-    background-color: #e0a800;
-}
-
-.client-info {
-    margin-top: 10px;
-    font-weight: 600;
-    color: var(--color-success);
-    padding: 5px 0;
-}
-
-/* -------------------- */
-/* BOTÓN DE PAGO */
-/* -------------------- */
-
-.payment-group {
-    display: flex;
-    flex-direction: column;
-    /* Empuja el contenido hacia el fondo del grid cell para alinearlo con la otra columna */
-    justify-content: flex-end; 
-}
-
-.pay-btn {
-  width: 100%;
-  padding: 15px;
-  margin-top: 20px;
-  font-size: 1.15rem;
-  font-weight: 700;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: var(--color-success);
-  color: white;
-  transition: background-color 0.2s, box-shadow 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pay-btn:hover:not(:disabled) {
-  background-color: #388e3c;
-  box-shadow: var(--shadow-sm);
-}
-
-.pay-btn:disabled {
-  background-color: #bdbdbd;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.btn-icon {
-  margin-right: 10px;
-  font-size: 1.3rem;
-}
-
-/*
- * --------------------------------
- * 3. LISTA DE INGRESOS
- * --------------------------------
- */
 
 .total-ingresos {
-    padding: 20px;
-    background-color: #e8f5e9; 
-    border: 1px solid var(--color-success);
-    border-radius: 8px;
-    margin-bottom: 25px;
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: var(--color-success);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.total-ingresos strong {
-    margin-right: 5px;
-}
-
-.total-icon {
-    margin-right: 10px;
-    font-size: 1.5rem;
-}
-
-.no-data-msg {
-    text-align: center;
-    padding: 20px;
-    color: #757575;
-    font-style: italic;
-    background-color: #f5f5f5;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4caf50;
 }
 
 .ingresos-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  border-top: 1px solid #eee;
 }
 
 .ingresos-list-header,
 .ingreso-item {
-    /* Define 4 columnas para la visualización tabular */
-    display: grid;
-    grid-template-columns: 1fr 2fr 1.5fr 2fr; 
-    gap: 15px;
-    padding: 12px 15px;
-    align-items: center;
-    border-bottom: 1px solid var(--color-border);
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 1fr 2fr;
+  gap: 0.5rem;
+  padding: 0.6rem 0.4rem;
+  align-items: center;
 }
 
 .ingresos-list-header {
-    font-weight: 700;
-    background-color: #eceff1; 
-    color: var(--color-text);
-    border-radius: 5px 5px 0 0;
-    border-bottom: 2px solid var(--color-primary);
+  font-weight: 600;
+  background-color: #f1f1f1;
 }
 
 .ingreso-item {
-    background-color: var(--color-card-bg);
-    transition: background-color 0.2s;
+  border-bottom: 1px solid #eee;
+  transition: background 0.15s;
 }
 
 .ingreso-item:hover {
-    background-color: #fcfcfc;
+  background-color: #f9f9f9;
 }
 
-.ingreso-date {
-    font-size: 0.9rem;
-    color: #616161;
+.ingreso-monto-metodo .metodo-pago-tag {
+  font-size: 0.85rem;
+  color: #555;
+  margin-left: 0.3rem;
 }
 
-.ingreso-concepto {
-    font-weight: 600;
+.no-data-msg {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #999;
+  padding: 0.5rem 0;
 }
 
-.ingreso-monto-metodo {
-    font-weight: 700;
-    color: var(--color-success);
-    display: flex;
-    flex-direction: column;
-}
-
-.metodo-pago-tag {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--color-primary);
-    background-color: rgba(0, 150, 136, 0.1);
-    padding: 2px 6px;
-    border-radius: 3px;
-    align-self: flex-start;
-    margin-top: 3px;
-}
-
-.ingreso-details {
-    font-size: 0.9rem;
-    color: #757575;
-}
-
-
-/*
- * --------------------------------
- * 4. MEDIA QUERIES (Responsividad)
- * --------------------------------
- */
-
-@media (max-width: 992px) {
-    /* Formulario en 1 columna */
-    .form-fields {
-        grid-template-columns: 1fr; 
-    }
-    
-    .form-fields > .input-group {
-        grid-column: auto;
-    }
-
-    /* Lista de ingresos colapsada */
-    .ingresos-list-header,
-    .ingreso-item {
-        grid-template-columns: 1fr 1fr; 
-        padding: 15px;
-    }
-    
-    .ingresos-list-header span:nth-child(3), 
-    .ingresos-list-header span:nth-child(4) { 
-        display: none;
-    }
-    
-    .ingreso-date { grid-column: 1 / 2; order: 1; }
-    .ingreso-monto-metodo { grid-column: 2 / 3; order: 2; text-align: right; }
-    .ingreso-concepto { grid-column: 1 / 3; order: 3; margin-top: 10px; }
-    .ingreso-details { grid-column: 1 / 3; order: 4; font-size: 0.85rem; }
-
-    .metodo-pago-tag {
-        align-self: flex-end;
-    }
-}
-
-@media (max-width: 576px) {
-    .main-title {
-        font-size: 2rem;
-    }
-    .form-section, .summary-section {
-        padding: 15px;
-    }
+/* --- Divider --- */
+.divider {
+  border: none;
+  height: 1px;
+  background-color: #eee;
+  margin: 2rem 0;
 }
