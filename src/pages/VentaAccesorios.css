@@ -1,394 +1,389 @@
-/* ================================================================= */
-/* 1. VARIABLES CSS (TOKENS DE DISEÑO)  */
-/* Basado en un sistema de 8px (var(--space-unit)) */
-/* ================================================================= */
-:root {
-  /* Colores Principales (Brand) */
-  --color-brand-primary: #0077c2; /* Azul limpio */
-  --color-brand-secondary: #28a745; /* Verde para Pagar/Confirmar */
-  --color-brand-hover: #005a92;
-  --color-accent: #ffc107; /* Amarillo/Naranja para alerta/edición */
+/* ======================================================= */
+/* 1. Estilos Generales y Layout */
+/* ======================================================= */
 
-  /* Colores Neutrales */
-  --color-text-dark: #212529;
-  --color-text-muted: #6c757d;
-  --color-bg-body: #f7f9fb;
-  --color-bg-card: #ffffff;
-  --color-border-light: #e0e4e8;
-  --color-border-medium: #c5cdd4;
-
-  /* Tipografía y Espaciado */
-  --font-family-base: 'Roboto', sans-serif;
-  --space-unit: 8px;
-  --radius-base: 8px;
-  --radius-pill: 9999px;
-
-  /* Sombras */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.1);
-}
-
-body {
-  margin: 0;
-  font-family: var(--font-family-base);
-  background-color: var(--color-bg-body);
-  color: var(--color-text-dark);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-/* ================================================================= */
-/* 2. LAYOUT GENERAL Y CONTENEDOR */
-/* ================================================================= */
 .ventas-container {
-  max-width: 900px;
-  margin: calc(4 * var(--space-unit)) auto;
-  padding: calc(4 * var(--space-unit));
-  background-color: var(--color-bg-card);
-  border-radius: var(--radius-base);
-  box-shadow: var(--shadow-md);
-  display: flex;
-  flex-direction: column;
-  gap: calc(4 * var(--space-unit));
+  padding: 20px;
+  background-color: #f4f7f9;
+  min-height: 100vh;
 }
 
 .main-title {
-  text-align: center;
-  font-size: 2rem;
-  color: var(--color-brand-primary);
-  margin-bottom: calc(2 * var(--space-unit));
-  border-bottom: 1px solid var(--color-border-light);
-  padding-bottom: calc(2 * var(--space-unit));
-  font-weight: 700;
+  color: #343a40;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 10px;
 }
 
-/* Principal panel flex con gap para separación */
 .main-content-panels {
   display: flex;
-  gap: calc(4 * var(--space-unit));
-  flex: 1;
-  min-height: 400px;
-  flex-wrap: wrap;
+  gap: 20px;
 }
 
-/* ================================================================= */
-/* 3. PANEL IZQUIERDO - CANCHAS Y CONTROLES */
-/* ================================================================= */
 .side-panel {
-  flex: 0 0 250px;
-  background-color: var(--color-bg-body);
-  padding: calc(3 * var(--space-unit));
-  border-radius: var(--radius-base);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  gap: calc(3 * var(--space-unit));
+  flex: 1;
+  min-width: 300px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+}
+
+.details-panel {
+  flex: 2;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
-  font-size: 1.15rem;
+  font-size: 1.1em;
   font-weight: 700;
-  color: var(--color-text-dark);
-  margin-bottom: var(--space-unit);
-  border-bottom: 1px solid var(--color-border-light);
-  padding-bottom: var(--space-unit);
+  color: #495057;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
-.cancha-buttons-container {
+.side-panel .mt-4 {
+    margin-top: 20px !important; /* Ajuste para separar los títulos */
+}
+
+.button-list {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-unit);
+  gap: 10px;
 }
 
-.cancha-btn {
-  padding: calc(1.5 * var(--space-unit)) calc(2 * var(--space-unit));
-  border: 1px solid var(--color-border-medium);
-  background-color: var(--color-bg-card);
-  color: var(--color-text-dark);
-  border-radius: var(--radius-base);
+.no-open-orders-msg {
+    font-style: italic;
+    color: #777;
+    padding: 10px;
+}
+
+/* ======================================================= */
+/* 2. Botones de Cancha y Ventas Pendientes */
+/* ======================================================= */
+
+.comanda-btn {
+  padding: 10px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #f8f9fa;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+  color: #495057;
+  transition: all 0.2s;
   flex-grow: 1;
+  min-width: 100px;
+}
+
+.comanda-btn:hover {
+  background-color: #e9ecef;
+}
+
+.comanda-btn.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* Estilos específicos para la lista de Ventas Pendientes */
+.open-orders-list {
+    flex-direction: column;
+}
+
+.open-venta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px; 
+    width: 100%;
+}
+
+.open-venta-item .comanda-btn {
+    flex-grow: 1;
+    padding: 8px 10px;
+    font-size: 0.9em;
+    min-width: 0; /* Permite que se ajuste con el botón de eliminar */
+}
+
+/* Botón de Eliminar Venta Pendiente */
+.delete-btn-small {
+    padding: 5px 8px;
+    border: 1px solid #dc3545;
+    background-color: #f8d7da;
+    color: #dc3545;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    line-height: 1;
+    transition: background-color 0.2s;
+    min-width: 30px;
+    height: 35px; /* Altura consistente con el botón de al lado */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn-small:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+
+/* ======================================================= */
+/* 3. Panel de Detalles (Derecho) */
+/* ======================================================= */
+
+.details-title {
+  color: #343a40;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.no-selection-message {
+  padding: 50px 20px;
   text-align: center;
-  user-select: none;
+  color: #6c757d;
+  font-style: italic;
 }
 
-.cancha-btn:hover,
-.cancha-btn:focus-visible {
-  background-color: #f0f3f6;
-  border-color: var(--color-brand-primary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-  outline-offset: 2px;
+.details-section {
+  margin-bottom: 20px;
 }
 
-.cancha-btn.active {
-  background-color: var(--color-brand-primary);
-  color: #fff;
-  border-color: var(--color-brand-primary);
-  font-weight: 600;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Info cancha seleccionada */
-.selected-cancha-info {
-  background-color: #e6f5ff;
-  padding: calc(2 * var(--space-unit));
-  border-radius: var(--radius-base);
-  margin-bottom: calc(3 * var(--space-unit));
-  border-left: 4px solid var(--color-brand-primary);
-}
-
-/* Contenedor para botones agregar */
-.controls-group {
-  display: flex;
-  gap: var(--space-unit);
-  margin-top: calc(2 * var(--space-unit));
-}
-
-.add-client-btn,
-.add-product-btn {
-  flex-grow: 1;
-  padding: calc(1.25 * var(--space-unit));
-  font-size: 0.95rem;
-  font-weight: 600;
-  border: none;
-  border-radius: var(--radius-base);
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-transform: uppercase;
-  user-select: none;
-}
-
+/* Botón de Cliente */
 .add-client-btn {
-  background-color: var(--color-brand-primary);
-  color: var(--color-bg-card);
-  box-shadow: var(--shadow-sm);
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
 }
 
-.add-client-btn:hover,
-.add-client-btn:focus-visible {
-  background-color: var(--color-brand-hover);
-  outline-offset: 2px;
+.add-client-btn:hover {
+  background-color: #0056b3;
 }
 
-.add-product-btn {
-  background-color: var(--color-brand-secondary);
-  color: var(--color-bg-card);
-  box-shadow: var(--shadow-sm);
-}
-
-.add-product-btn:hover,
-.add-product-btn:focus-visible {
-  background-color: #1e8338;
-  outline-offset: 2px;
-}
-
-/* Información Cliente */
 .client-info {
-  background-color: #f0f4f7;
-  padding: calc(2 * var(--space-unit));
-  border-radius: var(--radius-base);
-  margin-top: calc(2 * var(--space-unit));
-  border-left: 4px solid var(--color-brand-primary);
-  font-size: 0.95rem;
-  color: var(--color-text-dark);
-  line-height: 1.4;
+  background-color: #f8f9fa;
+  border-left: 3px solid #007bff;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 4px;
 }
 
-.client-info p {
-  margin: 4px 0;
+/* Botón de Producto */
+.add-product-btn {
+  padding: 12px 20px;
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 15px;
 }
 
-/* ================================================================= */
-/* 4. PANEL DERECHO - LISTA DE PRODUCTOS Y DETALLES */
-/* ================================================================= */
-.details-panel {
-  flex: 1;
-  background-color: var(--color-bg-card);
-  padding: calc(4 * var(--space-unit));
-  border-radius: var(--radius-base);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
+.add-product-btn:hover {
+  background-color: #138496;
 }
 
-.list-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text-dark);
-  margin-bottom: calc(3 * var(--space-unit));
-  border-bottom: 1px solid var(--color-border-light);
-  padding-bottom: var(--space-unit);
+.products-list-title {
+  font-size: 1em;
+  font-weight: 600;
+  color: #495057;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-.product-list {
+.empty-products-msg {
+    font-style: italic;
+    color: #6c757d;
+    padding: 10px 0;
+}
+
+/* Lista de Productos en Venta */
+.products-list {
   list-style: none;
   padding: 0;
-  margin: 0;
-  min-height: 150px;
-  flex-grow: 1;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-border-medium) transparent;
 }
 
-.product-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.product-list::-webkit-scrollbar-thumb {
-  background-color: var(--color-border-medium);
-  border-radius: var(--radius-base);
-}
-
-/* Mensaje cuando no hay productos */
-.empty-products-msg {
-  text-align: center;
-  color: var(--color-text-muted);
-  font-style: italic;
-  padding: calc(4 * var(--space-unit)) 0;
-}
-
-/* Item producto */
 .product-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: calc(1.5 * var(--space-unit)) 0;
-  border-bottom: 1px solid var(--color-border-light);
-  transition: background-color 0.3s ease;
-}
-
-.product-item:hover {
-  background-color: #fcfcfc;
-}
-
-.product-item:last-child {
-  border-bottom: none;
+  padding: 10px 0;
+  border-bottom: 1px dashed #e9ecef;
 }
 
 .product-info {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 
 .product-name {
   font-weight: 600;
-  color: var(--color-text-dark);
-  font-size: 1rem;
+  color: #343a40;
 }
 
 .product-price-display {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
+  font-size: 0.9em;
+  color: #6c757d;
 }
 
-/* Controles cantidad */
-.product-quantity-controls {
+.quantity-controls {
   display: flex;
   align-items: center;
-  gap: calc(1.5 * var(--space-unit));
+  gap: 5px;
 }
 
 .quantity-btn {
-  width: calc(4 * var(--space-unit));
-  height: calc(4 * var(--space-unit));
-  border: 1px solid var(--color-border-medium);
-  background-color: var(--color-bg-card);
-  color: var(--color-text-dark);
-  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ced4da;
+  background-color: #f8f9fa;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: 700;
-  font-size: 1.2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-  user-select: none;
-}
-
-.quantity-btn:hover,
-.quantity-btn:focus-visible {
-  background-color: #e9ecef;
-  border-color: var(--color-brand-primary);
-  outline-offset: 2px;
+  font-weight: bold;
+  line-height: 1;
+  transition: background-color 0.1s;
 }
 
 .product-quantity {
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--color-brand-primary);
-  min-width: 28px;
+  width: 25px;
   text-align: center;
+  font-weight: 600;
 }
 
-/* Totales y botón */
+/* Totales y Botones de Pago */
 .total-amount-container {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 2px solid #343a40;
   text-align: right;
-  margin-top: calc(3 * var(--space-unit));
-  padding-top: calc(2 * var(--space-unit));
-  border-top: 2px solid var(--color-border-light);
 }
 
-.total-amount {
-  font-size: 1.75rem;
+.total-amount-text {
+  font-size: 1.5em;
   font-weight: 700;
-  color: var(--color-brand-secondary);
+  color: #343a40;
+}
+
+.save-btn,
+.pay-btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: 700;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.save-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.save-btn:hover {
+  background-color: #5a6268;
 }
 
 .pay-btn {
-  width: 100%;
-  padding: calc(2 * var(--space-unit));
-  background-color: var(--color-brand-secondary);
+  background-color: #28a745;
   color: white;
-  border: none;
-  border-radius: var(--radius-base);
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 1.1rem;
-  margin-top: calc(2 * var(--space-unit));
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  text-transform: uppercase;
-  box-shadow: var(--shadow-sm);
-  user-select: none;
 }
 
-.pay-btn:hover:not(:disabled),
-.pay-btn:focus-visible:not(:disabled) {
-  background-color: #1e8338;
-  box-shadow: 0 4px 10px rgba(30, 131, 56, 0.5);
-  outline-offset: 2px;
+.pay-btn:hover {
+  background-color: #218838;
 }
 
-.pay-btn:disabled {
-  background-color: var(--color-border-medium);
-  cursor: not-allowed;
-  opacity: 0.7;
-  color: var(--color-text-dark);
+/* ======================================================= */
+/* 4. Panel Inferior de Tarjetas (Ventas Pendientes) */
+/* ======================================================= */
+
+.open-orders-display-panel {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* ================================================================= */
-/* 5. RESPONSIVE */
-/* ================================================================= */
-@media (max-width: 720px) {
-  .main-content-panels {
-    flex-direction: column;
-  }
+.open-orders-list-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
 
-  .side-panel {
-    width: 100%;
-    min-width: auto;
-  }
+.order-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    width: 280px; /* Ancho fijo para las tarjetas */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.2s;
+}
 
-  .ventas-container {
-    padding: calc(2 * var(--space-unit));
-    margin: calc(2 * var(--space-unit)) auto;
-  }
+.order-card:hover {
+    border-color: #007bff;
+}
+
+.order-card.active-card {
+    border: 2px solid #007bff;
+    background-color: #eaf3ff;
+}
+
+.card-header h4 {
+    margin: 0 0 10px 0;
+    color: #007bff;
+    font-size: 1.1em;
+}
+
+.card-body p {
+    margin: 2px 0;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.total-card {
+    margin-top: 10px;
+    padding-top: 5px;
+    border-top: 1px dashed #eee;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.card-actions button {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-edit {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-pay {
+    background-color: #28a745;
+    color: white;
 }
