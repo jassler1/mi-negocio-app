@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ClientSelectionModal from '../assets/components/ClientSelectionModal';
 import ProductSelectionModal from '../assets/components/ProductSelectionModal';
 import PaymentModal from '../assets/components/PaymentModal';
@@ -24,10 +24,10 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
   const [products, setProducts] = useState([]);
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
 
-  const productsCollectionRef = collection(db, 'inventario'); // ✅ Usamos 'inventario' para obtener el costo
+  const productsCollectionRef = collection(db, 'inventario');
   const comandasPagadasCollectionRef = collection(db, 'comandas_pagadas');
 
-  // Cargar productos del inventario al inicio
+  // Cargar productos del inventario
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -59,14 +59,6 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
     );
   }, [selectedItem]);
 
-  // Se mantiene esta lista para mostrar las comandas de cancha con ítems pendientes,
-  // pero ya no se muestra en el panel izquierdo como sección principal.
-  const canchasConPendientes = useMemo(() => {
-    return canchas.filter(
-      c => c.productosEnComanda && c.productosEnComanda.length > 0
-    );
-  }, [canchas]);
-
   const handleSelectComanda = (id, isCancha) => {
     setSelectedComandaId(id);
     setIsCanchaSelected(isCancha);
@@ -75,6 +67,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
   const handleAddCancha = () => {
     const newId =
       canchas.length > 0 ? Math.max(...canchas.map(c => c.id)) + 1 : 1;
+
     const nueva = {
       id: newId,
       nombre: `Cancha ${newId}`,
@@ -82,6 +75,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
       clienteSeleccionado: null,
       tipo: 'cancha',
     };
+
     setCanchas(prev => [...prev, nueva]);
     handleSelectComanda(newId, true);
   };
@@ -89,6 +83,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
   const handleCreateOpenOrder = () => {
     const newId =
       openOrders.length > 0 ? Math.max(...openOrders.map(o => o.id)) + 1 : 1;
+
     const nueva = {
       id: newId,
       nombre: `Comanda #${newId}`,
@@ -96,17 +91,13 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
       clienteSeleccionado: null,
       tipo: 'abierta',
     };
+
     setOpenOrders(prev => [...prev, nueva]);
     handleSelectComanda(newId, false);
   };
 
-  // Función para eliminar una comanda abierta
   const handleDeleteOpenOrder = comandaId => {
-    if (
-      window.confirm(
-        '¿Estás seguro de que quieres eliminar esta comanda abierta?'
-      )
-    ) {
+    if (window.confirm('¿Eliminar comanda abierta?')) {
       setOpenOrders(prev => prev.filter(o => o.id !== comandaId));
       if (selectedComandaId === comandaId && !isCanchaSelected) {
         setSelectedComandaId(null);
@@ -114,7 +105,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
     }
   };
 
-  // Cliente
+  // CLIENTES
   const openClientModal = () => setIsClientModalOpen(true);
   const closeClientModal = () => setIsClientModalOpen(false);
 
@@ -132,31 +123,24 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
       );
     };
 
-    if (isCanchaSelected) {
-      updateIn(canchas, setCanchas);
-    } else {
-      updateIn(openOrders, setOpenOrders);
-    }
+    if (isCanchaSelected) updateIn(canchas, setCanchas);
+    else updateIn(openOrders, setOpenOrders);
+
     closeClientModal();
   };
 
-  // Productos
+  // PRODUCTOS
   const openProductModal = () => setIsProductModalOpen(true);
   const closeProductModal = () => setIsProductModalOpen(false);
 
   const handleSelectProduct = productToAdd => {
     if (!selectedItem) return;
 
-    // Aseguramos que el objeto del producto tenga el costo de compra
     const productData = products.find(p => p.id === productToAdd.id);
-
-    // Si no encontramos el producto o su costo, usamos 0.
-    const costoUnitario = Number(productData?.costoCompra) || 0;
 
     const newProd = {
       ...productToAdd,
-      costoCompra: costoUnitario,
-      // Nos aseguramos de que el precio sea el costoVenta del inventario
+      costoCompra: Number(productData?.costoCompra) || 0,
       precio: Number(productData?.costoVenta) || Number(productToAdd.precio),
     };
 
@@ -167,6 +151,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
             const existing = item.productosEnComanda.find(
               p => p.id === newProd.id
             );
+
             if (existing) {
               return {
                 ...item,
@@ -188,11 +173,9 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
       );
     };
 
-    if (isCanchaSelected) {
-      updateIn(canchas, setCanchas);
-    } else {
-      updateIn(openOrders, setOpenOrders);
-    }
+    if (isCanchaSelected) updateIn(canchas, setCanchas);
+    else updateIn(openOrders, setOpenOrders);
+
     closeProductModal();
   };
 
@@ -203,7 +186,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
       setter(
         items.map(item => {
           if (item.id === selectedComandaId) {
-            const updatedProducts = item.productosEnComanda
+            const updated = item.productosEnComanda
               .map(prod => {
                 if (prod.id === productId) {
                   const newQty = (prod.cantidad || 0) + delta;
@@ -213,21 +196,18 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
                 return prod;
               })
               .filter(Boolean);
-            return { ...item, productosEnComanda: updatedProducts };
+            return { ...item, productosEnComanda: updated };
           }
           return item;
         })
       );
     };
 
-    if (isCanchaSelected) {
-      updateIn(canchas, setCanchas);
-    } else {
-      updateIn(openOrders, setOpenOrders);
-    }
+    if (isCanchaSelected) updateIn(canchas, setCanchas);
+    else updateIn(openOrders, setOpenOrders);
   };
 
-  // Pago
+  // ABRIR MODAL DE PAGO
   const openPaymentModal = (comandaId, isCancha) => {
     const itemToPay =
       comandaId != null
@@ -237,13 +217,14 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
         : selectedItem;
 
     if (!itemToPay || !itemToPay.productosEnComanda.length) {
-      alert('La comanda debe tener al menos un producto para pagar.');
+      alert('La comanda debe tener productos.');
       return;
     }
 
     if (itemToPay.id !== selectedComandaId || isCancha !== isCanchaSelected) {
-        handleSelectComanda(itemToPay.id, isCancha);
+      handleSelectComanda(itemToPay.id, isCancha);
     }
+
     setIsPaymentModalOpen(true);
   };
 
@@ -251,9 +232,10 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
     if (!isSubmittingPayment) setIsPaymentModalOpen(false);
   };
 
+  // PROCESAR PAGO FINAL
   const handleProcessPayment = async paymentData => {
     if (!selectedItem) return;
-    if (isSubmittingPayment) return;
+
     setIsSubmittingPayment(true);
 
     const ventaTotal = selectedItem.productosEnComanda.reduce(
@@ -264,13 +246,12 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
     const nuevaComanda = {
       tipoComanda: selectedItem.tipo,
       ubicacion: selectedItem.nombre,
-      // Aseguramos que el objeto que se guarda tenga el costoCompra
       productos: selectedItem.productosEnComanda.map(p => ({
         id: p.id,
         nombre: p.nombre,
         cantidad: p.cantidad,
         precio: p.precio,
-        costoCompra: p.costoCompra, // ⬅️ GUARDAMOS EL COSTO DE COMPRA EN FIREBASE
+        costoCompra: p.costoCompra,
       })),
       clienteId: selectedItem.clienteSeleccionado
         ? selectedItem.clienteSeleccionado.id
@@ -286,6 +267,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
     try {
       await addDoc(comandasPagadasCollectionRef, nuevaComanda);
 
+      // Actualiza historial del cliente
       if (
         selectedItem.clienteSeleccionado &&
         selectedItem.clienteSeleccionado.id
@@ -304,6 +286,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
         });
       }
 
+      // Eliminar comanda pagada
       if (isCanchaSelected) {
         setCanchas(prev =>
           prev.map(c =>
@@ -318,48 +301,53 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
 
       setSelectedComandaId(null);
       setIsPaymentModalOpen(false);
-      alert('✅ Pago procesado y comanda cerrada.');
+
     } catch (err) {
       console.error('Error procesando pago:', err);
-      alert('❌ Error al procesar el pago.');
+      alert('Error al procesar el pago.');
     } finally {
       setIsSubmittingPayment(false);
     }
   };
 
+  // 💾 GUARDAR COMANDA PENDIENTE
   const handleSaveComandaPendiente = () => {
     if (!selectedItem) return;
-    if (!selectedItem.productosEnComanda.length) {
-      alert('No hay productos para guardar.');
+
+    if (!isCanchaSelected) {
+      alert("Solo las canchas pueden guardarse como pendiente.");
       return;
     }
 
-    if (isCanchaSelected) {
-      const nuevaComandaAbierta = {
-        id:
-          openOrders.length > 0
-            ? Math.max(...openOrders.map(o => o.id)) + 1
-            : 1,
-        nombre: selectedItem.nombre, // Usa el nombre de la cancha como nombre de la comanda
-        productosEnComanda: [...selectedItem.productosEnComanda],
-        clienteSeleccionado: selectedItem.clienteSeleccionado || null,
-        tipo: 'abierta',
-      };
-
-      setOpenOrders(prev => [...prev, nuevaComandaAbierta]);
-
-      // Limpia la comanda de la cancha
-      setCanchas(prev =>
-        prev.map(c =>
-          c.id === selectedComandaId
-            ? { ...c, productosEnComanda: [], clienteSeleccionado: null }
-            : c
-        )
-      );
+    if (!selectedItem.productosEnComanda.length) {
+      alert("No hay productos para guardar.");
+      return;
     }
 
+    const nuevaComandaAbierta = {
+      id:
+        openOrders.length > 0
+          ? Math.max(...openOrders.map(o => o.id)) + 1
+          : 1,
+      nombre: selectedItem.nombre,
+      productosEnComanda: [...selectedItem.productosEnComanda],
+      clienteSeleccionado: selectedItem.clienteSeleccionado || null,
+      tipo: "abierta",
+    };
+
+    setOpenOrders(prev => [...prev, nuevaComandaAbierta]);
+
+    // Limpia la cancha original
+    setCanchas(prev =>
+      prev.map(c =>
+        c.id === selectedComandaId
+          ? { ...c, productosEnComanda: [], clienteSeleccionado: null }
+          : c
+      )
+    );
+
     setSelectedComandaId(null);
-    alert('✅ Comanda guardada en pendientes.');
+    alert("✅ Comanda guardada como pendiente.");
   };
 
   return (
@@ -367,8 +355,9 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
       <h2 className="main-title">Sistema de Comandas</h2>
 
       <div className="main-content-panels">
-        {/* Panel izquierdo */}
+        {/* PANEL IZQUIERDO */}
         <div className="side-panel">
+
           <div className="section-canchas">
             <h3 className="section-title">Comandas por Cancha</h3>
             <div className="button-list">
@@ -383,40 +372,44 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
                   {c.nombre}
                 </button>
               ))}
+
               <button onClick={handleAddCancha} className="add-btn-cancha">
                 + Cancha
               </button>
             </div>
           </div>
+
           <hr />
-          
-          {/* SECCIÓN MODIFICADA: Comandas Abiertas (Manuales) con el estilo de tarjeta */}
+
           <div className="section-comandas-abiertas">
             <h3 className="section-title">Comandas Guardadas / Abiertas</h3>
+
             <button
               onClick={handleCreateOpenOrder}
               className="create-open-order-btn"
             >
               + Abrir Comanda
             </button>
+
             <div className="open-orders-list-cards">
               {openOrders.length > 0 ? (
                 openOrders.map(o => (
                   <div key={o.id} className="pending-order-card">
-                    {/* Botón de Eliminación (se deja el ícono de basura para ahorrar espacio) */}
+
                     <button
-                        onClick={() => handleDeleteOpenOrder(o.id)}
-                        className="delete-open-order-btn-card"
-                        title="Eliminar Comanda Guardada"
+                      onClick={() => handleDeleteOpenOrder(o.id)}
+                      className="delete-open-order-btn-card"
+                      title="Eliminar Comanda Guardada"
                     >
-                        🗑️
+                      🗑️
                     </button>
-                    
+
                     <span className="pending-cancha-name">{o.nombre}</span>
+
                     <p className="pending-client">
-                      Cliente:{' '}
-                      {o.clienteSeleccionado?.nombreCompleto || 'Anónimo'}
+                      Cliente: {o.clienteSeleccionado?.nombreCompleto || 'Anónimo'}
                     </p>
+
                     <ul className="pending-products-list">
                       {o.productosEnComanda.map(p => (
                         <li key={p.id}>
@@ -424,18 +417,16 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
                         </li>
                       ))}
                     </ul>
+
                     <div className="pending-total-area">
                       <p className="pending-total">
                         Total: Bs.{' '}
                         {o.productosEnComanda
-                          .reduce(
-                            (sum, prod) =>
-                              sum + prod.precio * (prod.cantidad || 0),
-                            0
-                          )
+                          .reduce((sum, prod) => sum + prod.precio * (prod.cantidad || 0), 0)
                           .toFixed(2)}
                       </p>
                     </div>
+
                     <div className="pending-actions">
                       <button
                         onClick={() => handleSelectComanda(o.id, false)}
@@ -443,6 +434,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
                       >
                         EDITAR
                       </button>
+
                       <button
                         onClick={() => openPaymentModal(o.id, false)}
                         className="pay-btn-small"
@@ -450,6 +442,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
                         PAGAR
                       </button>
                     </div>
+
                   </div>
                 ))
               ) : (
@@ -457,74 +450,64 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
               )}
             </div>
           </div>
+
         </div>
         {/* FIN PANEL IZQUIERDO */}
 
-        {/* Panel de detalles (Derecho) - Sin cambios funcionales aquí */}
+        {/* PANEL DERECHO */}
         <div className="details-panel">
           {selectedItem ? (
             <div className="comanda-details-container">
               <h3 className="details-title">Comanda: {selectedItem.nombre}</h3>
 
-              {/* Cliente */}
+              {/* CLIENTE */}
               <div className="details-section">
                 <button onClick={openClientModal} className="add-client-btn">
-                  {selectedItem.clienteSeleccionado
-                    ? 'Cambiar Cliente'
-                    : 'Agregar Cliente'}
+                  {selectedItem.clienteSeleccionado ? 'Cambiar Cliente' : 'Agregar Cliente'}
                 </button>
               </div>
 
               {selectedItem.clienteSeleccionado && (
                 <div className="client-info">
-                  <p>
-                    <strong>Cliente:</strong>{' '}
-                    {selectedItem.clienteSeleccionado.nombreCompleto}
-                  </p>
-                  <p>
-                    <strong>CI:</strong>{' '}
-                    {selectedItem.clienteSeleccionado.numeroCi}
-                  </p>
+                  <p><strong>Cliente:</strong> {selectedItem.clienteSeleccionado.nombreCompleto}</p>
+                  <p><strong>CI:</strong> {selectedItem.clienteSeleccionado.numeroCi}</p>
                 </div>
               )}
 
-              {/* Productos */}
+              {/* PRODUCTOS */}
               <div className="details-section product-section">
                 <button onClick={openProductModal} className="add-product-btn">
                   Agregar Producto
                 </button>
+
                 <h4 className="products-list-title">Productos en la comanda</h4>
 
                 {selectedItem.productosEnComanda.length > 0 ? (
                   <ul className="products-list">
                     {selectedItem.productosEnComanda.map(prod => (
                       <li key={prod.id} className="product-item">
+
                         <div className="product-info">
                           <span className="product-name">{prod.nombre}</span>
                           <span className="product-price-display">
-                            Bs. {(prod.precio * prod.cantidad).toFixed(2)}{' '}
+                            Bs. {(prod.precio * prod.cantidad).toFixed(2)}
                             <small>(Bs. {prod.precio.toFixed(2)} c/u)</small>
                           </span>
                         </div>
+
                         <div className="quantity-controls">
                           <button
                             className="quantity-btn"
-                            aria-label="Reducir cantidad"
-                            onClick={() =>
-                              handleUpdateProductQuantity(prod.id, -1)
-                            }
+                            onClick={() => handleUpdateProductQuantity(prod.id, -1)}
                           >
                             −
                           </button>
-                          <span className="product-quantity">
-                            {prod.cantidad}
-                          </span>
+
+                          <span className="product-quantity">{prod.cantidad}</span>
+
                           <button
                             className="quantity-btn"
-                            aria-label="Aumentar cantidad"
-                            onClick={() =>
-                              handleUpdateProductQuantity(prod.id, 1)
-                            }
+                            onClick={() => handleUpdateProductQuantity(prod.id, 1)}
                           >
                             +
                           </button>
@@ -544,8 +527,8 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
 
                 {selectedItem.productosEnComanda.length > 0 && (
                   <>
-                    {/* Solo permitimos guardar pendiente si es una comanda de cancha */}
-                    {isCanchaSelected && ( 
+                    {/* GUARDAR PENDIENTE SOLO PARA CANCHA */}
+                    {isCanchaSelected && (
                       <button
                         onClick={handleSaveComandaPendiente}
                         className="save-btn"
@@ -559,13 +542,12 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
                       className="pay-btn"
                       disabled={isSubmittingPayment}
                     >
-                      {isSubmittingPayment
-                        ? 'Procesando...'
-                        : 'Pagar Venta'}
+                      {isSubmittingPayment ? 'Procesando...' : 'Pagar Venta'}
                     </button>
                   </>
                 )}
               </div>
+
             </div>
           ) : (
             <div className="no-selection-message">
@@ -574,15 +556,17 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
           )}
         </div>
         {/* FIN PANEL DERECHO */}
+
       </div>
 
-      {/* Modales */}
+      {/* MODALES */}
       {isClientModalOpen && (
         <ClientSelectionModal
           onSelectClient={handleSelectClient}
           onClose={closeClientModal}
         />
       )}
+
       {isProductModalOpen && (
         <ProductSelectionModal
           products={products}
@@ -591,14 +575,16 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
           filtroDeSeccion="comandas"
         />
       )}
-      {isPaymentModalOpen && selectedItem && (
+
+      {isPaymentModalOpen && (
         <PaymentModal
           totalAmount={totalAmount}
-          products={selectedItem.productosEnComanda}
+          products={selectedItem?.productosEnComanda || []}
           onProcessPayment={handleProcessPayment}
           onClose={closePaymentModal}
         />
       )}
+
     </div>
   );
 };
