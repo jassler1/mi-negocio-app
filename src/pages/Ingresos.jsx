@@ -78,8 +78,9 @@ function Ingresos() {
     { id: 'cat4', nombre: 'Pago por Clases Mensuales' },
     { id: 'cat5', nombre: 'Pago por Clases Semanales' },
     { id: 'cat6', nombre: 'Pago por Clases Diaria' },
-    { id: 'cat7', nombre: 'Alquiler de Canchas para Profesor' },
-    { id: 'cat8', nombre: 'Otros Ingresos' },
+    { id: 'cat7', nombre: 'Escalerilla' },
+    { id: 'cat8', nombre: 'Alquiler de Canchas para Profesor' },
+    { id: 'cat9', nombre: 'Otros Ingresos' },
   ]);
 
   const handleMontoChange = (e) => {
