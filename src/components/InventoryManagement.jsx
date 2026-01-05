@@ -20,8 +20,8 @@ function InventoryManagement() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const sections = ['all', 'restaurante', 'accesorios'];
-  const categories = ['all', 'bebidas', 'comida rapida', 'postres', 'snacks'];
+  const sections = ['all', 'RESTAURANTE', 'ACCESORIOS'];
+  const categories = ['all', 'BEBIDAS', 'COMIDA RAPIDA', 'POSTRES', 'SNACKS'];
 
   useEffect(() => {
     if (view === 'list') {
@@ -71,11 +71,23 @@ function InventoryManagement() {
   };
 
   const getFilteredProducts = (products, section, category, search) => {
+    // Limpiamos el texto del buscador (minúsculas y sin espacios extra)
+    const searchTerm = search.toLowerCase().trim();
+
     return products.filter(product => {
-      const matchesSection = section === 'all' || product.seccion === section;
-      const matchesCategory = category === 'all' || product.categoria === category;
-      const matchesSearch = (product.nombre?.toLowerCase().includes(search.toLowerCase()) || 
-                             product.codigo?.toLowerCase().includes(search.toLowerCase()));
+      // Obtenemos los valores del producto de forma segura (si es null, usamos texto vacío)
+      const pSection = (product.seccion || '').toLowerCase();
+      const pCategory = (product.categoria || '').toLowerCase();
+      const pName = (product.nombre || '').toLowerCase();
+      const pCode = (product.codigo || '').toLowerCase();
+
+      // Comparamos
+      const matchesSection = section === 'all' || pSection === section.toLowerCase();
+      const matchesCategory = category === 'all' || pCategory === category.toLowerCase();
+      
+      // Buscamos en nombre O en código
+      const matchesSearch = pName.includes(searchTerm) || pCode.includes(searchTerm);
+
       return matchesSection && matchesCategory && matchesSearch;
     });
   };
@@ -179,13 +191,15 @@ function InventoryManagement() {
               </select>
             </div>
 
-            <div className="filter-group search-group">
+           <div className="filter-group search-group">
               <label htmlFor="search-input"><FaSearch /> Buscar:</label>
               <input 
                 type="text" 
                 id="search-input"
+                // Aquí está la clave: value conectado directamente al estado
                 value={searchQuery}
-                onChange={debounce((e) => setSearchQuery(e.target.value), 300)} // Debounce search
+                // Quitamos el debounce. Ahora se actualiza al instante.
+                onChange={(e) => setSearchQuery(e.target.value)} 
                 placeholder="Buscar por nombre o código"
               />
             </div>
