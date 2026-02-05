@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import ClientSelectionModal from '../assets/components/ClientSelectionModal';
 import ProductSelectionModal from '../assets/components/ProductSelectionModal';
 import PaymentModal from '../assets/components/PaymentModal';
@@ -10,6 +10,8 @@ import {
   runTransaction,
   getDocs,
   Timestamp,
+  deleteDoc,
+  updateDoc,
 } from 'firebase/firestore';
 import './Comandas.css';
 
@@ -24,8 +26,14 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
   const [products, setProducts] = useState([]);
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
 
+  
+  const autosaveTimerRef = useRef(null);
+  const lastSavedHashRef = useRef('');
+
+
   const productsCollectionRef = collection(db, 'inventario');
   const comandasPagadasCollectionRef = collection(db, 'comandas_pagadas');
+  const comandasPendientesCollectionRef = collection(db, 'comandas_pendientes');
 
   // Cargar productos del inventario
   useEffect(() => {
@@ -43,6 +51,81 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
     };
     fetchProducts();
   }, []);
+
+  //Se agregó para guardar
+useEffect(() => {
+  if (!selectedItem) return;
+  if (isCanchaSelected) return;
+  if (!selectedComandaId) return;
+  if (typeof selectedComandaId !== 'string') return;
+
+  const payload = buildPendientePayload(selectedItem);
+  const hash = JSON.stringify(payload);
+
+  if (hash === lastSavedHashRef.current) return;
+
+  if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+
+  autosaveTimerRef.current = setTimeout(async () => {
+    try {
+      await updateDoc(
+        doc(db, 'comandas_pendientes', selectedComandaId),
+        payload
+      );
+      lastSavedHashRef.current = hash;
+    } catch (e) {
+      console.error("Error auto-guardando comanda:", e);
+    }
+  }, 600);
+
+  return () => {
+    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+  };
+}, [selectedItem, selectedComandaId, isCanchaSelected]);
+``
+
+  // Guarda comandas pendientes
+useEffect(() => {
+  const fetchPendientes = async () => {
+    try {
+      const snap = await getDocs(comandasPendientesCollectionRef);
+      const pendientes = snap.docs.map(d => ({
+        id: d.id,
+        ...d.data(),
+      }));
+      setOpenOrders(pendientes);
+    } catch (e) {
+      console.error("Error cargando comandas pendientes:", e);
+    }
+  };
+
+  fetchPendientes();
+}, []);
+
+ //Insertada 
+const buildPendientePayload = (item) => ({
+  nombre: item.nombre || '',
+  tipo: item.tipo || 'abierta',
+  productosEnComanda: (item.productosEnComanda || []).map(p => ({
+    id: p.id,
+    nombre: p.nombre,
+    cantidad: Number(p.cantidad || 0),
+    precio: Number(p.precio || 0),
+    costoCompra: Number(p.costoCompra || 0),
+  })),
+  clienteSeleccionado: item.clienteSeleccionado
+    ? {
+        id: item.clienteSeleccionado.id || null,
+        nombreCompleto: item.clienteSeleccionado.nombreCompleto || '',
+        numeroCi: item.clienteSeleccionado.numeroCi || '',
+      }
+    : null,
+  updatedAt: Timestamp.fromDate(new Date()),
+});
+``
+
+  
+
 
   const selectedItem = useMemo(() => {
     if (selectedComandaId == null) return null;
@@ -80,21 +163,30 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
     handleSelectComanda(newId, true);
   };
 
-  const handleCreateOpenOrder = () => {
-    const newId =
-      openOrders.length > 0 ? Math.max(...openOrders.map(o => o.id)) + 1 : 1;
-
+  //modificación para que guarde la comanda
+const handleCreateOpenOrder = async () => {
+  try {
     const nueva = {
-      id: newId,
-      nombre: `Comanda #${newId}`,
+      nombre: `Comanda #${Date.now()}`,
       productosEnComanda: [],
       clienteSeleccionado: null,
       tipo: 'abierta',
+      fecha: Timestamp.fromDate(new Date()),
+      updatedAt: Timestamp.fromDate(new Date()),
     };
 
-    setOpenOrders(prev => [...prev, nueva]);
-    handleSelectComanda(newId, false);
-  };
+    const docRef = await addDoc(comandasPendientesCollectionRef, nueva);
+
+    setOpenOrders(prev => [...prev, { id: docRef.id, ...nueva }]);
+    handleSelectComanda(docRef.id, false);
+
+  } catch (e) {
+    console.error("Error creando comanda abierta:", e);
+    alert("No se pudo abrir la comanda.");
+  }
+};
+``
+
 
   const handleDeleteOpenOrder = comandaId => {
     if (window.confirm('¿Eliminar comanda abierta?')) {
@@ -310,19 +402,52 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
     }
   };
 
-  // 💾 GUARDAR COMANDA PENDIENTE
-  const handleSaveComandaPendiente = () => {
-    if (!selectedItem) return;
+  // 💾 GUARDAR COMANDA PENDIENTE Modificado para manejar las comandas pendientes
+  
+const handleSaveComandaPendiente = async () => {
+  if (!selectedItem) return;
 
-    if (!isCanchaSelected) {
-      alert("Solo las canchas pueden guardarse como pendiente.");
-      return;
-    }
+  if (!isCanchaSelected) {
+    alert("Solo las canchas pueden guardarse como pendiente.");
+    return;
+  }
 
-    if (!selectedItem.productosEnComanda.length) {
-      alert("No hay productos para guardar.");
-      return;
-    }
+  if (!selectedItem.productosEnComanda.length) {
+    alert("No hay productos para guardar.");
+    return;
+  }
+
+  try {
+    const payload = {
+      nombre: selectedItem.nombre,
+      productosEnComanda: [...selectedItem.productosEnComanda],
+      clienteSeleccionado: selectedItem.clienteSeleccionado || null,
+      tipo: "abierta",
+      fecha: Timestamp.fromDate(new Date()),
+      updatedAt: Timestamp.fromDate(new Date()),
+    };
+
+    const docRef = await addDoc(comandasPendientesCollectionRef, payload);
+
+    setOpenOrders(prev => [...prev, { id: docRef.id, ...payload }]);
+
+    setCanchas(prev =>
+      prev.map(c =>
+        c.id === selectedComandaId
+          ? { ...c, productosEnComanda: [], clienteSeleccionado: null }
+          : c
+      )
+    );
+
+    setSelectedComandaId(null);
+    alert("✅ Comanda guardada como pendiente.");
+
+  } catch (e) {
+    console.error("Error guardando comanda pendiente:", e);
+    alert("No se pudo guardar la comanda.");
+  }
+};
+
 
     const nuevaComandaAbierta = {
       id:
