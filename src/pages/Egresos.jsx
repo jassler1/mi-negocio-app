@@ -94,6 +94,7 @@ function Egresos() {
     'Servicios Básicos',
     'Mantenimiento',
     'Insumos Alimenticios',
+    'Compra de Stock',
     'Material Deportivo',
     'Trofeos',
     'Insumos Deportivos',

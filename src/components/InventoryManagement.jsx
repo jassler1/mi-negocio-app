@@ -6,9 +6,19 @@ import EditProductForm from './EditProductForm';
 import AddStockForm from './AddStockForm';
 import CreateKitForm from './CreateKitForm';
 import './InventoryManagement.css';
-import { FaPlus, FaBoxOpen, FaCube, FaSearch, FaFilter, FaEdit, FaTrashAlt, FaBoxes } from 'react-icons/fa';
-import { debounce } from 'lodash';
-import { FaSpinner } from 'react-icons/fa';
+
+import {
+  FaPlus,
+  FaBoxOpen,
+  FaCube,
+  FaSearch,
+  FaFilter,
+  FaEdit,
+  FaTrashAlt,
+  FaBoxes,
+  FaSpinner
+} from 'react-icons/fa';
+
 
 function InventoryManagement() {
   const [view, setView] = useState('list');
@@ -70,26 +80,29 @@ function InventoryManagement() {
     }
   };
 
-  const getFilteredProducts = (products, section, category, search) => {
-     // Limpiamos el texto del buscador (minúsculas y sin espacios extra)
-    const searchTerm = search.toLowerCase().trim();
-    return products.filter(product => {
+const getFilteredProducts = (products, section, category, search) => {
+  // Limpiamos el texto del buscador (minúsculas y sin espacios extra)
+  const searchTerm = (search || '').toLowerCase().trim();
+
+  return products.filter(product => {
     // Obtenemos los valores del producto de forma segura (si es null, usamos texto vacío)
-      const pSection = (product.seccion || '').toLowerCase();
-      const pCategory = (product.categoria || '').toLowerCase();
-      const pName = (product.nombre || '').toLowerCase();
-      const pCode = (product.codigo || '').toLowerCase();
+    const pSection = (product.seccion || '').toLowerCase();
+    const pCategory = (product.categoria || '').toLowerCase();
+    const pName = (product.nombre || '').toLowerCase();
+    const pCode = (product.codigo || '').toLowerCase();
 
-      // Comparamos
-      const matchesSection = section === 'all' || pSection === section.toLowerCase();
-      const matchesCategory = category === 'all' || pCategory === category.toLowerCase();
-      
-      // Buscamos en nombre O en código
-      const matchesSearch = pName.includes(searchTerm) || pCode.includes(searchTerm);
+    // Comparamos
+    const matchesSection = section === 'all' || pSection === section.toLowerCase();
+    const matchesCategory = category === 'all' || pCategory === category.toLowerCase();
 
-      return matchesSection && matchesCategory && matchesSearch;
-    });
-  };
+    // Buscamos en nombre O en código
+    const matchesSearch = pName.includes(searchTerm) || pCode.includes(searchTerm);
+
+    return matchesSection && matchesCategory && matchesSearch;
+  });
+};
+``
+
 
   const filteredProducts = getFilteredProducts(products, selectedSection, selectedCategory, searchQuery);
 
@@ -190,11 +203,12 @@ function InventoryManagement() {
               </select>
             </div>
 
-            <div className="filter-group search-group">
+           <div className="filter-group search-group">
               <label htmlFor="search-input"><FaSearch /> Buscar:</label>
               <input 
                 type="text" 
                 id="search-input"
+                // Aquí está la clave: value conectado directamente al estado
                 value={searchQuery}
                // Quitamos el debounce. Ahora se actualiza al instante.
                 onChange={(e) => setSearchQuery(e.target.value)} 
