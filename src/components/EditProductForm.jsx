@@ -108,6 +108,8 @@ function EditProductForm({ product, onEditComplete, onCancel }) {
         nombre: formData.nombre,
         cantidad: parseFloat(formData.cantidad) || 0,
         unidad: formData.unidad,
+        seccion: formData.seccion,        // ⬅️ NUEVO
+        categoria: formData.categoria,    // ⬅️ NUEVO
         costoCompra: parseFloat(formData.costoCompra) || 0,
         costoVenta: formData.esInsumo ? 0 : (parseFloat(formData.costoVenta) || 0),
         gananciaPorcentaje: formData.esInsumo ? 0 : (parseFloat(formData.gananciaPorcentaje) || 0),
@@ -153,6 +155,28 @@ function EditProductForm({ product, onEditComplete, onCancel }) {
             <option value="porcion">porción</option>
           </select>
         </div>
+        
+        {/* ⬇️ NUEVOS CAMPOS - AGREGAR AQUÍ */}
+        <div>
+          <label>Sección:</label>
+          <select name="seccion" value={formData.seccion || ''} onChange={handleChange} required>
+            <option value="">Seleccione una sección</option>
+            <option value="RESTAURANTE">RESTAURANTE</option>
+            <option value="ACCESORIOS">ACCESORIOS</option>
+          </select>
+        </div>
+        <div>
+          <label>Categoría:</label>
+          <select name="categoria" value={formData.categoria || ''} onChange={handleChange} required>
+            <option value="">Seleccione una categoría</option>
+            <option value="BEBIDAS">BEBIDAS</option>
+            <option value="COMIDA RAPIDA">COMIDA RAPIDA</option>
+            <option value="POSTRES">POSTRES</option>
+            <option value="SNACKS">SNACKS</option>
+          </select>
+        </div>
+        {/* ⬆️ FIN DE NUEVOS CAMPOS */}
+        
         <div>
           <label>Costo de compra (BS):</label>
           <input type="text" name="costoCompra" value={formData.costoCompra} onChange={handleChange} required />
