@@ -251,7 +251,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
         nombre: p.nombre,
         cantidad: p.cantidad,
         precio: p.precio,
-        costoCompra: p.costoCompra,
+        costoCompra: p.costoCompra || 0,
       })),
       clienteId: selectedItem.clienteSeleccionado
         ? selectedItem.clienteSeleccionado.id
@@ -260,7 +260,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
         ? selectedItem.clienteSeleccionado.nombreCompleto
         : 'Anónimo',
       total: ventaTotal,
-      metodoPago: paymentData.method,
+      metodoPago: paymentData.method || 'Desconocido',
       fecha: Timestamp.fromDate(new Date()),
     };
 
