@@ -42,7 +42,9 @@ function ProductSelectionModal({ onSelectProduct, onClose, filtroDeSeccion }) {
                         precio: price,
                         unidad: data.unidad || 'unidad',
                         tipo: data.esInsumo ? 'Insumo' : 'Producto',
-                        seccion: section, 
+                        seccion: section,
+                        codigoBarras: data.codigoBarras || '',
+                        codigo: data.codigo || '',
                     };
                 });
 
@@ -74,6 +76,7 @@ function ProductSelectionModal({ onSelectProduct, onClose, filtroDeSeccion }) {
 
     const filteredProducts = products.filter(product =>
         product.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (product.codigoBarras && product.codigoBarras.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (product.codigo && product.codigo.toLowerCase().includes(searchQuery.toLowerCase()))
     );
     

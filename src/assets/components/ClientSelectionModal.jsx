@@ -1,88 +1,184 @@
-// src/assets/components/ClientSelectionModal.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../../firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import './ProductSelectionModal.css';
+import { FaTimes, FaSearch, FaPlus } from 'react-icons/fa';
 
-function ClientSelectionModal({ onSelectClient, onClose }) {
-  const [clients, setClients] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+function ProductSelectionModal({ onSelectProduct, onClose, filtroDeSeccion, initialSearchQuery = '' }) {
+  const [products, setProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [itemQuantities, setItemQuantities] = useState({});
+
+  const searchInputRef = useRef(null);
+
+  // Sincronizar initialSearchQuery con searchQuery cuando el modal abre
+  useEffect(() => {
+    setSearchQuery(initialSearchQuery || '');
+    // Focus en el input después de que se renderice
+    setTimeout(() => {
+      if (searchInputRef.current) {
+        searchInputRef.current.focus();
+      }
+    }, 0);
+  }, [initialSearchQuery]);
+
+  const ensureValidQuantity = (value) => {
+    const num = parseInt(value, 10);
+    return isNaN(num) || num < 1 ? 1 : num;
+  };
 
   useEffect(() => {
-    const fetchClients = async () => {
-      setLoading(true);
+    const fetchProducts = async () => {
       try {
-        const clientsCollection = collection(db, 'clientes');
-        const clientsSnapshot = await getDocs(clientsCollection);
-        const clientsList = clientsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setClients(clientsList);
+        setLoading(true);
+        const q = query(collection(db, 'inventario'), orderBy('nombre', 'asc'));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          setProducts([]);
+          setLoading(false);
+          return;
+        }
+
+        const productsList = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          const section = data.seccion ? data.seccion.toLowerCase() : '';
+          const price = parseFloat(data.costoVenta) || 0;
+
+          return {
+            id: doc.id,
+            nombre: data.nombre,
+            cantidad: Number(data.cantidad) || 0,
+            precio: price,
+            unidad: data.unidad || 'unidad',
+            tipo: data.esInsumo ? 'Insumo' : 'Producto',
+            seccion: section,
+            codigoBarras: data.codigoBarras || '',
+            codigo: data.codigo || '',
+          };
+        });
+
+        const filterSectionLower = filtroDeSeccion.toLowerCase();
+        let filteredList = [];
+
+        if (filterSectionLower === 'accesorios') {
+          filteredList = productsList.filter(p => p.seccion === 'accesorios' && p.cantidad > 0);
+        } else {
+          filteredList = productsList.filter(p =>
+            p.seccion === 'restaurante' &&
+            p.tipo !== 'Insumo' &&
+            p.precio > 0 &&
+            p.cantidad > 0
+          );
+        }
+
+        setProducts(filteredList);
       } catch (error) {
-        console.error('Error fetching clients: ', error);
+        console.error("Error al obtener productos: ", error);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchClients();
-  }, []);
+    fetchProducts();
+  }, [filtroDeSeccion]);
 
-  const filteredClients = clients.filter(client =>
-    client.nombreCompleto.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.numeroCi.includes(searchTerm) || // Agregamos la búsqueda por CI
-    client.telefono.includes(searchTerm)
+  const filteredProducts = products.filter(product =>
+    product.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (product.codigoBarras && product.codigoBarras.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (product.codigo && product.codigo.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
+  const handleQuantityChange = (productId, value) => {
+    const quantity = ensureValidQuantity(value);
+    setItemQuantities(prev => ({ ...prev, [productId]: quantity }));
+  };
+
+  const handleSelect = (product) => {
+    const quantityToSelect = itemQuantities[product.id] || 1;
+
+    if (quantityToSelect > product.cantidad) {
+      alert(`Stock insuficiente. Solo quedan ${product.cantidad} ${product.unidad}.`);
+      return;
+    }
+
+    onSelectProduct({ ...product, cantidad: quantityToSelect });
+
+    setSearchQuery('');
+    setItemQuantities(prev => {
+      const newState = { ...prev };
+      delete newState[product.id];
+      return newState;
+    });
+  };
+
+  const modalTitle = filtroDeSeccion === 'accesorios' ? 'Añadir Accesorio' : 'Seleccionar Producto';
+
   return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
-      justifyContent: 'center', alignItems: 'center'
-    }}>
-      <div style={{
-        backgroundColor: 'white', padding: '20px', borderRadius: '8px',
-        width: '90%', maxWidth: '500px', maxHeight: '80%', overflowY: 'auto'
-      }}>
-        <h2>Seleccionar Cliente</h2>
-        <input
-          type="text"
-          placeholder="Buscar por nombre, CI o teléfono..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-        />
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h3>{modalTitle}</h3>
+
+        <div className="input-with-icon">
+          <FaSearch />
+          <input
+            ref={searchInputRef}
+            type="text"
+            className="search-input"
+            placeholder="Buscar por nombre o código..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
         {loading ? (
-          <p>Cargando clientes...</p>
+          <p>Cargando productos...</p>
         ) : (
-          <div>
-            {filteredClients.length > 0 ? (
-              <ul style={{ listStyleType: 'none', padding: 0 }}>
-                {filteredClients.map(client => (
-                  <li key={client.id}
-                      onClick={() => onSelectClient(client)}
-                      style={{
-                        padding: '10px', borderBottom: '1px solid #eee',
-                        cursor: 'pointer', display: 'flex', justifyContent: 'space-between',
-                        alignItems: 'center'
-                      }}>
-                    <span>{client.nombreCompleto}</span>
-                    <small>{client.numeroCi}</small> {/* Muestra el número de CI */}
-                  </li>
-                ))}
-              </ul>
+          <ul className="product-list">
+            {filteredProducts.length === 0 ? (
+              <p>No se encontraron productos disponibles en esta sección.</p>
             ) : (
-              <p>No se encontraron clientes.</p>
+              filteredProducts.map(product => {
+                const currentQty = itemQuantities[product.id] || 1;
+                return (
+                  <li key={product.id} className="product-item">
+                    <div className="product-info">
+                      <strong>{product.nombre}</strong>
+                      <small>Bs. {product.precio.toFixed(2)} | Stock: {product.cantidad} {product.unidad}</small>
+                    </div>
+
+                    <div className="product-actions">
+                      <input
+                        type="number"
+                        min="1"
+                        max={product.cantidad}
+                        className="quantity-input"
+                        value={currentQty}
+                        onChange={(e) => handleQuantityChange(product.id, e.target.value)}
+                      />
+                      <button
+                        onClick={() => handleSelect(product)}
+                        className="add-product-btn"
+                        disabled={currentQty > product.cantidad || product.cantidad === 0}
+                      >
+                        <FaPlus /> Añadir
+                      </button>
+                    </div>
+                  </li>
+                );
+              })
             )}
-          </div>
+          </ul>
         )}
-        <button onClick={onClose} style={{ marginTop: '20px' }}>
-          Cerrar
+
+        <button onClick={onClose} className="close-modal-btn">
+          <FaTimes /> Cerrar
         </button>
       </div>
     </div>
   );
 }
 
-export default ClientSelectionModal;
+export default ProductSelectionModal;

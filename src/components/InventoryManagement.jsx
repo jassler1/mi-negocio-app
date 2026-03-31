@@ -71,11 +71,11 @@ function InventoryManagement() {
   };
 
   const getFilteredProducts = (products, section, category, search) => {
-    // Limpiamos el texto del buscador (minúsculas y sin espacios extra)
+     // Limpiamos el texto del buscador (minúsculas y sin espacios extra)
     const searchTerm = search.toLowerCase().trim();
-
+    
     return products.filter(product => {
-      // Obtenemos los valores del producto de forma segura (si es null, usamos texto vacío)
+    // Obtenemos los valores del producto de forma segura (si es null, usamos texto vacío)
       const pSection = (product.seccion || '').toLowerCase();
       const pCategory = (product.categoria || '').toLowerCase();
       const pName = (product.nombre || '').toLowerCase();
@@ -113,6 +113,7 @@ function InventoryManagement() {
               <th>Cantidad</th>
               <th>Sección</th>
               <th>Categoría</th>
+              <th>Costo de Compra (Bs)</th>
               <th>Costo de Venta (Bs)</th>
               <th>Tipo</th>
               <th>Acciones</th>
@@ -126,6 +127,7 @@ function InventoryManagement() {
                 <td>{(product.cantidad ?? 0) + ' ' + (product.unidad ?? '')}</td>
                 <td>{product.seccion ?? 'N/A'}</td>
                 <td>{product.categoria ?? 'N/A'}</td>
+                <td>{typeof product.costoCompra === 'number' ? product.costoCompra.toFixed(2) : 'N/A'}</td>
                 <td>{typeof product.costoVenta === 'number' ? product.costoVenta.toFixed(2) : 'N/A'}</td>
                 <td>{product.esInsumo ? 'Insumo' : product.esKit ? 'Kit' : 'Producto'}</td>
                 <td>
@@ -198,7 +200,7 @@ function InventoryManagement() {
                 id="search-input"
                 // Aquí está la clave: value conectado directamente al estado
                 value={searchQuery}
-                // Quitamos el debounce. Ahora se actualiza al instante.
+               // Quitamos el debounce. Ahora se actualiza al instante.
                 onChange={(e) => setSearchQuery(e.target.value)} 
                 placeholder="Buscar por nombre o código"
               />

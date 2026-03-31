@@ -23,6 +23,7 @@ function RegisterProductForm({ onRegisterComplete, onCancel }) {
         gananciaPorcentaje: '',
         esInsumo: false,
         codigo: '',
+        codigoBarras: '',
         proveedor: '',
         seccion: 'restaurante', // Valor inicial
         categoria: 'comida rapida', // Valor inicial
@@ -228,6 +229,13 @@ function RegisterProductForm({ onRegisterComplete, onCancel }) {
                 proveedor: formData.proveedor.toUpperCase(),
             };
 
+            // Omitir codigoBarras si está vacío; si tiene valor, guardarlo con trim
+            if (formData.codigoBarras.trim()) {
+                productData.codigoBarras = formData.codigoBarras.trim();
+            } else {
+                delete productData.codigoBarras;
+            }
+
             await addDoc(collection(db, 'inventario'), productData);
             setStatus('✅ Producto registrado con éxito.');
             onRegisterComplete();
@@ -400,7 +408,7 @@ function RegisterProductForm({ onRegisterComplete, onCancel }) {
                         </>
                     )}
                     
-                    {/* FILA 6: Proveedor (Ocupa una columna si es visible) */}
+                    {/* FILA 6: Proveedor y Código de barras */}
                     <div className="form-group" style={{gridColumn: formData.esInsumo ? 'span 2' : 'auto'}}>
                         <label htmlFor="proveedor">Proveedor:</label>
                         <div className="input-with-icon">
@@ -413,6 +421,20 @@ function RegisterProductForm({ onRegisterComplete, onCancel }) {
                                 onChange={handleChange}
                                 placeholder="Ej. COCA-COLA BOLIVIA"
                                 required
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="codigoBarras">Código de barras:</label>
+                        <div className="input-with-icon">
+                            <FaBarcode />
+                            <input
+                                id="codigoBarras"
+                                type="text"
+                                name="codigoBarras"
+                                value={formData.codigoBarras}
+                                onChange={handleChange}
+                                placeholder="Ej. 7501055300166"
                             />
                         </div>
                     </div>

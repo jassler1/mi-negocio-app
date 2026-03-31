@@ -73,12 +73,12 @@ function Ingresos() {
 
   const [categoriasAlquiler] = useState([
     { id: 'cat1', nombre: 'Alquiler de Canchas' },
-    { id: 'cat2', nombre: 'Venta de Material Deportivo' },
-    { id: 'cat3', nombre: 'Alquiler de Deportivo' },
-    { id: 'cat4', nombre: 'Pago por Clases Mensuales' },
-    { id: 'cat5', nombre: 'Pago por Clases Semanales' },
-    { id: 'cat6', nombre: 'Pago por Clases Diaria' },
-    { id: 'cat7', nombre: 'Escalerilla' },
+    { id: 'cat2', nombre: 'Canchas Embajadores' },
+    { id: 'cat3', nombre: 'Venta de Material Deportivo' },
+    { id: 'cat4', nombre: 'Alquiler de Deportivo' },
+    { id: 'cat5', nombre: 'Pago por Clases Mensuales' },
+    { id: 'cat6', nombre: 'Pago por Clases Semanales' },
+    { id: 'cat7', nombre: 'Pago por Clases Diaria' },
     { id: 'cat8', nombre: 'Alquiler de Canchas para Profesor' },
     { id: 'cat9', nombre: 'Otros Ingresos' },
   ]);

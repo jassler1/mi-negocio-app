@@ -1,3 +1,4 @@
+import useUSBBarcodeReader from '../hooks/useUSBBarcodeReader';
 import React, { useState, useEffect, useMemo } from 'react';
 import ClientSelectionModal from '../assets/components/ClientSelectionModal';
 import ProductSelectionModal from '../assets/components/ProductSelectionModal';
@@ -20,6 +21,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [initialProductSearchQuery, setInitialProductSearchQuery] = useState('');
 
   const [products, setProducts] = useState([]);
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
@@ -43,6 +45,55 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
     };
     fetchProducts();
   }, []);
+
+    // Hook para lector de códigos de barras USB
+  useUSBBarcodeReader({
+    enabled: !isProductModalOpen && !isClientModalOpen && !isPaymentModalOpen && !isEditableFocused(),
+    minLength: 4,
+    timeoutMs: 80,
+    onScan: (raw) => {
+      const code = String(raw || '').trim();
+      if (!code) return;
+
+      // Validar que hay comanda seleccionada
+      if (!selectedItem) {
+        alert('⚠️ Selecciona una comanda/cancha antes de escanear.');
+        return;
+      }
+
+      // Buscar por codigoBarras primero, luego por codigo
+      const byBarras = products.filter(p => String(p.codigoBarras || '').trim() === code);
+      const matches = byBarras.length > 0
+        ? byBarras
+        : products.filter(p => String(p.codigo || '').trim() === code);
+
+      if (matches.length === 1) {
+        // Exactamente 1 match: agregar directo
+        const p = matches[0];
+        handleSelectProduct({
+          id: p.id,
+          nombre: p.nombre,
+          cantidad: 1,
+          precio: Number(p.costoVenta) || Number(p.precio) || 0,
+          costoCompra: Number(p.costoCompra) || 0,
+        });
+        console.log(`✅ Producto agregado: ${p.nombre}`);
+        return;
+      }
+
+      // 0 o múltiples matches: abrir modal con búsqueda prellenada
+      setInitialProductSearchQuery(code);
+      setIsProductModalOpen(true);
+    },
+  });
+
+    // Detecta si hay un input o textarea enfocado
+  const isEditableFocused = () => {
+    const el = document.activeElement;
+    if (!el) return false;
+    const tag = el.tagName?.toLowerCase();
+    return tag === 'input' || tag === 'textarea' || el.isContentEditable;
+  };
 
   const selectedItem = useMemo(() => {
     if (selectedComandaId == null) return null;
@@ -251,7 +302,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
         nombre: p.nombre,
         cantidad: p.cantidad,
         precio: p.precio,
-        costoCompra: p.costoCompra,
+        costoCompra: p.costoCompra || 0,
       })),
       clienteId: selectedItem.clienteSeleccionado
         ? selectedItem.clienteSeleccionado.id
@@ -260,7 +311,7 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
         ? selectedItem.clienteSeleccionado.nombreCompleto
         : 'Anónimo',
       total: ventaTotal,
-      metodoPago: paymentData.method,
+      metodoPago: paymentData.method || 'Desconocido',
       fecha: Timestamp.fromDate(new Date()),
     };
 
@@ -567,14 +618,17 @@ const Comandas = ({ canchas, setCanchas, openOrders, setOpenOrders }) => {
         />
       )}
 
-      {isProductModalOpen && (
-        <ProductSelectionModal
-          products={products}
-          onSelectProduct={handleSelectProduct}
-          onClose={closeProductModal}
-          filtroDeSeccion="comandas"
-        />
-      )}
+     {isProductModalOpen && (
+  <ProductSelectionModal
+    onSelectProduct={handleSelectProduct}
+    onClose={() => {
+      setIsProductModalOpen(false);
+      setInitialProductSearchQuery('');
+    }}
+    filtroDeSeccion="comandas"
+    initialSearchQuery={initialProductSearchQuery}
+  />
+)}
 
       {isPaymentModalOpen && (
         <PaymentModal

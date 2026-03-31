@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, deleteField } from 'firebase/firestore';
 
 function EditProductForm({ product, onEditComplete, onCancel }) {
   const [formData, setFormData] = useState({
@@ -9,6 +9,7 @@ function EditProductForm({ product, onEditComplete, onCancel }) {
     costoCompra: String(product.costoCompra),
     costoVenta: String(product.costoVenta),
     gananciaPorcentaje: String(product.gananciaPorcentaje),
+    codigoBarras: product.codigoBarras || '',
   });
   const [status, setStatus] = useState('');
   const [mensajeGanancia, setMensajeGanancia] = useState('');
@@ -20,6 +21,7 @@ function EditProductForm({ product, onEditComplete, onCancel }) {
       costoCompra: String(product.costoCompra),
       costoVenta: String(product.costoVenta),
       gananciaPorcentaje: String(product.gananciaPorcentaje),
+      codigoBarras: product.codigoBarras || '',
     });
   }, [product]);
 
@@ -108,11 +110,14 @@ function EditProductForm({ product, onEditComplete, onCancel }) {
         nombre: formData.nombre,
         cantidad: parseFloat(formData.cantidad) || 0,
         unidad: formData.unidad,
+        seccion: formData.seccion,        // ⬅️ NUEVO
+        categoria: formData.categoria,    // ⬅️ NUEVO
         costoCompra: parseFloat(formData.costoCompra) || 0,
         costoVenta: formData.esInsumo ? 0 : (parseFloat(formData.costoVenta) || 0),
         gananciaPorcentaje: formData.esInsumo ? 0 : (parseFloat(formData.gananciaPorcentaje) || 0),
         esInsumo: formData.esInsumo,
         proveedor: formData.proveedor,
+        codigoBarras: formData.codigoBarras.trim() || deleteField(),
       });
       setStatus('✅ Producto actualizado con éxito.');
       onEditComplete();
@@ -153,6 +158,28 @@ function EditProductForm({ product, onEditComplete, onCancel }) {
             <option value="porcion">porción</option>
           </select>
         </div>
+        
+        {/* ⬇️ NUEVOS CAMPOS - AGREGAR AQUÍ */}
+        <div>
+          <label>Sección:</label>
+          <select name="seccion" value={formData.seccion || ''} onChange={handleChange} required>
+            <option value="">Seleccione una sección</option>
+            <option value="RESTAURANTE">RESTAURANTE</option>
+            <option value="ACCESORIOS">ACCESORIOS</option>
+          </select>
+        </div>
+        <div>
+          <label>Categoría:</label>
+          <select name="categoria" value={formData.categoria || ''} onChange={handleChange} required>
+            <option value="">Seleccione una categoría</option>
+            <option value="BEBIDAS">BEBIDAS</option>
+            <option value="COMIDA RAPIDA">COMIDA RAPIDA</option>
+            <option value="POSTRES">POSTRES</option>
+            <option value="SNACKS">SNACKS</option>
+          </select>
+        </div>
+        {/* ⬆️ FIN DE NUEVOS CAMPOS */}
+        
         <div>
           <label>Costo de compra (BS):</label>
           <input type="text" name="costoCompra" value={formData.costoCompra} onChange={handleChange} required />
@@ -173,6 +200,10 @@ function EditProductForm({ product, onEditComplete, onCancel }) {
         <div>
           <label>Proveedor:</label>
           <input type="text" name="proveedor" value={formData.proveedor} onChange={handleChange} required />
+        </div>
+        <div>
+          <label>Código de barras:</label>
+          <input type="text" name="codigoBarras" value={formData.codigoBarras} onChange={handleChange} placeholder="Ej. 7501055300166" />
         </div>
         <div>
           <label>

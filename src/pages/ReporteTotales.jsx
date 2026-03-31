@@ -61,6 +61,98 @@ const extractDate = (t) => {
     if (!dateValue) return new Date(0);
     return dateValue?.toDate?.() || new Date(dateValue);
 };
+// Se añadió
+const EXPORT_MODES = {
+  HOY: 'hoy',
+  TURNO_1: 'turno_1', // 05:00-16:00
+  TURNO_2: 'turno_2', // 16:00-03:00
+};
+
+const computeTotals = (transactions) => {
+  const ingresos = transactions.filter(t => t.monto > 0);
+  const egresos = transactions.filter(t => t.monto < 0);
+
+  const sumarMonto = (arr) => arr.reduce((acc, t) => acc + t.monto, 0);
+  const sumarGanancia = (arr) => arr.reduce((acc, t) => acc + (t.ganancia || 0), 0);
+  const sumarCosto = (arr) => arr.reduce((acc, t) => acc + (t.costoTotal || 0), 0);
+
+  const totalIngresos = sumarMonto(ingresos);
+  const totalEgresos = Math.abs(sumarMonto(egresos));
+  const totalGananciaBruta = sumarGanancia(ingresos);
+  const totalCostoMercancia = sumarCosto(ingresos);
+
+  return {
+    ingresosAlquiler: sumarMonto(ingresos.filter(t => t.tipo === TRANSACTION_TYPES.ALQUILER)),
+    ventasAccesorios: sumarMonto(ingresos.filter(t => t.tipo === TRANSACTION_TYPES.ACCESORIOS)),
+    comandasPagadas: sumarMonto(ingresos.filter(t => t.tipo === TRANSACTION_TYPES.COMANDA)),
+    generalIngresos: totalIngresos,
+    generalEgresos: totalEgresos,
+    balanceNeto: totalIngresos - totalEgresos,
+    gananciaBruta: totalGananciaBruta,
+    costoMercancia: totalCostoMercancia,
+  };
+};
+
+const getExportRange = (mode) => {
+  const now = new Date();
+
+  if (mode === EXPORT_MODES.HOY) {
+    const start = new Date(now);
+    start.setHours(0, 0, 0, 0);
+    return { start, end: now, label: 'Hoy (00:00 → ahora)' };
+  }
+
+  if (mode === EXPORT_MODES.TURNO_1) {
+    const start = new Date(now);
+    start.setHours(5, 0, 0, 0);
+
+    const plannedEnd = new Date(now);
+    plannedEnd.setHours(16, 0, 0, 0);
+
+    const end = new Date(Math.min(now.getTime(), plannedEnd.getTime()));
+    return { start, end, label: 'Turno 1 (05:00 → 16:00)' };
+  }
+
+  if (mode === EXPORT_MODES.TURNO_2) {
+    const hour = now.getHours();
+
+    // 00:00-02:59 => extensión del turno 2 del día anterior
+    if (hour >= 0 && hour < 3) {
+      const start = new Date(now);
+      start.setDate(start.getDate() - 1);
+      start.setHours(16, 0, 0, 0);
+
+      const plannedEnd = new Date(now);
+      plannedEnd.setHours(3, 0, 0, 0);
+
+      const end = new Date(Math.min(now.getTime(), plannedEnd.getTime()));
+      return {
+        start,
+        end,
+        label: 'Turno 2 (extensión: ayer 16:00 → hoy 03:00)',
+        note: 'Cierre extendido del turno 2 del día anterior (00:00-03:00).',
+      };
+    }
+
+    // 16:00-23:59 => turno 2 normal hoy
+    if (hour >= 16) {
+      const start = new Date(now);
+      start.setHours(16, 0, 0, 0);
+      return { start, end: now, label: 'Turno 2 (16:00 → 03:00)' };
+    }
+
+    return null; // 03:00-15:59
+  }
+
+  return null;
+};
+
+const filterByRange = (txs, start, end) =>
+  txs.filter(t => {
+    const d = extractDate(t);
+    return d.getTime() >= start.getTime() && d.getTime() <= end.getTime();
+  });
+// Hasta aqui
 
 const calculateProductCost = (productos) => {
     if (!productos || productos.length === 0) return 0;
@@ -197,35 +289,23 @@ function ReporteTotales() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+//nuevo
+    const [exportMode, setExportMode] = useState(EXPORT_MODES.HOY);
+const [printMode, setPrintMode] = useState(false);
+const [printData, setPrintData] = useState(null); 
+// { start, end, label, note, usuario, txs, totals }
+
+const nombreUsuario = localStorage.getItem('nombreUsuario') || '';
+    // añadido
+
+    
+
     const [filterType, setFilterType] = useState(UI_FILTER_OPTIONS.ALL);
     const [filterPaymentMethod, setFilterPaymentMethod] = useState(PAYMENT_METHODS[0]);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
-    const totals = useMemo(() => {
-        const ingresos = filteredTransactions.filter(t => t.monto > 0);
-        const egresos = filteredTransactions.filter(t => t.monto < 0);
-
-        const sumarMonto = (arr) => arr.reduce((acc, t) => acc + t.monto, 0);
-        const sumarGanancia = (arr) => arr.reduce((acc, t) => acc + (t.ganancia || 0), 0);
-        const sumarCosto = (arr) => arr.reduce((acc, t) => acc + (t.costoTotal || 0), 0);
-
-        const totalIngresos = sumarMonto(ingresos);
-        const totalEgresos = Math.abs(sumarMonto(egresos));
-        const totalGananciaBruta = sumarGanancia(ingresos);
-        const totalCostoMercancia = sumarCosto(ingresos);
-
-        return {
-            ingresosAlquiler: sumarMonto(ingresos.filter(t => t.tipo === TRANSACTION_TYPES.ALQUILER)),
-            ventasAccesorios: sumarMonto(ingresos.filter(t => t.tipo === TRANSACTION_TYPES.ACCESORIOS)),
-            comandasPagadas: sumarMonto(ingresos.filter(t => t.tipo === TRANSACTION_TYPES.COMANDA)),
-            generalIngresos: totalIngresos,
-            generalEgresos: totalEgresos,
-            balanceNeto: totalIngresos - totalEgresos,
-            gananciaBruta: totalGananciaBruta,
-            costoMercancia: totalCostoMercancia,
-        };
-    }, [filteredTransactions]);
+   const totals = useMemo(() => computeTotals(filteredTransactions), [filteredTransactions]);
 
     const fetchAllData = useCallback(async () => {
         setLoading(true);
@@ -261,6 +341,17 @@ function ReporteTotales() {
         }
     }, []);
 
+    const parseLocalDateInput = (yyyyMmDd, endOfDay = false) => {
+  if (!yyyyMmDd) return null;
+  const [y, m, d] = yyyyMmDd.split('-').map(Number);
+  if (!y || !m || !d) return null;
+
+  // new Date(y, m-1, d, ...) crea la fecha en zona horaria LOCAL (Bolivia)
+  return endOfDay
+    ? new Date(y, m - 1, d, 23, 59, 59, 999)
+    : new Date(y, m - 1, d, 0, 0, 0, 0);
+};
+
     useEffect(() => { fetchAllData(); }, [fetchAllData]);
 
     useEffect(() => {
@@ -273,20 +364,101 @@ function ReporteTotales() {
 
         if (filterPaymentMethod !== PAYMENT_METHODS[0]) data = data.filter(t => t.metodoPago === filterPaymentMethod);
 
-        const start = startDate ? new Date(startDate) : null;
-        const end = endDate ? new Date(endDate) : null;
-        if (start || end) {
-            if (start) start.setHours(0, 0, 0, 0);
-            if (end) end.setHours(23, 59, 59, 999);
-            data = data.filter(t => {
-                const d = extractDate(t);
-                if (start && d.getTime() < start.getTime()) return false;
-                if (end && d.getTime() > end.getTime()) return false;
-                return true;
-            });
-        }
+        const start = parseLocalDateInput(startDate, false);
+        const end = parseLocalDateInput(endDate, true);
+
+            if (start || end) {
+          data = data.filter(t => {
+        const d = extractDate(t);
+            if (start && d < start) return false;
+            if (end && d > end) return false;
+        return true;
+  });
+}
         setFilteredTransactions(data);
     }, [filterType, filterPaymentMethod, startDate, endDate, allTransactions]);
+
+    //Nuevo 
+
+    const exportToPdfSimple = async () => {
+  let user = (localStorage.getItem('nombreUsuario') || '').trim();
+
+if (user.length < 2) {
+  user = (window.prompt('Ingresa tu nombre para el cierre:') || '').trim();
+}
+
+if (user.length < 2) {
+  alert('Debes ingresar un nombre para generar el cierre.');
+  return;
+}
+
+  const range = getExportRange(exportMode);
+  if (!range) {
+    alert('El Turno 2 aún no inicia (solo disponible desde las 16:00 o en extensión 00:00-03:00).');
+    return;
+  }
+
+  const { start, end, label, note } = range;
+
+  // aplicar filtros actuales (tipo y método) solo para el cierre
+  let base = [...allTransactions];
+
+  if (filterType !== UI_FILTER_OPTIONS.ALL) {
+    if (filterType === UI_FILTER_OPTIONS.INGRESOS_GENERAL) base = base.filter(t => t.monto > 0);
+    else base = base.filter(t => t.tipo === filterType);
+  }
+
+  if (filterPaymentMethod !== PAYMENT_METHODS[0]) {
+    base = base.filter(t => t.metodoPago === filterPaymentMethod);
+  }
+
+  const txs = filterByRange(base, start, end);
+
+  if (txs.length === 0) {
+    alert('No hay transacciones para exportar en el rango seleccionado.');
+    return;
+  }
+
+  const msg1 =
+    `Exportar PDF (imprimir/guardar como PDF)\n\n` +
+    `Usuario cierre: ${user}\n` +
+    `Modo: ${label}\n` +
+    `Desde: ${format(start, 'dd/MM/yy HH:mm:ss')}\n` +
+    `Hasta: ${format(end, 'dd/MM/yy HH:mm:ss')}\n` +
+    (note ? `\nNota: ${note}\n` : '') +
+    `\n¿Confirmas que el turno/rango es correcto?`;
+  if (!window.confirm(msg1)) return;
+
+  const msg2 =
+    `SEGUNDA CONFIRMACIÓN\n` +
+    `Esto se usará como CIERRE del personal.\n` +
+    `¿Seguro que deseas continuar?`;
+  if (!window.confirm(msg2)) return;
+
+  const totalsForPrint = computeTotals(txs);
+
+  setPrintData({
+    start, end, label, note,
+    usuario: user,
+    txs,
+    totals: totalsForPrint
+  });
+
+  // activar modo impresión (mostramos solo el reporte)
+  setPrintMode(true);
+
+  // esperar render
+  await new Promise(r => setTimeout(r, 100));
+
+  // abrir diálogo imprimir
+  window.print();
+
+  // al cerrar el diálogo, volvemos a modo normal
+  // (se ejecuta cuando el navegador termina la impresión)
+  setPrintMode(false);
+  setPrintData(null);
+};
+    // Hasta aqui
 
     const clearFilters = () => {
         setFilterType(UI_FILTER_OPTIONS.ALL);
@@ -319,6 +491,76 @@ function ReporteTotales() {
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
         XLSX.writeFile(workbook, `reporte-transacciones-${filterType}.xlsx`);
     };
+// Nuevo Agregado
+    if (printMode && printData) {
+  return (
+    <div className="ReporteTotales-container">
+      <h2>📄 Cierre de Turno</h2>
+      <div style={{ marginBottom: 10 }}>
+        <div><strong>Usuario cierre:</strong> {printData.usuario}</div>
+        <div><strong>Modo:</strong> {printData.label}</div>
+        <div><strong>Rango:</strong> {format(printData.start, 'dd/MM/yy HH:mm:ss')} - {format(printData.end, 'dd/MM/yy HH:mm:ss')}</div>
+        {printData.note && <div><strong>Nota:</strong> {printData.note}</div>}
+        <div><strong>Total registros:</strong> {printData.txs.length}</div>
+      </div>
+
+      <table className="table-report">
+        <thead>
+          <tr>
+            <th>Fecha y Hora</th>
+            <th>Tipo</th>
+            <th>Método</th>
+            <th>Detalle</th>
+            <th>Monto Venta (Bs.)</th>
+            <th>Costo Mercancía (Bs.)</th>
+            <th>Ganancia Bruta (Bs.)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {printData.txs.map(t => (
+            <tr key={`print-${t.id}`}>
+              <td>{formatDate(t.fecha)}</td>
+              <td>{t.tipo}</td>
+              <td>{t.metodoPago}</td>
+              <td className="detalle-cell" dangerouslySetInnerHTML={{ __html: t.detalle }} />
+              <td>Bs. {formatNumber(t.monto)}</td>
+              <td>
+                {(t.tipo === TRANSACTION_TYPES.ACCESORIOS || t.tipo === TRANSACTION_TYPES.COMANDA)
+                  ? `Bs. ${formatNumber(t.costoTotal)}`
+                  : 'N/A'
+                }
+              </td>
+              <td>
+                {(t.tipo === TRANSACTION_TYPES.ACCESORIOS || t.tipo === TRANSACTION_TYPES.COMANDA || t.tipo === TRANSACTION_TYPES.ALQUILER)
+                  ? `Bs. ${formatNumber(t.ganancia)}`
+                  : 'N/A'
+                }
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div className="totals-summary">
+        <h3>Resumen de Totales</h3>
+        <div className="totals-grid">
+          <div className="total-card"><span>Ingresos Alquiler/Clases</span><strong>Bs. {formatNumber(printData.totals.ingresosAlquiler)}</strong></div>
+          <div className="total-card"><span>Ventas Accesorios</span><strong>Bs. {formatNumber(printData.totals.ventasAccesorios)}</strong></div>
+          <div className="total-card"><span>Comandas Pagadas</span><strong>Bs. {formatNumber(printData.totals.comandasPagadas)}</strong></div>
+          <div className="total-card highlight-orange"><span>Costo Total Mercancía (CMV)</span><strong>Bs. {formatNumber(printData.totals.costoMercancia)}</strong></div>
+          <div className="total-card highlight-blue"><span>Ganancia Bruta</span><strong>Bs. {formatNumber(printData.totals.gananciaBruta)}</strong></div>
+          <div className="total-card highlight-green"><span>Ingresos Totales</span><strong>Bs. {formatNumber(printData.totals.generalIngresos)}</strong></div>
+          <div className="total-card highlight-red"><span>Egresos Totales</span><strong>Bs. {formatNumber(printData.totals.generalEgresos)}</strong></div>
+          <div className="total-card highlight-purple"><span>Balance Neto</span><strong>Bs. {formatNumber(printData.totals.balanceNeto)}</strong></div>
+        </div>
+      </div>
+
+      <p style={{ marginTop: 12, fontSize: 12 }}>
+        Instrucción: en el cuadro de impresión selecciona “Guardar como PDF”.
+      </p>
+    </div>
+  );
+}
 
     return (
         <div className="ReporteTotales-container">
@@ -326,6 +568,18 @@ function ReporteTotales() {
 
             {/* FILTROS */}
             <div className="filtros-container">
+                <label>
+                      Exportar:
+                      <select value={exportMode} onChange={(e) => setExportMode(e.target.value)}>
+                        <option value={EXPORT_MODES.HOY}>Hoy (00:00 → ahora)</option>
+                        <option value={EXPORT_MODES.TURNO_1}>Turno 1 (05:00 → 16:00)</option>
+                        <option value={EXPORT_MODES.TURNO_2}>Turno 2 (16:00 → 03:00)</option>
+                      </select>
+                    </label>
+                    
+                    <button onClick={exportToPdfSimple} className="export-btn">
+                      Exportar PDF
+                    </button>
                 <label>
                     <FaFilter /> Tipo:
                     <select value={filterType} onChange={e => setFilterType(e.target.value)}>
